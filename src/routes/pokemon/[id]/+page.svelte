@@ -68,14 +68,14 @@
 				<div class="space-y-4">
 					<div class="grid grid-cols-2 gap-4">
 						<div class="text-gray-600">Species</div>
-						<div>{pokemon.species.name}</div>
+						<div>Unknown</div>
 						<div class="text-gray-600">Height</div>
 						<div>{(pokemon.height * 0.1).toFixed(1)}m</div>
 						<div class="text-gray-600">Weight</div>
 						<div>{(pokemon.weight * 0.1).toFixed(1)}kg</div>
 						<div class="text-gray-600">Abilities</div>
 						<div class="capitalize">
-							{pokemon.abilities.map(a => a.ability.name).join(', ')}
+							{pokemon.abilities.map((a: any) => a.ability.name).join(', ')}
 						</div>
 					</div>
 				</div>
