@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { teamStore } from '../../stores/team';
+	import { teamStore } from '$lib/stores/team';
 	import type { Team } from '$lib/types';
 	import BattleSimulator from '../../components/battle/BattleSimulator.svelte';
 	import Header from '../../components/header/header.svelte';

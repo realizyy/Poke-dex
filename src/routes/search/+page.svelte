@@ -5,10 +5,11 @@
 	import { browser } from '$app/environment';
 	import type { PageData } from './$types';
 	import type { Pokemon, SearchFilters, Team } from '$lib/types';
-	import { teamStore, currentTeam } from '../../stores/team';
+	import { teamStore, currentTeam } from '$lib/stores/team';
 	import SearchFilter from '../../components/search/SearchFilter.svelte';
 	import PokemonCard from '../../components/ui/PokemonCard.svelte';
 	import Header from '../../components/header/header.svelte';
+	import LoadingSpinner from '../../components/ui/LoadingSpinner.svelte';
 	import { PokemonService } from '$lib/services/pokemon-service';
 	
 	export let data: PageData;
@@ -199,7 +200,7 @@
 			</h2>
 			
 			{#if loading}
-				<div class="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-500"></div>
+				<LoadingSpinner size="sm" text="" showText={false} />
 			{/if}
 		</div>
 		
@@ -252,7 +253,11 @@
 	<!-- Results Grid -->
 	{#if loading && pokemons.length === 0}
 		<div class="flex justify-center items-center h-64">
-			<div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+			<LoadingSpinner 
+				size="lg" 
+				text="Searching Pokédex..." 
+				showText={true}
+			/>
 		</div>
 	{:else if pokemons.length === 0}
 		<div class="text-center py-12">
@@ -293,8 +298,11 @@
 			<div class="text-center mt-8">
 				{#if loadingMore}
 					<div class="flex justify-center items-center py-8">
-						<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-						<span class="ml-2 text-gray-600 dark:text-gray-400">Loading more Pokémon...</span>
+						<LoadingSpinner 
+							size="sm" 
+							text="Loading more Pokémon..." 
+							showText={true}
+						/>
 					</div>
 				{:else}
 					<button

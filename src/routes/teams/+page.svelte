@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { teamStore, currentTeam } from '../../stores/team';
+	import { teamStore, currentTeam } from '$lib/stores/team';
 	import type { Team } from '$lib/types';
 	import TeamBuilder from '../../components/team/TeamBuilder.svelte';
 	import Header from '../../components/header/header.svelte';

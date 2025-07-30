@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { teamStore, currentTeam } from '../../stores/team';
+	import { teamStore, currentTeam } from '$lib/stores/team';
 	import type { Team, TeamPokemon, Pokemon } from '$lib/types';
 	import { calculateTeamCoverage, getTypeColor } from '$lib/utils/pokemon-utils';
 	import PokemonCard from '../ui/PokemonCard.svelte';

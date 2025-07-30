@@ -6,6 +6,7 @@
 	import { get } from 'svelte/store';
 	import { getTypeColor } from '$lib/utils/pokemon-utils';
 	import Header from '../components/header/header.svelte';
+	import LoadingSpinner from '../components/ui/LoadingSpinner.svelte';
 
 	let pokemons: Pokemon[] = [];
 	let loading = true;
@@ -24,7 +25,7 @@
 	}
 </script>
 
-<div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-blue-900/20">
+<div class="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
 	<Header title="Pokédex" />
 	
 	<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -147,12 +148,11 @@
 		<!-- Featured Pokémon Section -->
 		{#if loading}
 			<div class="flex justify-center items-center h-64">
-				<div class="relative">
-					<div class="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
-					<div class="absolute inset-0 flex items-center justify-center">
-						<div class="w-8 h-8 bg-blue-600 rounded-full animate-pulse"></div>
-					</div>
-				</div>
+				<LoadingSpinner 
+					size="lg" 
+					text="Loading..." 
+					showText={true}
+				/>
 			</div>
 		{:else}
 			<section>

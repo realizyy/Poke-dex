@@ -23,8 +23,10 @@ function getActualTheme(theme: Theme): 'light' | 'dark' {
 	return theme;
 }
 
-export const theme = writable<Theme>(getInitialTheme());
-export const actualTheme = writable<'light' | 'dark'>('light');
+// Create stores
+const initialTheme = getInitialTheme();
+export const theme = writable<Theme>(initialTheme);
+export const actualTheme = writable<'light' | 'dark'>(getActualTheme(initialTheme));
 
 // Apply theme to document
 function applyTheme(actualTheme: 'light' | 'dark') {
@@ -49,9 +51,17 @@ theme.subscribe((currentTheme) => {
 	applyTheme(actual);
 });
 
-// Listen for system theme changes
+// Listen for system theme changes and apply initial theme
 if (browser) {
 	const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+	
+	// Apply initial theme immediately
+	const initial = getInitialTheme();
+	const actualInitial = getActualTheme(initial);
+	actualTheme.set(actualInitial);
+	applyTheme(actualInitial);
+	
+	// Also listen for changes to system preference
 	mediaQuery.addEventListener('change', (e) => {
 		theme.update((currentTheme) => {
 			if (currentTheme === 'system') {
@@ -62,19 +72,13 @@ if (browser) {
 			return currentTheme;
 		});
 	});
-	
-	// Apply initial theme
-	const initial = getInitialTheme();
-	const actual = getActualTheme(initial);
-	actualTheme.set(actual);
-	applyTheme(actual);
 }
 
 export function toggleTheme() {
 	theme.update((currentTheme) => {
 		if (currentTheme === 'light') return 'dark';
 		if (currentTheme === 'dark') return 'system';
-		return 'light';
+		return 'light'; // system -> light
 	});
 }
 
