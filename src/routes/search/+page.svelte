@@ -276,7 +276,7 @@
 					{pokemon} 
 					showStats={true}
 					showAddToTeam={selectedTeam !== null}
-					onClick={() => goto(`/pokemon/${pokemon.id}`)}
+					onClick={() => goto(`/pokemon/${pokemon.name}`)}
 				>
 					<div slot="add-to-team">
 						{#if selectedTeam}

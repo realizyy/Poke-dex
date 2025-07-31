@@ -176,7 +176,7 @@
 				
 				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 					{#each pokemons as pokemon}
-						<a href="/pokemon/{pokemon.id}" class="group block">
+						<a href="/pokemon/{pokemon.name}" class="group block">
 							<div class="relative overflow-hidden rounded-2xl transition-all duration-300 group-hover:scale-105 group-hover:shadow-2xl theme-border" style="background: linear-gradient(135deg, {getTypeColor(pokemon.types[0].type.name)}aa, {getTypeColor(pokemon.types[0].type.name)}dd); border-color: var(--border-color);">
 								<!-- Decorative elements -->
 								<div class="absolute top-4 right-4 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
