@@ -3,7 +3,6 @@
 	import { teamStore } from '$lib/stores/team';
 	import type { Team } from '$lib/types';
 	import BattleSimulator from '../../components/battle/BattleSimulator.svelte';
-	import Header from '../../components/header/header.svelte';
 	
 	let teams: Team[] = [];
 	let selectedTeam1: Team | null = null;
@@ -25,16 +24,14 @@
 	<meta name="description" content="Test your Pokémon teams in simulated battles with type effectiveness calculations." />
 </svelte:head>
 
-<div class="min-h-screen p-4 md:p-8 lg:p-12 bg-gray-50 dark:bg-gray-900">
-	<Header title="Battle Simulator" />
-	
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
 	{#if eligibleTeams.length < 2}
-		<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-12 border border-gray-200 dark:border-gray-700">
-			<div class="text-center">
-				<svg class="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-				</svg>
-				<h3 class="mt-4 text-xl font-medium text-gray-900 dark:text-white">Need More Teams</h3>
+	<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-12 border border-gray-200 dark:border-gray-700">
+		<div class="text-center">
+			<svg class="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+			</svg>
+			<h3 class="mt-4 text-xl font-medium text-gray-900 dark:text-white">Need More Teams</h3>
 				<p class="mt-2 text-gray-500 dark:text-gray-400 mb-6">
 					You need at least 2 teams with Pokémon to battle. Create teams in the Team Builder first.
 				</p>
@@ -105,11 +102,11 @@
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
 					</svg>
 					<h3 class="mt-2 text-lg font-medium text-gray-900 dark:text-white">Select Both Teams</h3>
-					<p class="mt-1 text-gray-500 dark:text-gray-400">
-						Choose two different teams to start the battle simulation.
-					</p>
-				</div>
+				<p class="mt-1 text-gray-500 dark:text-gray-400">
+					Choose two different teams to start the battle simulation.
+				</p>
 			</div>
-		{/if}
+		</div>
+	{/if}
 	{/if}
 </div>

@@ -7,15 +7,27 @@
 		<script>
 			// Initialize theme before page loads to prevent flash
 			(function() {
+				console.log('🚀 Initializing theme...');
+				
 				const theme = localStorage.getItem('theme') || 'system';
+				console.log('💾 Stored theme:', theme);
+				
 				const isDark = theme === 'dark' || 
 					(theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
 				
+				console.log('🌙 Is dark mode:', isDark);
+				
+				const html = document.documentElement;
+				
 				if (isDark) {
-					document.documentElement.classList.add('dark');
+					html.classList.add('dark');
+					console.log('✅ Added dark class during initialization');
 				} else {
-					document.documentElement.classList.remove('dark');
+					html.classList.remove('dark');
+					console.log('☀️ Removed dark class during initialization');
 				}
+				
+				console.log('📝 HTML classes after init:', html.className);
 			})();
 		</script>
 		%sveltekit.head%

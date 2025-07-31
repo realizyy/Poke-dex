@@ -8,7 +8,6 @@
 	import { teamStore, currentTeam } from '$lib/stores/team';
 	import SearchFilter from '../../components/search/SearchFilter.svelte';
 	import PokemonCard from '../../components/ui/PokemonCard.svelte';
-	import Header from '../../components/header/header.svelte';
 	import LoadingSpinner from '../../components/ui/LoadingSpinner.svelte';
 	import { PokemonService } from '$lib/services/pokemon-service';
 	
@@ -172,30 +171,28 @@
 </script>
 
 <svelte:head>
-	<title>Advanced Pokémon Search - Pokédex</title>
+	<title>Search Pokémon - Pokédx</title>
 	<meta name="description" content="Search and filter through all Pokémon with advanced filters including type, generation, and stats." />
 </svelte:head>
 
-<div class="min-h-screen p-4 md:p-8 lg:p-12 bg-gray-50 dark:bg-gray-900">
-	<Header title="Advanced Search" />
-	
-	<!-- Search and Filters -->
-	<div class="mb-8">
-		<SearchFilter 
-			bind:searchQuery 
-			bind:filters 
-			on:search={handleSearch}
-			on:clear={handleClear}
-		/>
-	</div>
-	
-	<!-- Results Header -->
+<!-- Search and Filters -->
+<div class="mb-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+	<SearchFilter 
+		bind:searchQuery 
+		bind:filters 
+		on:search={handleSearch}
+		on:clear={handleClear}
+	/>
+</div>
+
+<!-- Results Header -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 	<div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
 		<div class="flex items-center gap-4">
-			<h2 class="text-xl font-semibold text-gray-900 dark:text-white">
+			<h2 class="text-xl font-semibold theme-text">
 				Search Results
 				{#if pokemons.length > 0}
-					<span class="text-gray-500 dark:text-gray-400">({pokemons.length} found)</span>
+					<span class="theme-text-secondary">({pokemons.length} found)</span>
 				{/if}
 			</h2>
 			
@@ -207,23 +204,25 @@
 		<div class="flex items-center gap-4">
 			<!-- Sort Controls -->
 			<div class="flex items-center gap-2">
-				<label for="sort-select" class="text-sm font-medium text-gray-700 dark:text-gray-300">Sort by:</label>
+				<label for="sort-select" class="text-sm font-medium theme-text">Sort by:</label>
 				<select 
 					id="sort-select"
 					bind:value={sortBy}
-					class="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+					class="px-3 py-2 rounded-lg theme-border theme-bg-secondary theme-text text-sm"
+					style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-main);"
 				>
-					<option value="id">Pokédex #</option>
+					<option value="id">Pokédx #</option>
 					<option value="name">Name</option>
 					<option value="stats">Total Stats</option>
 				</select>
 				<button
 					on:click={() => sortOrder = sortOrder === 'asc' ? 'desc' : 'asc'}
-					class="p-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors"
+					class="p-2 rounded-lg theme-border theme-bg-secondary hover:bg-gray-50 transition-colors"
+					style="background-color: var(--bg-secondary); border-color: var(--border-color);"
 					title="Toggle sort order"
 					aria-label="Toggle sort order"
 				>
-					<svg class="w-4 h-4 text-gray-600 dark:text-gray-300 {sortOrder === 'desc' ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<svg class="w-4 h-4 theme-text-secondary {sortOrder === 'desc' ? 'rotate-180' : ''}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path>
 					</svg>
 				</button>
@@ -232,11 +231,12 @@
 			<!-- Team Selector -->
 			{#if teams.length > 0}
 				<div class="flex items-center gap-2">
-					<label for="team-select" class="text-sm font-medium text-gray-700 dark:text-gray-300">Add to team:</label>
+					<label for="team-select" class="text-sm font-medium theme-text">Add to team:</label>
 					<select 
 						id="team-select"
 						bind:value={selectedTeam}
-						class="px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+						class="px-3 py-2 rounded-lg theme-border theme-bg-secondary theme-text text-sm"
+						style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-main);"
 					>
 						<option value={null}>Select team...</option>
 						{#each teams as team}
@@ -255,17 +255,17 @@
 		<div class="flex justify-center items-center h-64">
 			<LoadingSpinner 
 				size="lg" 
-				text="Searching Pokédex..." 
+				text="Searching Pokédx..." 
 				showText={true}
 			/>
 		</div>
 	{:else if pokemons.length === 0}
 		<div class="text-center py-12">
-			<svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+			<svg class="mx-auto h-12 w-12 theme-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
 			</svg>
-			<h3 class="mt-2 text-sm font-medium text-gray-900 dark:text-white">No Pokémon found</h3>
-			<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+			<h3 class="mt-2 text-sm font-medium theme-text">No Pokémon found</h3>
+			<p class="mt-1 text-sm theme-text-secondary">
 				Try adjusting your search criteria or clearing filters.
 			</p>
 		</div>
@@ -315,7 +315,7 @@
 			</div>
 		{:else if pokemons.length > 0}
 			<div class="text-center py-8">
-				<p class="text-gray-500 dark:text-gray-400">
+				<p class="theme-text-secondary">
 					You've seen all the Pokémon matching your criteria!
 				</p>
 			</div>

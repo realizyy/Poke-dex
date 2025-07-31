@@ -34,11 +34,32 @@ function applyTheme(actualTheme: 'light' | 'dark') {
 	
 	const root = document.documentElement;
 	
+	console.log('🎨 Applying theme:', actualTheme); // Debug log
+	
 	if (actualTheme === 'dark') {
 		root.classList.add('dark');
+		console.log('🌙 Added dark class to html element'); // Debug log
 	} else {
 		root.classList.remove('dark');
+		console.log('☀️ Removed dark class from html element'); // Debug log
 	}
+	
+	// Force CSS variable recalculation and log current values
+	setTimeout(() => {
+		const computedStyle = getComputedStyle(root);
+		const bgMain = computedStyle.getPropertyValue('--bg-main').trim();
+		const textMain = computedStyle.getPropertyValue('--text-main').trim();
+		
+		console.log('📝 HTML classes:', root.className);
+		console.log('� CSS Variables after theme change:');
+		console.log('  --bg-main:', bgMain || 'undefined');
+		console.log('  --text-main:', textMain || 'undefined');
+	}, 10);
+	
+	// Force a repaint to ensure CSS variables take effect
+	root.style.display = 'none';
+	root.offsetHeight; // Trigger reflow
+	root.style.display = '';
 }
 
 // Subscribe to theme changes

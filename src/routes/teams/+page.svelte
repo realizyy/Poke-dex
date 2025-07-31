@@ -4,7 +4,6 @@
 	import { teamStore, currentTeam } from '$lib/stores/team';
 	import type { Team } from '$lib/types';
 	import TeamBuilder from '../../components/team/TeamBuilder.svelte';
-	import Header from '../../components/header/header.svelte';
 	
 	let teams: Team[] = [];
 	let showCreateModal = false;
@@ -70,15 +69,13 @@
 	<meta name="description" content="Build and manage your Pokémon teams with advanced type coverage analysis." />
 </svelte:head>
 
-<div class="min-h-screen p-4 md:p-8 lg:p-12 bg-gray-50 dark:bg-gray-900">
-	<Header title="Team Builder" />
-	
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
 	<div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
 		<!-- Team List Sidebar -->
 		<div class="lg:col-span-1">
-			<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+			<div class="theme-bg-secondary rounded-xl shadow-lg p-6 theme-border" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
 				<div class="flex justify-between items-center mb-4">
-					<h2 class="text-xl font-bold text-gray-900 dark:text-white">Your Teams</h2>
+					<h2 class="text-xl font-bold theme-text">Your Teams</h2>
 					<button
 						on:click={() => showCreateModal = true}
 						class="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition-colors"
