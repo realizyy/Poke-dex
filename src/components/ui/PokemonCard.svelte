@@ -24,7 +24,8 @@
 
 {#if onClick}
 <div 
-	class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105 border border-gray-200 dark:border-gray-700 {compact ? 'p-3' : 'p-4'} cursor-pointer"
+	class="theme-bg-secondary rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105 theme-border {compact ? 'p-3' : 'p-4'} cursor-pointer"
+	style="background-color: var(--bg-secondary); border-color: var(--border-color);"
 	on:click={handleClick}
 	on:keydown={(e) => e.key === 'Enter' && handleClick()}
 	role="button"
@@ -43,10 +44,10 @@
 		
 		<div class="flex-1 min-w-0">
 			<div class="flex items-center justify-between mb-1">
-				<h3 class="font-bold text-lg text-gray-900 dark:text-white capitalize truncate">
+				<h3 class="font-bold text-lg theme-text capitalize truncate">
 					{pokemon.name}
 				</h3>
-				<span class="text-sm text-gray-500 dark:text-gray-400">
+				<span class="text-sm theme-text-secondary">
 					#{pokemon.id.toString().padStart(3, '0')}
 				</span>
 			</div>
@@ -65,7 +66,7 @@
 			
 			<!-- Stats Total (if not compact) -->
 			{#if !compact}
-				<div class="text-sm text-gray-600 dark:text-gray-400">
+				<div class="text-sm theme-text-secondary">
 					Base Stats Total: <span class="font-semibold {getStatColor(getStatTotal(pokemon))}">{getStatTotal(pokemon)}</span>
 				</div>
 			{/if}
@@ -74,12 +75,12 @@
 	
 	<!-- Detailed Stats -->
 	{#if showStats && !compact}
-		<div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-			<h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Base Stats</h4>
+		<div class="mt-4 pt-4 theme-border" style="border-top: 1px solid var(--border-color);">
+			<h4 class="text-sm font-semibold theme-text-secondary mb-2">Base Stats</h4>
 			<div class="grid grid-cols-2 gap-2 text-xs">
 				{#each pokemon.stats as stat}
 					<div class="flex justify-between">
-						<span class="text-gray-600 dark:text-gray-400">
+						<span class="theme-text-muted">
 							{formatStatName(stat.stat.name)}:
 						</span>
 						<span class="font-semibold {getStatColor(stat.base_stat)}">
@@ -93,14 +94,15 @@
 	
 	<!-- Add to Team Button -->
 	{#if showAddToTeam}
-		<div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+		<div class="mt-3 pt-3 theme-border" style="border-top: 1px solid var(--border-color);">
 			<slot name="add-to-team" />
 		</div>
 	{/if}
 </div>
 {:else}
 <div 
-	class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105 border border-gray-200 dark:border-gray-700 {compact ? 'p-3' : 'p-4'}"
+	class="theme-bg-secondary rounded-xl shadow-lg overflow-hidden transition-all duration-300 hover:shadow-xl hover:scale-105 theme-border {compact ? 'p-3' : 'p-4'}"
+	style="background-color: var(--bg-secondary); border-color: var(--border-color);"
 	role="article"
 >
 	<!-- Pokemon Image and Basic Info -->
@@ -116,10 +118,10 @@
 		
 		<div class="flex-1 min-w-0">
 			<div class="flex items-center justify-between mb-1">
-				<h3 class="font-bold text-lg text-gray-900 dark:text-white capitalize truncate">
+				<h3 class="font-bold text-lg theme-text capitalize truncate">
 					{pokemon.name}
 				</h3>
-				<span class="text-sm text-gray-500 dark:text-gray-400">
+				<span class="text-sm theme-text-secondary">
 					#{pokemon.id.toString().padStart(3, '0')}
 				</span>
 			</div>
@@ -138,7 +140,7 @@
 			
 			<!-- Stats Total (if not compact) -->
 			{#if !compact}
-				<div class="text-sm text-gray-600 dark:text-gray-400">
+				<div class="text-sm theme-text-secondary">
 					Base Stats Total: <span class="font-semibold {getStatColor(getStatTotal(pokemon))}">{getStatTotal(pokemon)}</span>
 				</div>
 			{/if}
@@ -147,12 +149,12 @@
 	
 	<!-- Detailed Stats -->
 	{#if showStats && !compact}
-		<div class="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-			<h4 class="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">Base Stats</h4>
+		<div class="mt-4 pt-4 theme-border" style="border-top: 1px solid var(--border-color);">
+			<h4 class="text-sm font-semibold theme-text-secondary mb-2">Base Stats</h4>
 			<div class="grid grid-cols-2 gap-2 text-xs">
 				{#each pokemon.stats as stat}
 					<div class="flex justify-between">
-						<span class="text-gray-600 dark:text-gray-400">
+						<span class="theme-text-muted">
 							{formatStatName(stat.stat.name)}:
 						</span>
 						<span class="font-semibold {getStatColor(stat.base_stat)}">
@@ -166,7 +168,7 @@
 	
 	<!-- Add to Team Button -->
 	{#if showAddToTeam}
-		<div class="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+		<div class="mt-3 pt-3 theme-border" style="border-top: 1px solid var(--border-color);">
 			<slot name="add-to-team" />
 		</div>
 	{/if}

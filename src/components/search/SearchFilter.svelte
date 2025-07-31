@@ -90,7 +90,7 @@
 	}
 </script>
 
-<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-4 border border-gray-200 dark:border-gray-700">
+<div class="theme-bg-secondary rounded-xl shadow-lg p-4 theme-border" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
 	<!-- Search Input -->
 	<div class="relative mb-4">
 		<input
@@ -98,10 +98,11 @@
 			placeholder="Search Pokémon by name..."
 			bind:value={searchQuery}
 			on:input={handleSearchInput}
-			class="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+			class="w-full pl-10 pr-4 py-3 rounded-lg theme-border theme-bg-secondary theme-text focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+			style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-main);"
 		/>
 		<svg
-			class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400"
+			class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 theme-text-muted"
 			fill="none"
 			stroke="currentColor"
 			viewBox="0 0 24 24"
@@ -140,10 +141,10 @@
 	
 	<!-- Advanced Filters -->
 	{#if showFilters}
-		<div class="space-y-6 pt-4 border-t border-gray-200 dark:border-gray-700">
+		<div class="space-y-6 pt-4 theme-border" style="border-top: 1px solid var(--border-color);">
 			<!-- Type Filters -->
 			<div>
-				<h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Types</h3>
+				<h3 class="text-lg font-semibold theme-text mb-3">Types</h3>
 				<div class="flex flex-wrap gap-2">
 					{#each POKEMON_TYPES as type}
 						<button
@@ -159,14 +160,17 @@
 			
 			<!-- Generation Filters -->
 			<div>
-				<h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Generations</h3>
+				<h3 class="text-lg font-semibold theme-text mb-3">Generations</h3>
 				<div class="flex flex-wrap gap-2">
 					{#each GENERATIONS as generation}
 						<button
 							on:click={() => toggleGeneration(generation.id)}
 							class="px-4 py-2 rounded-lg border-2 transition-all {filters.generations.includes(generation.id.toString()) 
 								? 'border-blue-500 bg-blue-500 text-white' 
-								: 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:border-blue-300'}"
+								: 'theme-border theme-text-secondary hover:border-blue-300'}"
+							style="{!filters.generations.includes(generation.id.toString()) 
+								? `border-color: var(--border-color); color: var(--text-secondary);` 
+								: ''}"
 						>
 							<div class="text-sm">
 								<div class="font-semibold">{generation.name}</div>
@@ -179,16 +183,16 @@
 			
 			<!-- Stat Filters -->
 			<div>
-				<h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-3">Base Stats</h3>
+				<h3 class="text-lg font-semibold theme-text mb-3">Base Stats</h3>
 				<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
 					{#each Object.entries(statRanges) as [statName, range]}
 						<div class="space-y-2">
-							<div class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+							<div class="block text-sm font-medium theme-text-secondary">
 								{formatStatName(statName)}
 							</div>
 							<div class="flex gap-2 items-center">
 								<div class="flex-1">
-									<label for="min-{statName}" class="block text-xs text-gray-500">Min</label>
+									<label for="min-{statName}" class="block text-xs theme-text-muted">Min</label>
 									<input
 										id="min-{statName}"
 										type="range"

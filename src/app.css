@@ -138,6 +138,73 @@
     color: var(--text-main) !important;
     transition: color 0.3s ease !important;
   }
+
+  /* Hover states using theme colors */
+  .hover-theme-bg-secondary:hover {
+    background-color: var(--bg-secondary) !important;
+  }
+
+  .hover-theme-bg-tertiary:hover {
+    background-color: var(--bg-tertiary) !important;
+  }
+
+  /* Focus states for form elements */
+  .theme-focus:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgb(59 130 246);
+    border-color: rgb(59 130 246);
+  }
+
+  /* Select dropdown theming */
+  select.theme-select {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+    color: var(--text-main);
+  }
+
+  select.theme-select:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgb(59 130 246);
+    border-color: rgb(59 130 246);
+  }
+
+  select.theme-select option {
+    background-color: var(--bg-secondary);
+    color: var(--text-main);
+  }
+
+  /* Input theming */
+  input.theme-input {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+    color: var(--text-main);
+  }
+
+  input.theme-input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgb(59 130 246);
+    border-color: rgb(59 130 246);
+  }
+
+  input.theme-input::placeholder {
+    color: var(--text-muted);
+  }
+
+  /* Placeholder color for all themed inputs */
+  .theme-placeholder::placeholder {
+    color: var(--text-muted) !important;
+  }
+
+  /* Ensure buttons respect theme */
+  .theme-button {
+    background-color: var(--bg-secondary);
+    color: var(--text-main);
+    border-color: var(--border-color);
+  }
+
+  .theme-button:hover {
+    background-color: var(--bg-tertiary);
+  }
 }
 
 /* Animation keyframes */

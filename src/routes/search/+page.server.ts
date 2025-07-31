@@ -19,6 +19,11 @@ export const load: PageServerLoad = async ({ url }) => {
 	};
 	
 	try {
+		// Preload initial batch if this is the first page without filters
+		if (offset === 0 && !query && typeFilter.length === 0) {
+			PokemonService.preloadInitialBatch();
+		}
+		
 		let result;
 		if (query) {
 			const searchResults = await PokemonService.searchPokemon(query, limit);

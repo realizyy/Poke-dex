@@ -3,10 +3,10 @@ import type { Team, TeamPokemon, Pokemon } from '$lib/types';
 
 function createTeamStore() {
 	const { subscribe, set, update } = writable<Team[]>([]);
-	
+
 	return {
 		subscribe,
-		
+
 		// Load teams from localStorage
 		loadTeams: () => {
 			if (typeof window !== 'undefined') {
@@ -21,14 +21,14 @@ function createTeamStore() {
 				}
 			}
 		},
-		
+
 		// Save teams to localStorage
 		saveTeams: (teams: Team[]) => {
 			if (typeof window !== 'undefined') {
 				localStorage.setItem('pokemon-teams', JSON.stringify(teams));
 			}
 		},
-		
+
 		// Create new team
 		createTeam: (name: string) => {
 			const newTeam: Team = {
@@ -37,33 +37,38 @@ function createTeamStore() {
 				pokemons: [],
 				createdAt: new Date()
 			};
-			
-			update(teams => {
+
+			update((teams) => {
 				const updatedTeams = [...teams, newTeam];
 				if (typeof window !== 'undefined') {
 					localStorage.setItem('pokemon-teams', JSON.stringify(updatedTeams));
 				}
 				return updatedTeams;
 			});
-			
+
 			return newTeam;
 		},
-		
+
 		// Delete team
 		deleteTeam: (teamId: string) => {
-			update(teams => {
-				const updatedTeams = teams.filter(team => team.id !== teamId);
+			update((teams) => {
+				const updatedTeams = teams.filter((team) => team.id !== teamId);
 				if (typeof window !== 'undefined') {
 					localStorage.setItem('pokemon-teams', JSON.stringify(updatedTeams));
 				}
 				return updatedTeams;
 			});
 		},
-		
+
 		// Add Pokemon to team
-		addPokemonToTeam: (teamId: string, pokemon: Pokemon, moves: string[] = [], nickname?: string) => {
-			update(teams => {
-				const updatedTeams = teams.map(team => {
+		addPokemonToTeam: (
+			teamId: string,
+			pokemon: Pokemon,
+			moves: string[] = [],
+			nickname?: string
+		) => {
+			update((teams) => {
+				const updatedTeams = teams.map((team) => {
 					if (team.id === teamId && team.pokemons.length < 6) {
 						const teamPokemon: TeamPokemon = {
 							pokemon,
@@ -77,18 +82,18 @@ function createTeamStore() {
 					}
 					return team;
 				});
-				
+
 				if (typeof window !== 'undefined') {
 					localStorage.setItem('pokemon-teams', JSON.stringify(updatedTeams));
 				}
 				return updatedTeams;
 			});
 		},
-		
+
 		// Remove Pokemon from team
 		removePokemonFromTeam: (teamId: string, pokemonIndex: number) => {
-			update(teams => {
-				const updatedTeams = teams.map(team => {
+			update((teams) => {
+				const updatedTeams = teams.map((team) => {
 					if (team.id === teamId) {
 						return {
 							...team,
@@ -97,18 +102,18 @@ function createTeamStore() {
 					}
 					return team;
 				});
-				
+
 				if (typeof window !== 'undefined') {
 					localStorage.setItem('pokemon-teams', JSON.stringify(updatedTeams));
 				}
 				return updatedTeams;
 			});
 		},
-		
+
 		// Update Pokemon moves
 		updatePokemonMoves: (teamId: string, pokemonIndex: number, moves: string[]) => {
-			update(teams => {
-				const updatedTeams = teams.map(team => {
+			update((teams) => {
+				const updatedTeams = teams.map((team) => {
 					if (team.id === teamId && team.pokemons[pokemonIndex]) {
 						const updatedPokemons = [...team.pokemons];
 						updatedPokemons[pokemonIndex] = {
@@ -122,18 +127,18 @@ function createTeamStore() {
 					}
 					return team;
 				});
-				
+
 				if (typeof window !== 'undefined') {
 					localStorage.setItem('pokemon-teams', JSON.stringify(updatedTeams));
 				}
 				return updatedTeams;
 			});
 		},
-		
+
 		// Update Pokemon nickname
 		updatePokemonNickname: (teamId: string, pokemonIndex: number, nickname: string) => {
-			update(teams => {
-				const updatedTeams = teams.map(team => {
+			update((teams) => {
+				const updatedTeams = teams.map((team) => {
 					if (team.id === teamId && team.pokemons[pokemonIndex]) {
 						const updatedPokemons = [...team.pokemons];
 						updatedPokemons[pokemonIndex] = {
@@ -147,24 +152,24 @@ function createTeamStore() {
 					}
 					return team;
 				});
-				
+
 				if (typeof window !== 'undefined') {
 					localStorage.setItem('pokemon-teams', JSON.stringify(updatedTeams));
 				}
 				return updatedTeams;
 			});
 		},
-		
+
 		// Update team name
 		updateTeamName: (teamId: string, newName: string) => {
-			update(teams => {
-				const updatedTeams = teams.map(team => {
+			update((teams) => {
+				const updatedTeams = teams.map((team) => {
 					if (team.id === teamId) {
 						return { ...team, name: newName };
 					}
 					return team;
 				});
-				
+
 				if (typeof window !== 'undefined') {
 					localStorage.setItem('pokemon-teams', JSON.stringify(updatedTeams));
 				}

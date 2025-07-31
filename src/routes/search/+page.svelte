@@ -208,7 +208,7 @@
 				<select 
 					id="sort-select"
 					bind:value={sortBy}
-					class="px-3 py-2 rounded-lg theme-border theme-bg-secondary theme-text text-sm"
+					class="px-3 py-2 rounded-lg theme-border theme-bg-secondary theme-text text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
 					style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-main);"
 				>
 					<option value="id">Pokédx #</option>
@@ -217,7 +217,7 @@
 				</select>
 				<button
 					on:click={() => sortOrder = sortOrder === 'asc' ? 'desc' : 'asc'}
-					class="p-2 rounded-lg theme-border theme-bg-secondary hover:bg-gray-50 transition-colors"
+					class="p-2 rounded-lg theme-border theme-bg-secondary hover:theme-bg-tertiary transition-colors"
 					style="background-color: var(--bg-secondary); border-color: var(--border-color);"
 					title="Toggle sort order"
 					aria-label="Toggle sort order"
@@ -235,7 +235,7 @@
 					<select 
 						id="team-select"
 						bind:value={selectedTeam}
-						class="px-3 py-2 rounded-lg theme-border theme-bg-secondary theme-text text-sm"
+						class="px-3 py-2 rounded-lg theme-border theme-bg-secondary theme-text text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
 						style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-main);"
 					>
 						<option value={null}>Select team...</option>

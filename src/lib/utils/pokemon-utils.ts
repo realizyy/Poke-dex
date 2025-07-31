@@ -152,7 +152,18 @@ export const TYPE_EFFECTIVENESS: TypeEffectiveness = {
 	},
 	steel: {
 		weakTo: ['fire', 'fighting', 'ground'],
-		resistantTo: ['normal', 'grass', 'ice', 'flying', 'psychic', 'bug', 'rock', 'dragon', 'steel', 'fairy'],
+		resistantTo: [
+			'normal',
+			'grass',
+			'ice',
+			'flying',
+			'psychic',
+			'bug',
+			'rock',
+			'dragon',
+			'steel',
+			'fairy'
+		],
 		immuneTo: ['poison'],
 		superEffectiveAgainst: ['ice', 'rock', 'fairy'],
 		notVeryEffectiveAgainst: ['fire', 'water', 'electric', 'steel'],
@@ -174,23 +185,23 @@ export function getTypeColor(type: string): string {
 
 export function calculateTypeWeaknesses(types: string[]): string[] {
 	const weaknesses = new Set<string>();
-	
-	types.forEach(type => {
-		TYPE_EFFECTIVENESS[type]?.weakTo.forEach(weakness => {
+
+	types.forEach((type) => {
+		TYPE_EFFECTIVENESS[type]?.weakTo.forEach((weakness) => {
 			weaknesses.add(weakness);
 		});
 	});
-	
+
 	// Remove resistances and immunities
-	types.forEach(type => {
-		TYPE_EFFECTIVENESS[type]?.resistantTo.forEach(resistance => {
+	types.forEach((type) => {
+		TYPE_EFFECTIVENESS[type]?.resistantTo.forEach((resistance) => {
 			weaknesses.delete(resistance);
 		});
-		TYPE_EFFECTIVENESS[type]?.immuneTo.forEach(immunity => {
+		TYPE_EFFECTIVENESS[type]?.immuneTo.forEach((immunity) => {
 			weaknesses.delete(immunity);
 		});
 	});
-	
+
 	return Array.from(weaknesses);
 }
 
@@ -201,30 +212,30 @@ export function calculateTeamCoverage(team: TeamPokemon[]): {
 } {
 	const weaknesses: { [key: string]: number } = {};
 	const resistances: { [key: string]: number } = {};
-	
-	team.forEach(teamPokemon => {
-		const types = teamPokemon.pokemon.types.map(t => t.type.name);
-		
+
+	team.forEach((teamPokemon) => {
+		const types = teamPokemon.pokemon.types.map((t) => t.type.name);
+
 		// Count weaknesses
-		types.forEach(type => {
-			TYPE_EFFECTIVENESS[type]?.weakTo.forEach(weakness => {
+		types.forEach((type) => {
+			TYPE_EFFECTIVENESS[type]?.weakTo.forEach((weakness) => {
 				weaknesses[weakness] = (weaknesses[weakness] || 0) + 1;
 			});
 		});
-		
+
 		// Count resistances
-		types.forEach(type => {
-			TYPE_EFFECTIVENESS[type]?.resistantTo.forEach(resistance => {
+		types.forEach((type) => {
+			TYPE_EFFECTIVENESS[type]?.resistantTo.forEach((resistance) => {
 				resistances[resistance] = (resistances[resistance] || 0) + 1;
 			});
 		});
 	});
-	
+
 	// Calculate coverage score (lower is better)
 	const totalWeaknesses = Object.values(weaknesses).reduce((sum, count) => sum + count, 0);
 	const totalResistances = Object.values(resistances).reduce((sum, count) => sum + count, 0);
-	const coverageScore = totalWeaknesses - (totalResistances * 0.5);
-	
+	const coverageScore = totalWeaknesses - totalResistances * 0.5;
+
 	return { weaknesses, resistances, coverageScore };
 }
 
@@ -257,9 +268,24 @@ export function getGenerationFromId(id: number): number {
 }
 
 export const POKEMON_TYPES = [
-	'normal', 'fire', 'water', 'electric', 'grass', 'ice',
-	'fighting', 'poison', 'ground', 'flying', 'psychic', 'bug',
-	'rock', 'ghost', 'dragon', 'dark', 'steel', 'fairy'
+	'normal',
+	'fire',
+	'water',
+	'electric',
+	'grass',
+	'ice',
+	'fighting',
+	'poison',
+	'ground',
+	'flying',
+	'psychic',
+	'bug',
+	'rock',
+	'ghost',
+	'dragon',
+	'dark',
+	'steel',
+	'fairy'
 ];
 
 export const GENERATIONS = [

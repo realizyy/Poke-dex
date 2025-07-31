@@ -57,7 +57,7 @@
 						type="text"
 						placeholder="Search for any Pokémon..."
 						bind:value={searchQuery}
-						class="w-full pl-12 pr-32 py-4 rounded-2xl theme-border bg-white/80 backdrop-blur-xl theme-text placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-lg transition-all duration-200"
+						class="w-full pl-12 pr-32 py-4 rounded-2xl theme-border theme-bg-secondary backdrop-blur-xl theme-text theme-placeholder focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-lg transition-all duration-200"
 						style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-main);"
 					/>
 					<div class="absolute left-4 top-1/2 transform -translate-y-1/2">

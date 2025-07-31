@@ -2,9 +2,13 @@
 	import { i18n } from '$lib/i18n';
 	import { ParaglideJS } from '@inlang/paraglide-sveltekit';
 	import '../app.css';
+	import '$lib/fonts.css';
 	// Import theme store to ensure it's initialized
 	import '$lib/stores/theme';
+	// Import cache store to start preloading
+	import '$lib/stores/pokemon-cache';
 	import Header from '../components/header/header.svelte';
+	import CacheStatus from '../components/ui/cache-status.svelte';
 
 	let { children } = $props();
 </script>
@@ -12,7 +16,6 @@
 <svelte:head>
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<link rel="icon" type="image/png" href="/favicon.ico" />
-	<link href="https://fonts.cdnfonts.com/css/pokemon-solid" rel="stylesheet" />
 </svelte:head>
 
 <ParaglideJS {i18n}>
@@ -21,5 +24,6 @@
 		<main>
 			{@render children()}
 		</main>
+		<CacheStatus />
 	</div>
 </ParaglideJS>
