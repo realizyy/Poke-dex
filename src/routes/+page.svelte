@@ -185,16 +185,16 @@
 								<div class="relative p-6">
 									<div class="flex justify-between items-start mb-4">
 										<div>
-											<h3 class="text-white font-bold text-lg capitalize tracking-wide">{pokemon.name}</h3>
+											<h3 class="theme-text font-bold text-lg capitalize tracking-wide">{pokemon.name}</h3>
 											<div class="flex gap-2 mt-2">
 												{#each pokemon.types as type}
-													<span class="px-3 py-1 bg-white/20 backdrop-blur-sm text-white text-xs rounded-full font-medium border border-white/20">
+													<span class="px-3 py-1 bg-white/20 backdrop-blur-sm theme-text capitalize text-xs rounded-full font-medium border border-white/20">
 														{type.type.name}
 													</span>
 												{/each}
 											</div>
 										</div>
-										<span class="text-white/90 text-sm font-bold bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">
+										<span class="theme-text text-sm font-bold bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">
 											#{pokemon.id.toString().padStart(3, '0')}
 										</span>
 									</div>
@@ -212,7 +212,7 @@
 									</div>
 									
 									<div class="text-center">
-										<div class="inline-flex items-center text-white/90 text-sm font-medium bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">
+										<div class="inline-flex items-center theme-text text-sm font-medium bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">
 											<span>View Details</span>
 											<svg class="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>

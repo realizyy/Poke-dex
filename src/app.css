@@ -355,22 +355,6 @@
   background: #111827;
 }
 
-/* Loading text animation */
-/* .loading-text {
-  background: linear-gradient(90deg, 
-    #dc2626,
-    #ef4444,
-    #f87171,
-    #ef4444,
-    #dc2626
-  );
-  background-size: 200% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation: loading-shimmer 2s ease-in-out infinite;
-} */
-
 @keyframes loading-shimmer {
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }

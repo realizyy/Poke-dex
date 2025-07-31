@@ -1,70 +1,29 @@
 <script lang="ts">
-// import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
-    import type { Pokemon, ColorType, Team } from '$lib/types';
-	import { teamStore } from '$lib/stores/team';
-	import { onMount } from 'svelte';
+	   import { goto } from '$app/navigation';
+	   import type { Pokemon, Team } from '$lib/types';
+	   import { getTypeColor, getStatName, getStatColor } from '$lib/utils/pokemon-utils';
+	   import { teamStore } from '$lib/stores/team';
+	   import { onMount } from 'svelte';
 
-	export let data;
-	let { pokemon } = data;
-	let activeTab = 'About';
-    let teams: Team[] = [];
+	   export let data;
+	   let { pokemon } = data;
+	   let activeTab = 'About';
+	   let teams: Team[] = [];
 
-	onMount(() => {
-		teamStore.loadTeams();
-		teamStore.subscribe(value => teams = value);
-	});
+	   // Debug log for all pokemon details
+	   onMount(() => {
+			   console.log('Pokemon detail data:', pokemon);
+			   teamStore.loadTeams();
+			   teamStore.subscribe(value => teams = value);
+	   });
 
-	function getTypeColor(type: string): string {
-		const colors: ColorType = {
-			grass: 'bg-emerald-500',
-			fire: 'bg-red-500',
-			water: 'bg-blue-500',
-			electric: 'bg-yellow-400',
-			psychic: 'bg-pink-500',
-			ice: 'bg-cyan-400',
-			dragon: 'bg-indigo-600',
-			dark: 'bg-gray-800',
-			fairy: 'bg-pink-300',
-			normal: 'bg-gray-400',
-			fighting: 'bg-red-700',
-			poison: 'bg-purple-500',
-			ground: 'bg-yellow-600',
-			flying: 'bg-indigo-400',
-			bug: 'bg-green-400',
-			rock: 'bg-yellow-800',
-			ghost: 'bg-purple-700',
-			steel: 'bg-gray-500'
-		};
-		return colors[type] || 'bg-gray-400';
-	}
+	   function addToTeam(teamId: string) {
+			   if (pokemon) {
+					   teamStore.addPokemonToTeam(teamId, pokemon);
+			   }
+	   }
 
-	function getStatName(statName: string): string {
-	const names: Record<string, string> = {
-		'hp': 'HP',
-		'attack': 'Attack',
-		'defense': 'Defense',
-		'special-attack': 'Sp. Attack',
-		'special-defense': 'Sp. Defense',
-		'speed': 'Speed'
-	};
-	return names[statName] || statName;
-	}
-
-	function getStatColor(value: number): string {
-		if (value >= 120) return 'bg-green-500';
-		if (value >= 90) return 'bg-yellow-500';
-		if (value >= 60) return 'bg-orange-500';
-		return 'bg-red-500';
-	}
-
-	function addToTeam(teamId: string) {
-		if (pokemon) {
-			teamStore.addPokemonToTeam(teamId, pokemon);
-		}
-	}
-
-	const tabs = ['About', 'Base Stats', 'Moves', 'Evolution'];
+	   const tabs = ['About', 'Base Stats', 'Moves', 'Evolution'];
 </script>
 
 <svelte:head>
@@ -91,29 +50,30 @@
 			
 			<!-- Header Content -->
 			<div class="relative p-6 pb-0">
-				<div class="flex items-center justify-between text-white mb-6">
+				<div class="flex items-center justify-between mb-6">
 					<div class="flex items-center gap-4">
 						<button on:click={() => goto('/')} class="p-2 hover:bg-white/20 rounded-lg transition-colors" aria-label="Back to home">
-							<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+							<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 theme-text" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
 							</svg>
 						</button>
-						<h1 class="text-3xl font-bold capitalize">{pokemon.name}</h1>
+						<h1 class="text-3xl font-bold capitalize theme-text">{pokemon.name}</h1>
 					</div>
-					<span class="text-lg font-bold">#{pokemon.id.toString().padStart(3, '0')}</span>
+					<span class="text-lg font-bold theme-text">#{pokemon.id.toString().padStart(3, '0')}</span>
 				</div>
 				
 				<!-- Types -->
 				<div class="flex gap-2 mb-8">
 					{#each pokemon.types as type}
-						<span class="px-4 py-2 bg-white/20 rounded-full text-white text-sm font-medium capitalize">
+						<span class="px-4 py-2 rounded-full theme-text text-sm font-medium capitalize"
+							style="background-color: {getTypeColor(type.type.name)};">
 							{type.type.name}
 						</span>
 					{/each}
 				</div>
 				
 				<!-- Pokemon Image -->
-				<div class="flex justify-center pb-8">
+				<div class="flex justify-center pb-18">
 					<div class="relative">
 						<img 
 							src={pokemon.sprites.other['official-artwork'].front_default} 
