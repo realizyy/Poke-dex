@@ -58,3 +58,30 @@ export interface SearchFilters {
 export interface ColorType {
 	[key: string]: string;
 }
+
+// Search related types
+export interface SearchResult {
+	pokemons: Pokemon[];
+	hasMore: boolean;
+	totalResults: number;
+}
+
+export type SortBy = 'id' | 'name' | 'stats';
+export type SortOrder = 'asc' | 'desc';
+
+// Modal related types
+export interface AddToTeamModalData {
+	show: boolean;
+	pokemon: Pokemon | null;
+}
+
+// Event types for components
+export interface SearchEvent {
+	query: string;
+	filters: SearchFilters;
+}
+
+export interface TeamSelectedEvent {
+	teamId: string;
+	pokemon: Pokemon;
+}

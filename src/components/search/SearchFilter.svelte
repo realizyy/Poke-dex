@@ -1,114 +1,86 @@
 <script lang="ts">
-	import { createEventDispatcher, onMount } from 'svelte';
-	import type { SearchFilters } from '$lib/types';
+	import { createEventDispatcher } from 'svelte';
+	import type { SearchFilters, SearchEvent } from '$lib/types';
 	import { POKEMON_TYPES, GENERATIONS, getTypeColor } from '$lib/utils/pokemon-utils';
+	import { SearchFilterUtils } from '$lib/utils/search-filter-utils';
 	
 	const dispatch = createEventDispatcher<{
-		search: { query: string; filters: SearchFilters };
+		search: SearchEvent;
 		clear: void;
 	}>();
 	
 	export let searchQuery = '';
-	export let filters: SearchFilters = {
-		types: [],
-		generations: [],
-		minStats: {},
-		maxStats: {}
-	};
+	export let filters: SearchFilters = SearchFilterUtils.createEmptyFilters();
 	
 	let showFilters = false;
-	let searchTimeout: ReturnType<typeof setTimeout>;
 	
-	// Stats ranges for sliders
-	const statRanges = {
-		hp: { min: 1, max: 255 },
-		attack: { min: 1, max: 190 },
-		defense: { min: 1, max: 230 },
-		specialAttack: { min: 1, max: 194 },
-		specialDefense: { min: 1, max: 230 },
-		speed: { min: 1, max: 180 }
-	};
+	// Get stat ranges from utils
+	const statRanges = SearchFilterUtils.STAT_RANGES;
 	
-	function handleSearchInput() {
-		clearTimeout(searchTimeout);
-		searchTimeout = setTimeout(() => {
-			dispatch('search', { query: searchQuery, filters });
-		}, 300);
+	function handleSearch() {
+		dispatch('search', { query: searchQuery, filters });
+	}
+	
+	function handleKeydown(event: KeyboardEvent) {
+		if (event.key === 'Enter') {
+			handleSearch();
+		}
 	}
 	
 	function toggleType(type: string) {
-		if (filters.types.includes(type)) {
-			filters.types = filters.types.filter(t => t !== type);
-		} else {
-			filters.types = [...filters.types, type];
-		}
-		dispatch('search', { query: searchQuery, filters });
+		filters = SearchFilterUtils.toggleType(filters, type);
+		handleSearch();
 	}
 	
 	function toggleGeneration(generation: number) {
-		const genString = generation.toString();
-		if (filters.generations.includes(genString)) {
-			filters.generations = filters.generations.filter(g => g !== genString);
-		} else {
-			filters.generations = [...filters.generations, genString];
-		}
-		dispatch('search', { query: searchQuery, filters });
+		filters = SearchFilterUtils.toggleGeneration(filters, generation);
+		handleSearch();
 	}
 	
 	function updateStatFilter(statName: string, type: 'min' | 'max', value: number) {
-		if (type === 'min') {
-			if (!filters.minStats) filters.minStats = {};
-			filters.minStats[statName] = value;
-		} else {
-			if (!filters.maxStats) filters.maxStats = {};
-			filters.maxStats[statName] = value;
-		}
-		dispatch('search', { query: searchQuery, filters });
+		filters = SearchFilterUtils.updateStatFilter(filters, statName, type, value);
+		handleSearch();
 	}
 	
 	function clearFilters() {
 		searchQuery = '';
-		filters = {
-			types: [],
-			generations: [],
-			minStats: {},
-			maxStats: {}
-		};
+		filters = SearchFilterUtils.createEmptyFilters();
 		dispatch('clear');
-	}
-	
-	function formatStatName(statName: string): string {
-		const names: { [key: string]: string } = {
-			hp: 'HP',
-			attack: 'Attack',
-			defense: 'Defense',
-			specialAttack: 'Sp. Attack',
-			specialDefense: 'Sp. Defense',
-			speed: 'Speed'
-		};
-		return names[statName] || statName;
 	}
 </script>
 
-<div class="theme-bg-secondary rounded-xl shadow-lg p-4 theme-border" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
+<div class="theme-bg-secondary rounded-xl shadow-lg p-4 theme-border border-1" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
 	<!-- Search Input -->
 	<div class="relative mb-4">
-		<input
-			type="text"
-			placeholder="Search Pokémon by name..."
-			bind:value={searchQuery}
-			on:input={handleSearchInput}
-			class="w-full pl-10 pr-4 py-3 rounded-lg theme-border theme-bg-secondary theme-text focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-			style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-main);"
-		/>
-		<svg
-			class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 theme-text-muted"
-			fill="none"
-			stroke="currentColor"
-			viewBox="0 0 24 24"
-		>
-			<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-		</svg>
+		<div class="flex gap-2">
+			<div class="relative flex-1">
+				<input
+					type="text"
+					placeholder="Search Pokémon by name..."
+					bind:value={searchQuery}
+					on:keydown={handleKeydown}
+					class="w-full pl-10 pr-4 py-3 rounded-lg theme-border theme-bg-secondary theme-text focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+					style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-main);"
+				/>
+				<svg
+					class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 theme-text-muted"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+				>
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+				</svg>
+			</div>
+			<button
+				on:click={handleSearch}
+				class="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors flex items-center gap-2"
+			>
+				<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+				</svg>
+				Search
+			</button>
+		</div>
 	</div>
 	
 	<!-- Filter Toggle -->
@@ -188,7 +160,7 @@
 					{#each Object.entries(statRanges) as [statName, range]}
 						<div class="space-y-2">
 							<div class="block text-sm font-medium theme-text-secondary">
-								{formatStatName(statName)}
+								{SearchFilterUtils.formatStatName(statName)}
 							</div>
 							<div class="flex gap-2 items-center">
 								<div class="flex-1">
@@ -198,12 +170,12 @@
 										type="range"
 										min={range.min}
 										max={range.max}
-										value={filters.minStats?.[statName] || range.min}
+										value={SearchFilterUtils.getStatValue(filters, statName, 'min')}
 										on:input={(e) => updateStatFilter(statName, 'min', parseInt(e.currentTarget.value))}
 										class="w-full"
 									/>
 									<span class="text-xs text-gray-600 dark:text-gray-400">
-										{filters.minStats?.[statName] || range.min}
+										{SearchFilterUtils.getStatValue(filters, statName, 'min')}
 									</span>
 								</div>
 								<div class="flex-1">
@@ -213,12 +185,12 @@
 										type="range"
 										min={range.min}
 										max={range.max}
-										value={filters.maxStats?.[statName] || range.max}
+										value={SearchFilterUtils.getStatValue(filters, statName, 'max')}
 										on:input={(e) => updateStatFilter(statName, 'max', parseInt(e.currentTarget.value))}
 										class="w-full"
 									/>
 									<span class="text-xs text-gray-600 dark:text-gray-400">
-										{filters.maxStats?.[statName] || range.max}
+										{SearchFilterUtils.getStatValue(filters, statName, 'max')}
 									</span>
 								</div>
 							</div>
