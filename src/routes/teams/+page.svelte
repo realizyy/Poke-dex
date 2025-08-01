@@ -100,7 +100,10 @@
 							<div 
 								class="p-3 rounded-lg border-2 cursor-pointer transition-all {selectedTeam?.id === team.id 
 									? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
-									: 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'}"
+									: 'theme-border hover:border-blue-300 dark:hover:border-blue-500'}"
+								style="{selectedTeam?.id === team.id 
+									? 'border-color: #3b82f6; background-color: rgba(59, 130, 246, 0.1);' 
+									: 'border-color: var(--border-color);'}"
 								on:click={() => selectTeam(team)}
 								on:keydown={(e) => e.key === 'Enter' && selectTeam(team)}
 								role="button"
@@ -108,17 +111,17 @@
 							>
 								<div class="flex justify-between items-start">
 									<div class="flex-1 min-w-0">
-										<h3 class="font-semibold text-gray-900 dark:text-white truncate">
+										<h3 class="font-semibold theme-text truncate">
 											{team.name}
 										</h3>
-										<p class="text-sm text-gray-600 dark:text-gray-400">
+										<p class="text-sm theme-text-secondary">
 											{team.pokemons.length}/6 Pokémon
 										</p>
 									</div>
 									<div class="flex gap-1 ml-2">
 										<button
 											on:click|stopPropagation={() => exportTeam(team)}
-											class="p-1 text-gray-400 hover:text-blue-500 transition-colors"
+											class="p-1 theme-text-muted hover:text-blue-500 transition-colors"
 											title="Export team"
                                             aria-label="Export team"
 										>
@@ -128,7 +131,7 @@
 										</button>
 										<button
 											on:click|stopPropagation={() => deleteTeam(team.id)}
-											class="p-1 text-gray-400 hover:text-red-500 transition-colors"
+											class="p-1 theme-text-muted hover:text-red-500 transition-colors"
 											title="Delete team"
                                             aria-label="Delete team"
 										>
@@ -151,7 +154,7 @@
 				{#snippet pokemonSelector()}
 					<div>
 						<div class="text-center py-8">
-							<p class="text-gray-600 dark:text-gray-400 mb-4">
+							<p class="theme-text-secondary mb-4">
 								To add Pokémon to your team, use the 
 								<a href="/search" class="text-blue-500 hover:text-blue-600 font-medium">Advanced Search</a>
 								page and select this team from the dropdown.
@@ -167,21 +170,21 @@
 				{/snippet}
 				<TeamBuilder team={selectedTeam} showAnalysis={true} allowEditing={true} {pokemonSelector} />
 			{:else}
-				<div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-12 border border-gray-200 dark:border-gray-700">
+				<div class="theme-bg-secondary rounded-xl shadow-lg p-12 theme-border" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
 					<div class="text-center">
-						<svg class="mx-auto h-16 w-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<svg class="mx-auto h-16 w-16 theme-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
 						</svg>
-						<h3 class="mt-4 text-xl font-medium text-gray-900 dark:text-white">Select a Team</h3>
+						<h3 class="mt-4 text-xl font-medium theme-text">Select a Team</h3>
                         {#if teams.length === 0}
-                            <p class="mt-2 text-gray-600 dark:text-gray-400">
+                            <p class="mt-2 theme-text-secondary">
                                 You have no teams yet. Create one to get started.
                             </p>
                         {:else}
-                            <p class="mt-2 text-gray-600 dark:text-gray-400">
+                            <p class="mt-2 theme-text-secondary">
                                 Select a team from the list on the left to view or edit its details.
                             </p>
-                            <p class="mt-2 text-gray-500 dark:text-gray-400">
+                            <p class="mt-2 theme-text-muted">
                                 You can also create a new team using the button above.
                             </p>
                         {/if}
@@ -195,14 +198,14 @@
 <!-- Create Team Modal -->
 {#if showCreateModal}
 	<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-		<div class="bg-white dark:bg-gray-800 rounded-xl max-w-md w-full p-6">
-			<h3 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+		<div class="theme-bg-secondary rounded-xl max-w-md w-full p-6 theme-border" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
+			<h3 class="text-lg font-semibold theme-text mb-4">
 				Create New Team
 			</h3>
 			
 			<form on:submit|preventDefault={createTeam}>
 				<div class="mb-4">
-					<label for="team-name-input" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+					<label for="team-name-input" class="block text-sm font-medium theme-text-secondary mb-2">
 						Team Name
 					</label>
 					<input
@@ -210,7 +213,8 @@
 						type="text"
 						bind:value={newTeamName}
 						placeholder="Enter team name..."
-						class="w-full px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+						class="w-full px-3 py-2 rounded-lg theme-border theme-bg theme-text focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+						style="background-color: var(--bg-main); border-color: var(--border-color); color: var(--text-main);"
 						required
 					/>
 				</div>
@@ -219,7 +223,8 @@
 					<button
 						type="button"
 						on:click={() => { showCreateModal = false; newTeamName = ''; }}
-						class="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
+						class="px-4 py-2 theme-text-secondary hover:theme-bg-tertiary rounded-lg transition-colors"
+						style="color: var(--text-secondary);"
 					>
 						Cancel
 					</button>

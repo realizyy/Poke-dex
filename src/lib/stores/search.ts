@@ -56,6 +56,23 @@ function createSearchStore() {
 
 		// Perform search
 		performSearch: async (query: string, filters: SearchFilters) => {
+			// Don't perform search if query is empty and no filters are active
+			const hasActiveFilters = filters.types.length > 0 || filters.generations.length > 0;
+			if (!query.trim() && !hasActiveFilters) {
+				update(state => ({
+					...state,
+					query: '',
+					filters,
+					hasSearched: false,
+					pokemons: [],
+					loading: false,
+					hasMore: false,
+					totalResults: 0,
+					offset: 0
+				}));
+				return;
+			}
+
 			update(state => ({
 				...state,
 				loading: true,

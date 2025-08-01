@@ -5,20 +5,34 @@
 	   import { teamStore } from '$lib/stores/team';
 	   import { onMount } from 'svelte';
 	   import EvolutionChain from '../../../components/ui/EvolutionChain.svelte';
+	   import { page } from '$app/stores';
+	   import type { PageData } from './$types';
 
-	   export let data;
-	   let { pokemon } = data;
+	   export let data: PageData;
+	   const pokemon = data.pokemon;
 	   let activeTab = 'About';
 	   let teams: Team[] = [];
 
 	   onMount(() => {
 			   teamStore.loadTeams();
-			   teamStore.subscribe(value => teams = value);
+			   teamStore.subscribe((value: Team[]) => {
+				   teams = value;
+			   });
 	   });
 
 	   function addToTeam(teamId: string) {
 			   if (pokemon) {
 					   teamStore.addPokemonToTeam(teamId, pokemon);
+			   }
+	   }
+
+	   function handleBack() {
+			   // Check if there's history to go back to
+			   if (window.history.length > 1) {
+					   history.back();
+			   } else {
+					   // Fallback to home if no history
+					   goto('/');
 			   }
 	   }
 
@@ -51,7 +65,7 @@
 			<div class="relative p-6 pb-0">
 				<div class="flex items-center justify-between mb-6">
 					<div class="flex items-center gap-4">
-						<button on:click={() => goto('/')} class="p-2 hover:bg-white/20 rounded-lg transition-colors" aria-label="Back to home">
+						<button on:click={handleBack} class="p-2 hover:bg-white/20 rounded-lg transition-colors" aria-label="Go back">
 							<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 theme-text" fill="none" viewBox="0 0 24 24" stroke="currentColor">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
 							</svg>

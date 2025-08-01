@@ -26,8 +26,8 @@
 		// Initialize stores
 		teamStore.loadTeams();
 		
-		// Initialize search from URL params if available
-		if (data.query || data.filters) {
+		// Only initialize search from URL params if there's an explicit query or filters
+		if (data.query || (data.filters && (data.filters.types.length > 0 || data.filters.generations.length > 0))) {
 			searchStore.performSearch(
 				data.query || '',
 				data.filters || { types: [], generations: [] }
@@ -82,9 +82,9 @@
 </svelte:head>
 
 <div class="min-h-screen theme-bg" style="background-color: var(--bg-main);">
-	<!-- Search Header -->
-	<div class="sticky top-0 z-40 theme-bg theme-border-b" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
-		<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+	<!-- Search Header - Fixed positioning and z-index -->
+	<div class="theme-bg theme-border-b relative z-10" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
+		<div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-3 sm:py-4">
 			<SearchFilter 
 				bind:searchQuery={searchState.query}
 				bind:filters={searchState.filters}
@@ -95,36 +95,36 @@
 	</div>
 
 	<!-- Main Content -->
-	<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+	<div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6">
 		{#if !searchState.hasSearched}
 			<!-- Welcome State -->
-			<div class="text-center py-12">
+			<div class="text-center py-8 sm:py-12">
 				<div class="max-w-md mx-auto">
-					<div class="mb-6">
-						<svg class="mx-auto h-16 w-16 theme-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<div class="mb-4 sm:mb-6">
+						<svg class="mx-auto h-12 w-12 sm:h-16 sm:w-16 theme-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
 						</svg>
 					</div>
-					<h2 class="text-2xl font-bold theme-text mb-2">Search Pokémon</h2>
-					<p class="text-sm theme-text-secondary mb-6">
+					<h2 class="text-xl sm:text-2xl font-bold theme-text mb-2">Search Pokémon</h2>
+					<p class="text-xs sm:text-sm theme-text-secondary mb-4 sm:mb-6 px-4">
 						Enter a Pokémon name or use filters to find your favorite Pokémon
 					</p>
-					<div class="flex flex-wrap justify-center gap-2">
+					<div class="flex flex-wrap justify-center gap-2 px-4">
 						<button 
 							on:click={() => handleQuickSearch('pikachu')}
-							class="px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-sm font-medium transition-colors"
+							class="px-3 sm:px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors"
 						>
 							Try "Pikachu"
 						</button>
 						<button 
 							on:click={() => handleQuickSearch('charizard')}
-							class="px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-sm font-medium transition-colors"
+							class="px-3 sm:px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors"
 						>
 							Try "Charizard"
 						</button>
 						<button 
 							on:click={() => handleQuickSearch('bulbasaur')}
-							class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-sm font-medium transition-colors"
+							class="px-3 sm:px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors"
 						>
 							Try "Bulbasaur"
 						</button>
@@ -133,15 +133,15 @@
 			</div>
 		{:else}
 			<!-- Search Results -->
-			<div class="space-y-6">
+			<div class="space-y-4 sm:space-y-6">
 				<!-- Results Header -->
-				<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-					<div class="flex items-center gap-3">
-						<div class="flex items-center gap-2">
-							<svg class="w-5 h-5 theme-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
+					<div class="flex items-center gap-2 sm:gap-3">
+						<div class="flex items-center gap-1.5 sm:gap-2">
+							<svg class="w-4 h-4 sm:w-5 sm:h-5 theme-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
 							</svg>
-							<h2 class="text-lg font-semibold theme-text">Search Results</h2>
+							<h2 class="text-base sm:text-lg font-semibold theme-text">Search Results</h2>
 						</div>
 						
 						{#if searchState.pokemons.length > 0}
@@ -156,13 +156,13 @@
 					</div>
 					
 					<!-- Compact Controls -->
-					<div class="flex items-center gap-3">
+					<div class="flex items-center gap-2 sm:gap-3">
 						<!-- Sort Controls -->
-						<div class="flex items-center gap-2">
+						<div class="flex items-center gap-1.5 sm:gap-2">
 							<select 
 								value={searchState.sortBy}
 								on:change={handleSortChange}
-								class="px-3 py-1.5 rounded-md theme-border theme-bg-secondary theme-text text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
+								class="px-2 sm:px-3 py-1 sm:py-1.5 rounded-md theme-border theme-bg-secondary theme-text text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
 								style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-main);"
 							>
 								<option value="id">#</option>
@@ -171,7 +171,7 @@
 							</select>
 							<button
 								on:click={handleSortOrderToggle}
-								class="p-1.5 rounded-md theme-border theme-bg-secondary hover:theme-bg-tertiary transition-colors"
+								class="p-1 sm:p-1.5 rounded-md theme-border theme-bg-secondary hover:theme-bg-tertiary transition-colors"
 								style="background-color: var(--bg-secondary); border-color: var(--border-color);"
 								title="Toggle sort order"
 								aria-label="Toggle sort order"
@@ -193,7 +193,7 @@
 				
 				<!-- Results Grid -->
 				{#if searchState.loading && searchState.pokemons.length === 0}
-					<div class="flex justify-center items-center h-48">
+					<div class="flex justify-center items-center h-32 sm:h-48">
 						<LoadingSpinner 
 							size="lg" 
 							text="Searching Pokémon..." 
@@ -201,9 +201,9 @@
 						/>
 					</div>
 				{:else if searchState.pokemons.length === 0}
-					<div class="text-center py-12">
+					<div class="text-center py-8 sm:py-12">
 						<div class="max-w-sm mx-auto">
-							<svg class="mx-auto h-12 w-12 theme-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<svg class="mx-auto h-10 w-10 sm:h-12 sm:w-12 theme-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
 							</svg>
 							<h3 class="mt-3 text-sm font-medium theme-text">No Pokémon found</h3>
@@ -212,15 +212,15 @@
 							</p>
 							<button
 								on:click={handleClear}
-								class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition-colors"
+								class="px-3 sm:px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors"
 							>
 								Clear Search
 							</button>
 						</div>
 					</div>
 				{:else}
-					<!-- Compact Grid -->
-					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+					<!-- Mobile Responsive Grid -->
+					<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
 						{#each $sortedPokemons as pokemon (pokemon.id)}
 							<div class="group relative">
 								<PokemonCard 
@@ -233,12 +233,13 @@
 									<div slot="add-to-team">
 										<button
 											on:click|stopPropagation={() => openAddToTeamModal(pokemon)}
-											class="w-full px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
+											class="w-full px-2 sm:px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-1.5 sm:gap-2"
 										>
-											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+											<svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
 											</svg>
-											Add to Team
+											<span class="hidden sm:inline">Add to Team</span>
+											<span class="sm:hidden">Add</span>
 										</button>
 									</div>
 								</PokemonCard>
@@ -248,9 +249,9 @@
 					
 					<!-- Load More -->
 					{#if searchState.hasMore}
-						<div class="text-center pt-6">
+						<div class="text-center pt-4 sm:pt-6">
 							{#if searchState.loadingMore}
-								<div class="flex justify-center items-center py-4">
+								<div class="flex justify-center items-center py-3 sm:py-4">
 									<LoadingSpinner 
 										size="sm" 
 										text="Loading more..." 
@@ -260,7 +261,7 @@
 							{:else}
 								<button
 									on:click={handleLoadMore}
-									class="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition-colors"
+									class="px-4 sm:px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors"
 								>
 									{#if searchState.query}
 										Load More ({searchState.pokemons.length}/{searchState.totalResults})
@@ -271,7 +272,7 @@
 							{/if}
 						</div>
 					{:else if searchState.pokemons.length > 0}
-						<div class="text-center py-4">
+						<div class="text-center py-3 sm:py-4">
 							<p class="text-xs theme-text-secondary">
 								{#if searchState.query}
 									Showing all {searchState.pokemons.length} results

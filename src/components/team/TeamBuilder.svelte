@@ -29,9 +29,11 @@
 	}
 
 	function getCoverageColor(count: number): string {
-		if (count === 0) return 'text-green-600';
-		if (count <= 2) return 'text-yellow-600';
-		return 'text-red-600';
+		if (count === 0) return 'text-green-700';
+		if (count === 1) return 'text-yellow-700';
+		if (count <= 2) return 'text-orange-700';
+		if (count <= 3) return 'text-red-700';
+		return 'text-red-800';
 	}
 
 	function getTeamScore(): { score: number; grade: string; color: string } {
@@ -60,13 +62,14 @@
 </script>
 
 <div
-	class="rounded-xl border border-gray-200 bg-white p-6 shadow-lg dark:border-gray-700 dark:bg-gray-800"
+	class="rounded-xl theme-border theme-bg-secondary p-6 shadow-lg"
+	style="border-color: var(--border-color); background-color: var(--bg-secondary);"
 >
 	<!-- Team Header -->
 	<div class="mb-6 flex items-center justify-between">
 		<div>
-			<h2 class="text-2xl font-bold text-gray-900 dark:text-white">{team.name}</h2>
-			<p class="text-sm text-gray-600 dark:text-gray-400">
+			<h2 class="text-2xl font-bold theme-text">{team.name}</h2>
+			<p class="text-sm theme-text-secondary">
 				{team.pokemons.length}/6 Pokémon
 			</p>
 		</div>
@@ -78,7 +81,7 @@
 					<div class="text-2xl font-bold {teamScore.color}">
 						{teamScore.grade}
 					</div>
-					<div class="text-sm text-gray-600 dark:text-gray-400">
+					<div class="text-sm theme-text-secondary">
 						Team Score: {teamScore.score}/100
 					</div>
 				{/snippet}
@@ -95,47 +98,52 @@
 				<div class="group relative">
 					<PokemonCard pokemon={teamPokemon.pokemon} compact={true} />
 
-					<!-- Pokemon Details -->
-					<div class="mt-2 rounded-lg bg-gray-50 p-2 dark:bg-gray-700">
-						{#if teamPokemon.nickname}
-							<div class="text-sm font-semibold text-gray-900 dark:text-white">
-								{teamPokemon.nickname}
-							</div>
-						{/if}
+					<!-- Pokemon Details with Remove Button -->
+					<div class="mt-2 rounded-lg theme-bg-tertiary p-2 relative" style="background-color: var(--bg-tertiary);">
+						<div class="flex items-start justify-between gap-2">
+							<div class="flex-1 min-w-0">
+								{#if teamPokemon.nickname}
+									<div class="text-sm font-semibold theme-text truncate">
+										{teamPokemon.nickname}
+									</div>
+								{/if}
 
-						{#if teamPokemon.moves.length > 0}
-							<div class="text-xs text-gray-600 dark:text-gray-400">
-								Moves: {teamPokemon.moves.slice(0, 2).join(', ')}
-								{#if teamPokemon.moves.length > 2}
-									<span class="text-blue-600">+{teamPokemon.moves.length - 2} more</span>
+								{#if teamPokemon.moves.length > 0}
+									<div class="text-xs theme-text-secondary">
+										Moves: {teamPokemon.moves.slice(0, 2).join(', ')}
+										{#if teamPokemon.moves.length > 2}
+											<span class="text-blue-600">+{teamPokemon.moves.length - 2} more</span>
+										{/if}
+									</div>
 								{/if}
 							</div>
-						{/if}
-					</div>
 
-					<!-- Remove Button -->
-					{#if allowEditing}
-						<button
-							on:click={() => removePokemon(index)}
-							class="absolute top-2 right-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-white opacity-0 transition-opacity group-hover:opacity-100 hover:bg-red-600"
-							title="Remove from team"
-							aria-label="Remove from team"
-						>
-							<svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="2"
-									d="M6 18L18 6M6 6l12 12"
-								></path>
-							</svg>
-						</button>
-					{/if}
+							<!-- Compact Remove Button -->
+							{#if allowEditing}
+								<button
+									on:click={() => removePokemon(index)}
+									class="flex-shrink-0 flex h-5 w-5 items-center justify-center rounded-full bg-red-500/80 text-white transition-all hover:bg-red-600 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-red-300"
+									title="Remove from team"
+									aria-label="Remove {teamPokemon.pokemon.name} from team"
+								>
+									<svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+										<path
+											stroke-linecap="round"
+											stroke-linejoin="round"
+											stroke-width="2.5"
+											d="M6 18L18 6M6 6l12 12"
+										></path>
+									</svg>
+								</button>
+							{/if}
+						</div>
+					</div>
 				</div>
 			{:else}
 				<!-- Empty Slot -->
 				<div
-					class="flex min-h-[200px] flex-col items-center justify-center rounded-xl border-2 border-dashed border-gray-300 p-8 text-gray-500 dark:border-gray-600 dark:text-gray-400"
+					class="flex min-h-[200px] flex-col items-center justify-center rounded-xl border-2 border-dashed theme-border p-8 theme-text-muted"
+					style="border-color: var(--border-color);"
 				>
 					{#if allowEditing}
 						<button
@@ -170,25 +178,23 @@
 
 	<!-- Team Analysis -->
 	{#if showAnalysis && teamCoverage && team.pokemons.length > 0}
-		<div class="border-t border-gray-200 pt-6 dark:border-gray-700">
-			<h3 class="mb-4 text-lg font-semibold text-gray-900 dark:text-white">Team Analysis</h3>
+		<div class="border-t theme-border pt-6" style="border-color: var(--border-color);">
+			<h3 class="mb-4 text-lg font-semibold theme-text">Team Analysis</h3>
 
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
 				<!-- Weaknesses -->
 				<div>
-					<h4 class="text-md mb-3 font-medium text-gray-700 dark:text-gray-300">Team Weaknesses</h4>
+					<h4 class="text-md mb-3 font-medium theme-text-secondary">Team Weaknesses</h4>
 					{#if Object.keys(teamCoverage.weaknesses).length > 0}
 						<div class="flex flex-wrap gap-2">
 							{#each Object.entries(teamCoverage.weaknesses) as [type, count]}
 								<span
-									class="flex items-center gap-1 rounded-full px-3 py-1 text-sm font-semibold text-white"
+									class="flex items-center gap-1 rounded-full px-3 py-1 text-sm font-semibold text-white capitalize"
 									style="background-color: {getTypeColor(type)}"
 								>
 									{type}
 									<span
-										class="bg-opacity-20 rounded-full bg-black px-1 text-xs {getCoverageColor(
-											count
-										)}"
+										class="bg-white bg-opacity-90 rounded-full px-1.5 py-0.5 text-xs font-bold {getCoverageColor(count)}"
 									>
 										{count}
 									</span>
@@ -204,25 +210,25 @@
 
 				<!-- Resistances -->
 				<div>
-					<h4 class="text-md mb-3 font-medium text-gray-700 dark:text-gray-300">
+					<h4 class="text-md mb-3 font-medium theme-text-secondary">
 						Team Resistances
 					</h4>
 					{#if Object.keys(teamCoverage.resistances).length > 0}
 						<div class="flex flex-wrap gap-2">
 							{#each Object.entries(teamCoverage.resistances) as [type, count]}
 								<span
-									class="flex items-center gap-1 rounded-full px-3 py-1 text-sm font-semibold text-white"
+									class="flex items-center gap-1 rounded-full px-3 py-1 text-sm font-semibold text-white capitalize"
 									style="background-color: {getTypeColor(type)}"
 								>
 									{type}
-									<span class="bg-opacity-20 rounded-full bg-black px-1 text-xs text-green-300">
+									<span class="bg-white bg-opacity-90 rounded-full px-1.5 py-0.5 text-xs font-bold text-green-700">
 										{count}
 									</span>
 								</span>
 							{/each}
 						</div>
 					{:else}
-						<p class="text-sm text-gray-600 dark:text-gray-400">No resistances detected.</p>
+						<p class="text-sm theme-text-secondary">No resistances detected.</p>
 					{/if}
 				</div>
 			</div>
@@ -252,16 +258,17 @@
 <!-- Pokemon Selector Modal -->
 {#if showAddPokemon}
 	<div class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
-		<div class="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-xl bg-white dark:bg-gray-800">
+		<div class="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-xl theme-bg-secondary theme-border" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
 			<div
-				class="flex items-center justify-between border-b border-gray-200 p-4 dark:border-gray-700"
+				class="flex items-center justify-between border-b theme-border p-4"
+				style="border-color: var(--border-color);"
 			>
-				<h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+				<h3 class="text-lg font-semibold theme-text">
 					Add Pokémon to {team.name}
 				</h3>
 				<button
 					on:click={() => (showAddPokemon = false)}
-					class="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+					class="theme-text-muted hover:theme-text-secondary"
 					aria-label="Close add Pokémon dialog"
 				>
 					<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">

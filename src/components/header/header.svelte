@@ -35,6 +35,27 @@
 	];
 
 	const currentPath = $derived($page.url.pathname);
+	
+	// Mobile menu state
+	let isMobileMenuOpen = $state(false);
+	
+	function toggleMobileMenu() {
+		isMobileMenuOpen = !isMobileMenuOpen;
+	}
+	
+	function closeMobileMenu() {
+		isMobileMenuOpen = false;
+	}
+	
+	function handleNavigation(href: string) {
+		closeMobileMenu();
+		// Force navigation for battle page to prevent state issues
+		if (currentPath === '/battle' && href !== '/battle') {
+			window.location.href = href;
+		} else {
+			goto(href);
+		}
+	}
 </script>
 
 <header
@@ -48,15 +69,18 @@
 				<button
 					onclick={() => goto('/')}
 					class="group flex items-center space-x-3 transition-all duration-200 hover:scale-105"
+					aria-label="Go to home page"
 				>
 					<div class="relative">
 						<div
-							class="border-color: var(--border-color) flex h-10 w-10 items-center justify-center rounded-xl border-1 bg-gradient-to-br from-red-500 to-red-600 shadow-lg transition-shadow group-hover:shadow-xl"
+							class="flex h-10 w-10 items-center justify-center rounded-xl border border-red-500 bg-gradient-to-br from-red-500 to-red-600 shadow-lg transition-shadow group-hover:shadow-xl"
+							style="border-color: var(--border-color);"
 						>
 							<span class="text-xl font-bold text-white">P</span>
 						</div>
 						<div
-							class="absolute -top-1 -right-1 h-4 w-4 rounded-full border-2 border-color: var(--border-color) bg-gradient-to-br from-yellow-400 to-yellow-500"
+							class="absolute -top-1 -right-1 h-4 w-4 rounded-full border-2 bg-gradient-to-br from-yellow-400 to-yellow-500"
+							style="border-color: var(--border-color);"
 						></div>
 					</div>
 					<h1 class="theme-text text-2xl font-bold">Pokédx</h1>
@@ -66,13 +90,14 @@
 			<!-- Navigation -->
 			<nav class="hidden items-center space-x-1 md:flex">
 				{#each navItems as item}
-					<a
-						href={item.href}
+					<button
+						onclick={() => handleNavigation(item.href)}
 						class="group relative flex items-center space-x-2 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200"
 						class:active={currentPath === item.href}
 						style={currentPath === item.href
 							? 'color: #3b82f6; background-color: var(--bg-tertiary);'
 							: 'color: var(--text-secondary);'}
+						aria-current={currentPath === item.href ? 'page' : undefined}
 					>
 						<span class="transition-transform duration-200 group-hover:scale-110">
 							{@html item.icon}
@@ -84,7 +109,7 @@
 								class="absolute bottom-0 left-1/2 h-1 w-1 -translate-x-1/2 transform rounded-full bg-blue-600"
 							></div>
 						{/if}
-					</a>
+					</button>
 				{/each}
 			</nav>
 
@@ -94,40 +119,63 @@
 
 				<!-- Mobile Menu Button -->
 				<button
+					onclick={toggleMobileMenu}
 					class="theme-bg-secondary theme-text-secondary flex h-10 w-10 items-center justify-center rounded-xl transition-colors hover:bg-gray-200 md:hidden"
 					style="background-color: var(--bg-secondary); color: var(--text-secondary);"
-					aria-label="Open menu"
+					aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+					aria-expanded={isMobileMenuOpen}
 				>
-					<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M4 6h16M4 12h16M4 18h16"
-						></path>
-					</svg>
+					{#if isMobileMenuOpen}
+						<!-- Close Icon (X) -->
+						<svg class="h-5 w-5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M6 18L18 6M6 6l12 12"
+							></path>
+						</svg>
+					{:else}
+						<!-- Hamburger Icon -->
+						<svg class="h-5 w-5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path
+								stroke-linecap="round"
+								stroke-linejoin="round"
+								stroke-width="2"
+								d="M4 6h16M4 12h16M4 18h16"
+							></path>
+						</svg>
+					{/if}
 				</button>
 			</div>
 		</div>
 
 		<!-- Mobile Navigation -->
-		<div class="theme-border mt-2 pt-4 pb-4 md:hidden" style="border-color: var(--border-color);">
-			<nav class="grid grid-cols-2 gap-2">
-				{#each navItems as item}
-					<a
-						href={item.href}
-						class="flex items-center space-x-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200"
-						style={currentPath === item.href
-							? 'color: #3b82f6; background-color: var(--bg-tertiary);'
-							: 'color: var(--text-secondary);'}
-					>
-						<span class="flex-shrink-0">
+		{#if isMobileMenuOpen}
+			<div 
+				class="theme-border mt-2 pt-4 pb-4 md:hidden overflow-hidden transition-all duration-300 ease-in-out"
+				style="border-color: var(--border-color);"
+				role="navigation"
+				aria-label="Mobile navigation menu"
+			>
+				<nav class="grid grid-cols-2 gap-2">
+					{#each navItems as item}
+						<button
+							onclick={() => handleNavigation(item.href)}
+							class="flex w-full items-center space-x-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200"
+							style={currentPath === item.href
+								? 'color: #3b82f6; background-color: var(--bg-tertiary);'
+								: 'color: var(--text-secondary);'}
+							aria-current={currentPath === item.href ? 'page' : undefined}
+						>
+													<span class="flex-shrink-0">
 							{@html item.icon}
 						</span>
 						<span>{item.label}</span>
-					</a>
-				{/each}
-			</nav>
-		</div>
+					</button>
+					{/each}
+				</nav>
+			</div>
+		{/if}
 	</div>
 </header>

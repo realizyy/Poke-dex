@@ -85,3 +85,35 @@ export interface TeamSelectedEvent {
 	teamId: string;
 	pokemon: Pokemon;
 }
+
+// Battle types
+export interface BattleState {
+	selectedTeam1: Team | null;
+	selectedTeam2: Team | null;
+	selectedPokemon1: TeamPokemon | null;
+	selectedPokemon2: TeamPokemon | null;
+	battleLog: string[];
+	battleInProgress: boolean;
+	battleResult: BattleResult | null;
+}
+
+export interface BattleResult {
+	winner: 'team1' | 'team2' | 'draw';
+	winnerPokemon?: TeamPokemon;
+	loserPokemon?: TeamPokemon;
+	totalTurns: number;
+}
+
+export interface BattleDamageResult {
+	damage: number;
+	effectiveness: number;
+	message: string;
+}
+
+export interface BattlePokemonStats {
+	hp: number;
+	maxHp: number;
+	attack: number;
+	defense: number;
+	speed: number;
+}

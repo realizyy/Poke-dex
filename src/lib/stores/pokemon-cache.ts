@@ -40,11 +40,8 @@ class PokemonCacheManager {
 		cacheState.update(state => ({ ...state, isPreloading: true }));
 		
 		try {
-			// Start background preloading
-			await Promise.all([
-				this.preloadFeaturedPokemon(),
-				this.preloadInitialBatch()
-			]);
+			// Only preload featured Pokemon, not initial batch
+			await this.preloadFeaturedPokemon();
 		} finally {
 			cacheState.update(state => ({ 
 				...state, 
@@ -56,11 +53,6 @@ class PokemonCacheManager {
 
 	private async preloadFeaturedPokemon(): Promise<void> {
 		await PokemonService.preloadFeaturedPokemon();
-		cacheState.update(state => ({ ...state, preloadProgress: 50 }));
-	}
-
-	private async preloadInitialBatch(): Promise<void> {
-		await PokemonService.preloadInitialBatch();
 		cacheState.update(state => ({ ...state, preloadProgress: 100 }));
 	}
 
@@ -82,7 +74,7 @@ class PokemonCacheManager {
 
 export const pokemonCacheManager = PokemonCacheManager.getInstance();
 
-// Auto-initialize cache when store is imported
+// Auto-initialize cache when store is imported (only featured Pokemon)
 if (browser) {
 	pokemonCacheManager.initializeCache();
 	

@@ -19,29 +19,36 @@ export const load: PageServerLoad = async ({ url }) => {
 	};
 	
 	try {
-		// Preload initial batch if this is the first page without filters
-		if (offset === 0 && !query && typeFilter.length === 0) {
-			PokemonService.preloadInitialBatch();
-		}
-		
-		let result;
-		if (query) {
-			const searchResults = await PokemonService.searchPokemon(query, limit);
-			result = {
-				pokemons: searchResults,
-				hasMore: searchResults.length >= limit
+		// Only perform search if there's an explicit query or filters
+		if (query || typeFilter.length > 0 || genFilter.length > 0) {
+			let result;
+			if (query) {
+				const searchResults = await PokemonService.searchPokemon(query, limit);
+				result = {
+					pokemons: searchResults,
+					hasMore: searchResults.length >= limit
+				};
+			} else {
+				result = await PokemonService.fetchPokemonWithFilters(filters, limit, offset);
+			}
+			
+			return {
+				pokemons: result.pokemons,
+				hasMore: result.hasMore,
+				query,
+				filters,
+				offset
 			};
 		} else {
-			result = await PokemonService.fetchPokemonWithFilters(filters, limit, offset);
+			// Return empty state for initial page load
+			return {
+				pokemons: [],
+				hasMore: false,
+				query: '',
+				filters: { types: [], generations: [] },
+				offset: 0
+			};
 		}
-		
-		return {
-			pokemons: result.pokemons,
-			hasMore: result.hasMore,
-			query,
-			filters,
-			offset
-		};
 	} catch (error) {
 		console.error('Error loading Pokemon:', error);
 		return {

@@ -199,13 +199,15 @@ export class PokemonService {
 	}
 	
 	static async fetchPokemonWithFilters(filters: SearchFilters, limit: number = 50, offset: number = 0): Promise<{pokemons: Pokemon[], hasMore: boolean}> {
-		// Try to use preloaded batch for initial requests
-		if (offset === 0 && limit <= INITIAL_BATCH_SIZE && 
-			filters.types.length === 0 && !filters.minStats && !filters.maxStats) {
-			const preloadedBatch = await this.preloadInitialBatch();
+		// Don't fetch anything if no filters are active and no query
+		const hasActiveFilters = filters.types.length > 0 || 
+			(filters.minStats && Object.keys(filters.minStats).length > 0) ||
+			(filters.maxStats && Object.keys(filters.maxStats).length > 0);
+		
+		if (!hasActiveFilters) {
 			return {
-				pokemons: preloadedBatch.slice(0, limit),
-				hasMore: preloadedBatch.length > limit
+				pokemons: [],
+				hasMore: false
 			};
 		}
 

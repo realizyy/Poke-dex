@@ -87,10 +87,11 @@
 </script>
 
 <div
-	class="rounded-xl border border-gray-200 bg-white p-6 shadow-lg dark:border-gray-700 dark:bg-gray-800"
+	class="rounded-xl theme-border theme-bg-secondary p-6 shadow-lg"
+	style="border-color: var(--border-color); background-color: var(--bg-secondary);"
 >
 	<div class="mb-4 flex items-center justify-between">
-		<h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+		<h3 class="text-lg font-semibold theme-text">
 			Select Moves for {pokemon.name}
 		</h3>
 		<button
@@ -102,7 +103,7 @@
 	</div>
 
 	<div class="mb-4">
-		<p class="text-sm text-gray-600 dark:text-gray-400">
+		<p class="text-sm theme-text-secondary">
 			Selected: {selectedMoves.length}/4 moves
 		</p>
 		{#if selectedMoves.length > 0}
@@ -125,7 +126,8 @@
 					move
 				)
 					? 'border-blue-500 bg-blue-50 text-blue-900 dark:bg-blue-900/20 dark:text-blue-300'
-					: 'border-gray-200 text-gray-700 hover:border-gray-300 disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-600 dark:text-gray-300 dark:hover:border-gray-500'}"
+					: 'theme-border theme-text-secondary hover:border-blue-300 disabled:cursor-not-allowed disabled:opacity-50'}"
+				style="{!selectedMoves.includes(move) ? 'border-color: var(--border-color); color: var(--text-secondary);' : ''}"
 			>
 				{formatMoveName(move)}
 			</button>
