@@ -10,6 +10,7 @@ export { searchStore, sortedPokemons } from './stores/search';
 export { modalStore } from './stores/modal';
 export { teamStore, currentTeam } from './stores/team';
 export { battleStore } from './stores/battle-store';
+export { toastStore } from './stores/toast-store';
 
 // Utils
 export { SortUtils } from './utils/sort-utils';

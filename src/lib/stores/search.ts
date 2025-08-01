@@ -1,7 +1,8 @@
 import { writable, derived } from 'svelte/store';
 import type { Pokemon, SearchFilters } from '$lib/types';
 import { SearchService } from '$lib/services/search-service';
-import { SortUtils } from '$lib/utils/sort-utils';
+// import { SortUtils } from '$lib/utils/sort-utils'; // Removing since module not found
+import { toastStore } from './toast-store';
 import { URLUtils } from '$lib/utils/url-utils';
 
 export type SortBy = 'id' | 'name' | 'stats';
@@ -82,18 +83,39 @@ function createSearchStore() {
 				hasSearched: true
 			}));
 
-			const result = await SearchService.performSearch(query, filters, 20, 0);
+			try {
+				const result = await SearchService.performSearch(query, filters, 20, 0);
 
-			update(state => ({
-				...state,
-				loading: false,
-				pokemons: result.pokemons,
-				hasMore: result.hasMore,
-				totalResults: result.totalResults
-			}));
+				update(state => ({
+					...state,
+					loading: false,
+					pokemons: result.pokemons,
+					hasMore: result.hasMore,
+					totalResults: result.totalResults
+				}));
 
-			// Update URL
-			URLUtils.updateSearchUrl(query, filters, 0);
+				// Show search results toast
+				if (result.pokemons.length === 0) {
+					toastStore.warning('No Results', 'No Pokémon found matching your search criteria');
+				} else if (query.trim()) {
+					toastStore.success('Search Complete', `Found ${result.totalResults} Pokémon matching "${query}"`);
+				} else {
+					toastStore.info('Filter Applied', `Found ${result.totalResults} Pokémon matching your filters`);
+				}
+
+				// Update URL
+				URLUtils.updateSearchUrl(query, filters, 0);
+			} catch (error) {
+				update(state => ({
+					...state,
+					loading: false,
+					pokemons: [],
+					hasMore: false,
+					totalResults: 0
+				}));
+				
+				toastStore.error('Search Error', 'Failed to perform search. Please try again.');
+			}
 		},
 
 		// Load more results
@@ -155,5 +177,10 @@ export const searchStore = createSearchStore();
 // Derived store for sorted pokemons
 export const sortedPokemons = derived(
 	searchStore,
-	($searchStore) => SortUtils.sortPokemon($searchStore.pokemons, $searchStore.sortBy, $searchStore.sortOrder)
+	($searchStore) => $searchStore.pokemons.sort((a, b) => {
+		const multiplier = $searchStore.sortOrder === 'asc' ? 1 : -1;
+		const aValue = a[$searchStore.sortBy];
+		const bValue = b[$searchStore.sortBy];
+		return (aValue > bValue ? 1 : -1) * multiplier;
+	})
 );

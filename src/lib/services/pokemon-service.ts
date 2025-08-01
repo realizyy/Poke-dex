@@ -1,4 +1,5 @@
 import type { Pokemon, PokemonSpecies, SearchFilters } from '$lib/types';
+import { toastStore } from '$lib/stores/toast-store';
 
 const POKEMON_API_BASE = 'https://pokeapi.co/api/v2';
 const POKEMON_CACHE = new Map<string, any>();
@@ -70,14 +71,20 @@ export class PokemonService {
 			return cached;
 		}
 		
-		const response = await fetch(`${POKEMON_API_BASE}/pokemon/${id}`);
-		if (!response.ok) {
-			throw new Error(`Failed to fetch Pokemon with id ${id}`);
+		try {
+			const response = await fetch(`${POKEMON_API_BASE}/pokemon/${id}`);
+			if (!response.ok) {
+				toastStore.error('Pokemon Not Found', `Could not find Pokemon with ID ${id}`);
+				throw new Error(`Failed to fetch Pokemon with id ${id}`);
+			}
+			
+			const pokemon = await response.json();
+			this.setCacheWithTTL(cacheKey, pokemon);
+			return pokemon;
+		} catch (error) {
+			toastStore.error('Network Error', 'Failed to load Pokemon data. Please check your connection.');
+			throw error;
 		}
-		
-		const pokemon = await response.json();
-		this.setCacheWithTTL(cacheKey, pokemon);
-		return pokemon;
 	}
 	
 	static async fetchPokemonSpecies(id: number): Promise<PokemonSpecies> {

@@ -1,5 +1,6 @@
 import { writable } from 'svelte/store';
 import type { Team, TeamPokemon, Pokemon } from '$lib/types';
+import { toastStore } from './toast-store';
 
 function createTeamStore() {
 	const { subscribe, set, update } = writable<Team[]>([]);
@@ -46,18 +47,25 @@ function createTeamStore() {
 				return updatedTeams;
 			});
 
+			toastStore.success('Team Created', `Team "${name}" has been created successfully!`);
 			return newTeam;
 		},
 
 		// Delete team
 		deleteTeam: (teamId: string) => {
+			let deletedTeamName = '';
 			update((teams) => {
+				const teamToDelete = teams.find(team => team.id === teamId);
+				deletedTeamName = teamToDelete?.name || 'Unknown Team';
+				
 				const updatedTeams = teams.filter((team) => team.id !== teamId);
 				if (typeof window !== 'undefined') {
 					localStorage.setItem('pokemon-teams', JSON.stringify(updatedTeams));
 				}
 				return updatedTeams;
 			});
+			
+			toastStore.warning('Team Deleted', `Team "${deletedTeamName}" has been deleted`);
 		},
 
 		// Add Pokemon to team
@@ -67,18 +75,27 @@ function createTeamStore() {
 			moves: string[] = [],
 			nickname?: string
 		) => {
+			let success = false;
+			let teamName = '';
+			let updatedTeam: Team | null = null;
+			
 			update((teams) => {
 				const updatedTeams = teams.map((team) => {
-					if (team.id === teamId && team.pokemons.length < 6) {
-						const teamPokemon: TeamPokemon = {
-							pokemon,
-							moves: moves.slice(0, 4), // Max 4 moves
-							nickname
-						};
-						return {
-							...team,
-							pokemons: [...team.pokemons, teamPokemon]
-						};
+					if (team.id === teamId) {
+						teamName = team.name;
+						if (team.pokemons.length < 6) {
+							const teamPokemon: TeamPokemon = {
+								pokemon,
+								moves: moves.slice(0, 4), // Max 4 moves
+								nickname
+							};
+							success = true;
+							updatedTeam = {
+								...team,
+								pokemons: [...team.pokemons, teamPokemon]
+							};
+							return updatedTeam;
+						}
 					}
 					return team;
 				});
@@ -88,17 +105,41 @@ function createTeamStore() {
 				}
 				return updatedTeams;
 			});
+			
+			// Update currentTeam if it's the same team being modified
+			if (updatedTeam) {
+				currentTeam.update(current => {
+					if (current && current.id === teamId) {
+						return updatedTeam;
+					}
+					return current;
+				});
+			}
+			
+			if (success) {
+				const displayName = nickname || pokemon.name;
+				toastStore.success('Pokémon Added', `${displayName} has been added to ${teamName}!`);
+			} else {
+				toastStore.error('Team Full', 'Cannot add more Pokémon. Team is already full (6/6)');
+			}
 		},
 
 		// Remove Pokemon from team
 		removePokemonFromTeam: (teamId: string, pokemonIndex: number) => {
+			let removedPokemonName = '';
+			let updatedTeam: Team | null = null;
+			
 			update((teams) => {
 				const updatedTeams = teams.map((team) => {
 					if (team.id === teamId) {
-						return {
+						const pokemonToRemove = team.pokemons[pokemonIndex];
+						removedPokemonName = pokemonToRemove?.nickname || pokemonToRemove?.pokemon.name || 'Unknown Pokémon';
+						
+						updatedTeam = {
 							...team,
 							pokemons: team.pokemons.filter((_, index) => index !== pokemonIndex)
 						};
+						return updatedTeam;
 					}
 					return team;
 				});
@@ -108,6 +149,20 @@ function createTeamStore() {
 				}
 				return updatedTeams;
 			});
+			
+			// Update currentTeam if it's the same team being modified
+			if (updatedTeam) {
+				currentTeam.update(current => {
+					if (current && current.id === teamId) {
+						return updatedTeam;
+					}
+					return current;
+				});
+			}
+			
+			if (removedPokemonName) {
+				toastStore.info('Pokémon Removed', `${removedPokemonName} has been removed from the team`);
+			}
 		},
 
 		// Update Pokemon moves

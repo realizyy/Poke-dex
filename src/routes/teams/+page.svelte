@@ -14,6 +14,17 @@
 	// Subscribe to team store
 	teamStore.subscribe((value: Team[]) => {
 		teams = value;
+		
+		// Update selectedTeam if it exists in the updated teams
+		if (selectedTeam) {
+			const updatedSelectedTeam = value.find(team => team.id === selectedTeam!.id);
+			if (updatedSelectedTeam) {
+				selectedTeam = updatedSelectedTeam;
+			} else {
+				// Team was deleted, clear selection
+				selectedTeam = null;
+			}
+		}
 	});
 	
 	onMount(() => {

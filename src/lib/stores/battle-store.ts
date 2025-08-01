@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store';
 import type { BattleState, Team, TeamPokemon, BattleResult } from '$lib/types';
 import { BattleService } from '$lib/services/battle-service';
+import { toastStore } from './toast-store';
 
 const initialState: BattleState = {
 	selectedTeam1: null,
@@ -27,6 +28,10 @@ function createBattleStore() {
 				battleLog: [],
 				battleResult: null
 			}));
+			
+			if (team) {
+				toastStore.info('Team Selected', `${team.name} selected for Team 1`);
+			}
 		},
 
 		selectTeam2: (team: Team | null) => {
@@ -37,6 +42,10 @@ function createBattleStore() {
 				battleLog: [],
 				battleResult: null
 			}));
+			
+			if (team) {
+				toastStore.info('Team Selected', `${team.name} selected for Team 2`);
+			}
 		},
 
 		// Pokemon selection
@@ -47,6 +56,10 @@ function createBattleStore() {
 				battleLog: [],
 				battleResult: null
 			}));
+			
+			if (pokemon) {
+				toastStore.success('Pokémon Ready', `${pokemon.nickname || pokemon.pokemon.name} is ready to battle!`);
+			}
 		},
 
 		selectPokemon2: (pokemon: TeamPokemon | null) => {
@@ -56,12 +69,17 @@ function createBattleStore() {
 				battleLog: [],
 				battleResult: null
 			}));
+			
+			if (pokemon) {
+				toastStore.success('Pokémon Ready', `${pokemon.nickname || pokemon.pokemon.name} is ready to battle!`);
+			}
 		},
 
 		// Battle simulation
 		simulateBattle: () => {
 			update(state => {
 				if (!state.selectedPokemon1 || !state.selectedPokemon2) {
+					toastStore.error('Battle Error', 'Please select Pokémon for both teams before starting battle');
 					return state;
 				}
 
@@ -71,6 +89,8 @@ function createBattleStore() {
 					battleLog: [],
 					battleResult: null
 				};
+
+				toastStore.info('Battle Started', 'The battle is beginning!');
 
 				// Start battle simulation
 				setTimeout(() => {
@@ -90,6 +110,14 @@ function createBattleStore() {
 						battleInProgress: false,
 						battleResult: result
 					}));
+
+					// Show battle result toast
+					if (result.winner === 'draw') {
+						toastStore.warning('Battle Complete', 'The battle ended in a draw!');
+					} else {
+						const winnerName = result.winnerPokemon?.nickname || result.winnerPokemon?.pokemon.name;
+						toastStore.success('Battle Complete', `${winnerName} wins the battle!`);
+					}
 				}, 100);
 
 				return newState;
@@ -106,10 +134,12 @@ function createBattleStore() {
 				battleInProgress: false,
 				battleResult: null
 			}));
+			toastStore.info('Battle Reset', 'Battle arena has been reset');
 		},
 
 		resetAll: () => {
 			set(initialState);
+			toastStore.info('Arena Reset', 'Battle arena has been completely reset');
 		},
 
 		// Utility functions

@@ -117,3 +117,24 @@ export interface BattlePokemonStats {
 	defense: number;
 	speed: number;
 }
+
+// Toast notification types
+export type ToastType = 'success' | 'error' | 'warning' | 'info';
+
+export interface Toast {
+	id: string;
+	type: ToastType;
+	title: string;
+	message?: string;
+	duration?: number;
+	persistent?: boolean;
+	createdAt: Date;
+}
+
+export interface ToastOptions {
+	type?: ToastType;
+	title: string;
+	message?: string;
+	duration?: number;
+	persistent?: boolean;
+}

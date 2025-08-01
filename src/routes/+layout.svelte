@@ -9,6 +9,7 @@
 	import '$lib/stores/pokemon-cache';
 	import Header from '../components/header/header.svelte';
 	import CacheStatus from '../components/ui/cache-status.svelte';
+	import ToastContainer from '../components/ui/ToastContainer.svelte';
 
 	let { children } = $props();
 </script>
@@ -25,5 +26,6 @@
 			{@render children()}
 		</main>
 		<CacheStatus />
+		<ToastContainer />
 	</div>
 </ParaglideJS>

@@ -120,12 +120,12 @@
 
 							<!-- Compact Remove Button -->
 							{#if allowEditing}
-								<button
-									on:click={() => removePokemon(index)}
-									class="flex-shrink-0 flex h-5 w-5 items-center justify-center rounded-full bg-red-500/80 text-white transition-all hover:bg-red-600 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-red-300"
-									title="Remove from team"
-									aria-label="Remove {teamPokemon.pokemon.name} from team"
-								>
+															<button
+								onclick={() => removePokemon(index)}
+								class="flex-shrink-0 flex h-5 w-5 items-center justify-center rounded-full bg-red-500/80 text-white transition-all hover:bg-red-600 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-red-300"
+								title="Remove from team"
+								aria-label="Remove {teamPokemon.pokemon.name} from team"
+							>
 									<svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 										<path
 											stroke-linecap="round"
@@ -147,7 +147,7 @@
 				>
 					{#if allowEditing}
 						<button
-							on:click={openAddPokemon}
+							onclick={openAddPokemon}
 							class="flex flex-col items-center gap-2 transition-colors hover:text-blue-500"
 						>
 							<svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -267,7 +267,7 @@
 					Add Pokémon to {team.name}
 				</h3>
 				<button
-					on:click={() => (showAddPokemon = false)}
+					onclick={() => (showAddPokemon = false)}
 					class="theme-text-muted hover:theme-text-secondary"
 					aria-label="Close add Pokémon dialog"
 				>
