@@ -1,5 +1,5 @@
 {
-	"name": "pok-dex",
+	"name": "movie-library",
 	"private": true,
 	"version": "0.0.1",
 	"type": "module",
@@ -45,7 +45,6 @@
 	"dependencies": {
 		"@inlang/paraglide-sveltekit": "^0.15.5",
 		"axios": "^1.7.9",
-		"axios-cache-interceptor": "^1.6.2",
-		"pokenode-ts": "^1.20.0"
+		"axios-cache-interceptor": "^1.6.2"
 	}
 }

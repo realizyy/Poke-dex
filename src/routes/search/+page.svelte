@@ -1,304 +1,261 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
-	import type { PageData } from './$types';
-	import type { SearchEvent, TeamSelectedEvent } from '$lib/types';
-	
-	// Components
-	import SearchFilter from '../../components/search/SearchFilter.svelte';
-	import PokemonCard from '../../components/ui/PokemonCard.svelte';
-	import LoadingSpinner from '../../components/ui/LoadingSpinner.svelte';
-	import AddToTeamModal from '../../components/ui/AddToTeamModal.svelte';
-	import { toastStore } from '$lib/stores/toast-store';
-	
-	// Stores and Services
-	import { searchStore, sortedPokemons } from '$lib/stores/search';
-	import { modalStore } from '$lib/stores/modal';
-	import { teamStore } from '$lib/stores/team';
-	import { URLUtils, SortUtils } from '$lib';
-	
-	export let data: PageData;
-	
-	// Reactive store subscriptions
-	$: searchState = $searchStore;
-	$: modalState = $modalStore;
-	
-	onMount(() => {
-		// Initialize stores
-		teamStore.loadTeams();
-		
-		// Only initialize search from URL params if there's an explicit query or filters
-		if (data.query || (data.filters && (data.filters.types.length > 0 || data.filters.generations.length > 0))) {
-			searchStore.performSearch(
-				data.query || '',
-				data.filters || { types: [], generations: [] }
-			);
+	import type { Movie, Genre } from '$lib/types/movie';
+	import { TMDBService } from '$lib/services/tmdb';
+	import MovieGrid from '$components/MovieGrid.svelte';
+	import SearchBar from '$components/SearchBar.svelte';
+
+	let movies: Movie[] = [];
+	let genres: Genre[] = [];
+	let loading = false;
+	let error: string | null = null;
+	let currentPage = 1;
+	let totalPages = 0;
+	let totalResults = 0;
+	let searchQuery = '';
+	let selectedGenres: number[] = [];
+	let minRating = 0;
+	let sortBy = 'popularity.desc';
+	let yearFrom = '';
+	let yearTo = '';
+
+	$: pageData = $page;
+	$: urlQuery = pageData.url.searchParams.get('q') || '';
+
+	onMount(async () => {
+		await loadGenres();
+		if (urlQuery) {
+			searchQuery = urlQuery;
+			await performSearch();
 		}
 	});
-	
-	// Event handlers
-	function handleSearch(event: CustomEvent<SearchEvent>) {
-		searchStore.performSearch(event.detail.query, event.detail.filters);
+
+	async function loadGenres() {
+		try {
+			const response = await TMDBService.getGenres();
+			genres = response.genres;
+		} catch (err) {
+			console.error('Error loading genres:', err);
+		}
 	}
-	
-	function handleClear() {
-		searchStore.clearSearch();
+
+	async function performSearch(page = 1) {
+		if (!searchQuery.trim()) return;
+
+		try {
+			loading = true;
+			error = null;
+
+			const params: any = {
+				page,
+				sort_by: sortBy,
+				'vote_average.gte': minRating
+			};
+
+			if (selectedGenres.length > 0) {
+				params.with_genres = selectedGenres.join(',');
+			}
+
+			if (yearFrom) {
+				params['primary_release_date.gte'] = `${yearFrom}-01-01`;
+			}
+
+			if (yearTo) {
+				params['primary_release_date.lte'] = `${yearTo}-12-31`;
+			}
+
+			const response = await TMDBService.discoverMovies(params);
+			movies = response.results;
+			currentPage = response.page;
+			totalPages = response.total_pages;
+			totalResults = response.total_results;
+		} catch (err) {
+			error = 'Failed to search movies. Please try again.';
+			console.error('Search error:', err);
+		} finally {
+			loading = false;
+		}
 	}
-	
-	function handleLoadMore() {
-		searchStore.loadMore();
+
+	async function handleSearch(event: CustomEvent<string>) {
+		searchQuery = event.detail;
+		if (searchQuery.trim()) {
+			await performSearch();
+		}
 	}
-	
-	function handleSortChange(event: Event) {
-		const target = event.target as HTMLSelectElement;
-		searchStore.updateSort(target.value as any, searchState.sortOrder);
+
+	async function handleLoadMore() {
+		if (currentPage < totalPages) {
+			await performSearch(currentPage + 1);
+			movies = [...movies, ...movies];
+		}
 	}
-	
-	function handleSortOrderToggle() {
-		searchStore.toggleSortOrder();
+
+	function toggleGenre(genreId: number) {
+		selectedGenres = selectedGenres.includes(genreId)
+			? selectedGenres.filter(id => id !== genreId)
+			: [...selectedGenres, genreId];
 	}
-	
-	function openAddToTeamModal(pokemon: any) {
-		modalStore.openAddToTeamModal(pokemon);
+
+	async function applyFilters() {
+		await performSearch();
 	}
-	
-	function handleTeamSelected(event: CustomEvent<TeamSelectedEvent>) {
-		toastStore.success(
-			'Pokémon Added to Team',
-			`${event.detail.pokemon.name} has been successfully added to the team!`,
-			{ duration: 3000 }
-		);
-	}
-	
-	function navigateToPokemon(pokemonName: string) {
-		URLUtils.navigateToPokemon(pokemonName);
-	}
-	
-	// Quick search handlers for example buttons
-	function handleQuickSearch(query: string) {
-		searchStore.performSearch(query, { types: [], generations: [] });
+
+	function clearFilters() {
+		selectedGenres = [];
+		minRating = 0;
+		sortBy = 'popularity.desc';
+		yearFrom = '';
+		yearTo = '';
 	}
 </script>
 
 <svelte:head>
-	<title>Search Pokémon - Pokédx</title>
-	<meta name="description" content="Search and filter through all Pokémon with advanced filters including type, generation, and stats." />
+	<title>Search Movies - Movie Library</title>
+	<meta name="description" content="Search and discover movies with advanced filtering options" />
 </svelte:head>
 
-<div class="min-h-screen theme-bg" style="background-color: var(--bg-main);">
-	<!-- Search Header - Fixed positioning and z-index -->
-	<div class="theme-bg theme-border-b relative z-10" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
-		<div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-3 sm:py-4">
-			<SearchFilter 
-				bind:searchQuery={searchState.query}
-				bind:filters={searchState.filters}
-				on:search={handleSearch}
-				on:clear={handleClear}
-			/>
+<div class="min-h-screen bg-gray-900 text-white">
+	<div class="container mx-auto px-4 py-8">
+		<!-- Search Header -->
+		<div class="mb-8">
+			<h1 class="text-4xl font-bold mb-4">Search Movies</h1>
+			<SearchBar on:search={handleSearch} />
 		</div>
-	</div>
 
-	<!-- Main Content -->
-	<div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6">
-		{#if !searchState.hasSearched}
-			<!-- Welcome State -->
-			<div class="text-center py-8 sm:py-12">
-				<div class="max-w-md mx-auto">
-					<div class="mb-4 sm:mb-6">
-						<svg class="mx-auto h-12 w-12 sm:h-16 sm:w-16 theme-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-						</svg>
+		<div class="grid lg:grid-cols-4 gap-8">
+			<!-- Filters Sidebar -->
+			<div class="lg:col-span-1">
+				<div class="bg-gray-800 rounded-lg p-6 sticky top-4">
+					<h2 class="text-xl font-semibold mb-6">Filters</h2>
+
+					<!-- Genres -->
+					<div class="mb-6">
+						<h3 class="text-lg font-medium mb-3">Genres</h3>
+						<div class="space-y-2 max-h-48 overflow-y-auto">
+							{#each genres as genre}
+								<label class="flex items-center cursor-pointer">
+									<input
+										type="checkbox"
+										checked={selectedGenres.includes(genre.id)}
+										on:change={() => toggleGenre(genre.id)}
+										class="rounded border-gray-600 text-blue-600 focus:ring-blue-500"
+									/>
+									<span class="ml-2 text-sm">{genre.name}</span>
+								</label>
+							{/each}
+						</div>
 					</div>
-					<h2 class="text-xl sm:text-2xl font-bold theme-text mb-2">Search Pokémon</h2>
-					<p class="text-xs sm:text-sm theme-text-secondary mb-4 sm:mb-6 px-4">
-						Enter a Pokémon name or use filters to find your favorite Pokémon
-					</p>
-					<div class="flex flex-wrap justify-center gap-2 px-4">
-						<button 
-							onclick={() => handleQuickSearch('pikachu')}
-							class="px-3 sm:px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors"
+
+					<!-- Rating -->
+					<div class="mb-6">
+						<h3 class="text-lg font-medium mb-3">Minimum Rating</h3>
+						<input
+							type="range"
+							bind:value={minRating}
+							min="0"
+							max="10"
+							step="0.5"
+							class="w-full"
+						/>
+						<div class="flex justify-between text-sm text-gray-400 mt-1">
+							<span>0</span>
+							<span>{minRating}</span>
+							<span>10</span>
+						</div>
+					</div>
+
+					<!-- Sort By -->
+					<div class="mb-6">
+						<h3 class="text-lg font-medium mb-3">Sort By</h3>
+						<select
+							bind:value={sortBy}
+							class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white"
 						>
-							Try "Pikachu"
+							<option value="popularity.desc">Popularity</option>
+							<option value="vote_average.desc">Rating</option>
+							<option value="release_date.desc">Release Date (Newest)</option>
+							<option value="release_date.asc">Release Date (Oldest)</option>
+							<option value="title.asc">Title A-Z</option>
+							<option value="title.desc">Title Z-A</option>
+						</select>
+					</div>
+
+					<!-- Year Range -->
+					<div class="mb-6">
+						<h3 class="text-lg font-medium mb-3">Year Range</h3>
+						<div class="grid grid-cols-2 gap-2">
+							<div>
+								<label class="block text-sm text-gray-400 mb-1">From</label>
+								<input
+									type="number"
+									bind:value={yearFrom}
+									min="1900"
+									max="2030"
+									placeholder="1900"
+									class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white"
+								/>
+							</div>
+							<div>
+								<label class="block text-sm text-gray-400 mb-1">To</label>
+								<input
+									type="number"
+									bind:value={yearTo}
+									min="1900"
+									max="2030"
+									placeholder="2030"
+									class="w-full bg-gray-700 border border-gray-600 rounded-lg px-3 py-2 text-white"
+								/>
+							</div>
+						</div>
+					</div>
+
+					<!-- Action Buttons -->
+					<div class="space-y-2">
+						<button
+							on:click={applyFilters}
+							class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors duration-200"
+						>
+							Apply Filters
 						</button>
-						<button 
-							onclick={() => handleQuickSearch('charizard')}
-							class="px-3 sm:px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors"
+						<button
+							on:click={clearFilters}
+							class="w-full bg-gray-600 text-white py-2 px-4 rounded-lg hover:bg-gray-700 transition-colors duration-200"
 						>
-							Try "Charizard"
-						</button>
-						<button 
-							onclick={() => handleQuickSearch('bulbasaur')}
-							class="px-3 sm:px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors"
-						>
-							Try "Bulbasaur"
+							Clear Filters
 						</button>
 					</div>
 				</div>
 			</div>
-		{:else}
-			<!-- Search Results -->
-			<div class="space-y-4 sm:space-y-6">
-				<!-- Results Header -->
-				<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
-					<div class="flex items-center gap-2 sm:gap-3">
-						<div class="flex items-center gap-1.5 sm:gap-2">
-							<svg class="w-4 h-4 sm:w-5 sm:h-5 theme-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-							</svg>
-							<h2 class="text-base sm:text-lg font-semibold theme-text">Search Results</h2>
-						</div>
-						
-						{#if searchState.pokemons.length > 0}
-							<span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
-								{searchState.pokemons.length} found
-							</span>
-						{/if}
-						
-						{#if searchState.loading}
-							<LoadingSpinner size="sm" text="" showText={false} />
-						{/if}
-					</div>
-					
-					<!-- Compact Controls -->
-					<div class="flex items-center gap-2 sm:gap-3">
-						<!-- Sort Controls -->
-						<div class="flex items-center gap-1.5 sm:gap-2">
-							<select 
-								value={searchState.sortBy}
-								onchange={handleSortChange}
-								class="px-2 sm:px-3 py-1 sm:py-1.5 rounded-md theme-border theme-bg-secondary theme-text text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
-								style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-main);"
-							>
-								<option value="id">#</option>
-								<option value="name">Name</option>
-								<option value="stats">Stats</option>
-							</select>
-							<button
-								onclick={handleSortOrderToggle}
-								class="p-1 sm:p-1.5 rounded-md theme-border theme-bg-secondary hover:theme-bg-tertiary transition-colors"
-								style="background-color: var(--bg-secondary); border-color: var(--border-color);"
-								title="Toggle sort order"
-								aria-label="Toggle sort order"
-							>
-								<svg 
-									class="w-3 h-3 theme-text-secondary transition-transform duration-200 {SortUtils.getSortOrderIconClass(searchState.sortOrder)}" 
-									fill="none" 
-									stroke="currentColor" 
-									viewBox="0 0 24 24"
-								>
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path>
-								</svg>
-							</button>
-						</div>
-						
 
-					</div>
-				</div>
-				
-				<!-- Results Grid -->
-				{#if searchState.loading && searchState.pokemons.length === 0}
-					<div class="flex justify-center items-center h-32 sm:h-48">
-						<LoadingSpinner 
-							size="lg" 
-							text="Searching Pokémon..." 
-							showText={true}
-						/>
-					</div>
-				{:else if searchState.pokemons.length === 0}
-					<div class="text-center py-8 sm:py-12">
-						<div class="max-w-sm mx-auto">
-							<svg class="mx-auto h-10 w-10 sm:h-12 sm:w-12 theme-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-							</svg>
-							<h3 class="mt-3 text-sm font-medium theme-text">No Pokémon found</h3>
-							<p class="mt-1 text-xs theme-text-secondary mb-4">
-								Try adjusting your search criteria
-							</p>
-							<button
-								onclick={handleClear}
-								class="px-3 sm:px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors"
-							>
-								Clear Search
-							</button>
-						</div>
-					</div>
-				{:else}
-					<!-- Mobile Responsive Grid -->
-					<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
-						{#each $sortedPokemons as pokemon (pokemon.id)}
-							<div class="group relative">
-								<PokemonCard 
-									{pokemon} 
-									showStats={true}
-									showAddToTeam={true}
-									onClick={() => navigateToPokemon(pokemon.name)}
-									compact={false}
-								>
-									<div slot="add-to-team">
-										<button
-											onclick={(e) => { e.stopPropagation(); openAddToTeamModal(pokemon); }}
-											class="w-full px-2 sm:px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-1.5 sm:gap-2"
-										>
-											<svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-											</svg>
-											<span class="hidden sm:inline">Add to Team</span>
-											<span class="sm:hidden">Add</span>
-										</button>
-									</div>
-								</PokemonCard>
-							</div>
-						{/each}
-					</div>
-					
-					<!-- Load More -->
-					{#if searchState.hasMore}
-						<div class="text-center pt-4 sm:pt-6">
-							{#if searchState.loadingMore}
-								<div class="flex justify-center items-center py-3 sm:py-4">
-									<LoadingSpinner 
-										size="sm" 
-										text="Loading more..." 
-										showText={true}
-									/>
-								</div>
-							{:else}
-								<button
-									onclick={handleLoadMore}
-									class="px-4 sm:px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors"
-								>
-									{#if searchState.query}
-										Load More ({searchState.pokemons.length}/{searchState.totalResults})
-									{:else}
-										Load More ({searchState.pokemons.length} loaded)
-									{/if}
-								</button>
-							{/if}
-						</div>
-					{:else if searchState.pokemons.length > 0}
-						<div class="text-center py-3 sm:py-4">
-							<p class="text-xs theme-text-secondary">
-								{#if searchState.query}
-									Showing all {searchState.pokemons.length} results
-								{:else}
-									Menampilkan semua {searchState.pokemons.length} Pokémon yang dimuat
+			<!-- Search Results -->
+			<div class="lg:col-span-3">
+				{#if searchQuery}
+					<div class="mb-6">
+						<h2 class="text-2xl font-semibold mb-2">
+							Search Results for "{searchQuery}"
+						</h2>
+						{#if totalResults > 0}
+							<p class="text-gray-400">
+								Found {totalResults} movie{totalResults !== 1 ? 's' : ''}
+								{#if selectedGenres.length > 0}
+									in {selectedGenres.map(id => genres.find(g => g.id === id)?.name).filter(Boolean).join(', ')}
 								{/if}
 							</p>
-						</div>
-					{/if}
+						{/if}
+					</div>
 				{/if}
-			</div>
-		{/if}
-	</div>
-</div>
 
-<!-- Add to Team Modal -->
-{#if modalState.addToTeam.pokemon}
-	<AddToTeamModal
-		pokemon={modalState.addToTeam.pokemon}
-		teams={$teamStore}
-		bind:show={modalState.addToTeam.show}
-		on:close={() => modalStore.closeAddToTeamModal()}
-		on:teamSelected={handleTeamSelected}
-	/>
-{/if} 
+				<MovieGrid
+					movies={movies}
+					loading={loading}
+					error={error}
+					cardSize="medium"
+					showLoadMore={currentPage < totalPages}
+					onLoadMore={handleLoadMore}
+				/>
+			</div>
+		</div>
+	</div>
+</div> 
