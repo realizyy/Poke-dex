@@ -97,6 +97,43 @@ export class PokemonService {
 		this.setCacheWithTTL(cacheKey, species);
 		return species;
 	}
+
+	static async fetchEvolutionChain(chainId: number): Promise<any> {
+		const cacheKey = `evolution-chain-${chainId}`;
+		const cached = this.getCachedData(cacheKey);
+		
+		if (cached) {
+			return cached;
+		}
+		
+		const response = await fetch(`${POKEMON_API_BASE}/evolution-chain/${chainId}`);
+		if (!response.ok) {
+			throw new Error(`Failed to fetch evolution chain with id ${chainId}`);
+		}
+		
+		const evolutionChain = await response.json();
+		this.setCacheWithTTL(cacheKey, evolutionChain);
+		return evolutionChain;
+	}
+
+	static async getEvolutionChainForPokemon(pokemonId: number): Promise<any> {
+		try {
+			// First get the species to find the evolution chain URL
+			const species = await this.fetchPokemonSpecies(pokemonId);
+			const evolutionChainUrl = species.evolution_chain?.url;
+			
+			if (!evolutionChainUrl) {
+				return null;
+			}
+			
+			// Extract chain ID from URL
+			const chainId = this.extractIdFromUrl(evolutionChainUrl);
+			return await this.fetchEvolutionChain(chainId);
+		} catch (error) {
+			console.error('Error fetching evolution chain:', error);
+			return null;
+		}
+	}
 	
 	static async fetchPokemonList(limit: number = 1000, offset: number = 0): Promise<{results: {name: string, url: string}[], count: number}> {
 		const cacheKey = `list-${limit}-${offset}`;
@@ -233,7 +270,7 @@ export class PokemonService {
 	// Cache statistics and management
 	static getCacheStats(): { size: number, hitRate: number, memoryUsage: string } {
 		const cacheSize = POKEMON_CACHE.size;
-		const memoryUsage = `${Math.round(JSON.stringify(Array.from(POKEMON_CACHE.values())).length / 1024)} KB`;
+		const memoryUsage = `${Math.round(JSON.stringify(Array.from(POKEMON_CACHE.values())).length / 1024 / 1024)} MB`;
 		
 		return {
 			size: cacheSize,

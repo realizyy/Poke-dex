@@ -89,5 +89,5 @@ if (browser) {
 	// Periodic cache cleanup
 	setInterval(() => {
 		pokemonCacheManager.clearExpiredCache();
-	}, 5 * 60 * 1000); // Every 5 minutes
+	}, 3 * 60 * 1000); // Every 3 minutes
 }

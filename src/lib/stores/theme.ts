@@ -88,9 +88,11 @@ if (browser) {
 
 export function toggleTheme() {
 	theme.update((currentTheme) => {
+		// Only toggle between light and dark, skip system mode
 		if (currentTheme === 'light') return 'dark';
-		if (currentTheme === 'dark') return 'system';
-		return 'light'; // system -> light
+		if (currentTheme === 'dark') return 'light';
+		// If current theme is system, go to light mode
+		return 'light';
 	});
 }
 

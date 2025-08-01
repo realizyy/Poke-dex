@@ -238,13 +238,13 @@
 								class="h-12 w-12 object-contain"
 							/>
 							<div class="flex-1">
-								<div class="font-semibold text-gray-900 dark:text-white">
+								<div class="font-semibold text-gray-900 dark:text-white capitalize">
 									{teamPokemon.nickname || teamPokemon.pokemon.name}
 								</div>
 								<div class="mt-1 flex gap-1">
 									{#each teamPokemon.pokemon.types as type}
 										<span
-											class="rounded-full px-2 py-1 text-xs font-semibold text-white"
+											class="rounded-full px-2 py-1 text-xs font-semibold text-white capitalize"
 											style="background-color: {getTypeColor(type.type.name)}"
 										>
 											{type.type.name}
@@ -278,13 +278,13 @@
 								class="h-12 w-12 object-contain"
 							/>
 							<div class="flex-1">
-								<div class="font-semibold text-gray-900 dark:text-white">
+								<div class="font-semibold text-gray-900 dark:text-white capitalize">
 									{teamPokemon.nickname || teamPokemon.pokemon.name}
 								</div>
 								<div class="mt-1 flex gap-1">
 									{#each teamPokemon.pokemon.types as type}
 										<span
-											class="rounded-full px-2 py-1 text-xs font-semibold text-white"
+											class="rounded-full px-2 py-1 text-xs font-semibold text-white capitalize"
 											style="background-color: {getTypeColor(type.type.name)}"
 										>
 											{type.type.name}

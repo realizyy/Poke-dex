@@ -17,6 +17,7 @@ export interface PokemonSpecies {
 	color: { name: string };
 	habitat: { name: string } | null;
 	capture_rate: number;
+	evolution_chain?: { url: string };
 }
 
 export interface TeamPokemon {

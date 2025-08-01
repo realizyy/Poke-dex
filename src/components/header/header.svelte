@@ -59,7 +59,7 @@
 							class="absolute -top-1 -right-1 h-4 w-4 rounded-full border-2 border-color: var(--border-color) bg-gradient-to-br from-yellow-400 to-yellow-500"
 						></div>
 					</div>
-					<h1 class="theme-text text-2xl font-bold">Pokédex</h1>
+					<h1 class="theme-text text-2xl font-bold">Pokédx</h1>
 				</button>
 			</div>
 

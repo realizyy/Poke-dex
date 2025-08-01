@@ -4,15 +4,14 @@
 	   import { getTypeColor, getStatName, getStatColor } from '$lib/utils/pokemon-utils';
 	   import { teamStore } from '$lib/stores/team';
 	   import { onMount } from 'svelte';
+	   import EvolutionChain from '../../../components/ui/EvolutionChain.svelte';
 
 	   export let data;
 	   let { pokemon } = data;
 	   let activeTab = 'About';
 	   let teams: Team[] = [];
 
-	   // Debug log for all pokemon details
 	   onMount(() => {
-			   console.log('Pokemon detail data:', pokemon);
 			   teamStore.loadTeams();
 			   teamStore.subscribe(value => teams = value);
 	   });
@@ -159,20 +158,23 @@
 					</div>
 				{:else if activeTab === 'Base Stats'}
 					<div class="space-y-4">
-						{#each pokemon.stats as stat}
-							<div class="theme-bg-secondary rounded-lg p-4">
-								<div class="flex justify-between items-center mb-2">
-									<span class="font-medium theme-text">{getStatName(stat.stat.name)}</span>
-									<span class="font-bold theme-text">{stat.base_stat}</span>
+						<!-- Stats Grid 3x3 -->
+						<div class="grid grid-cols-3 gap-4">
+							{#each pokemon.stats as stat}
+								<div class="theme-bg-secondary rounded-lg p-4">
+									<div class="flex justify-between items-center mb-2">
+										<span class="font-medium theme-text text-sm">{getStatName(stat.stat.name)}</span>
+										<span class="font-bold theme-text">{stat.base_stat}</span>
+									</div>
+									<div class="w-full bg-gray-200 rounded-full h-2">
+										<div 
+											class="h-2 rounded-full {getStatColor(stat.base_stat)} transition-all duration-500"
+											style="width: {Math.min(stat.base_stat / 200 * 100, 100)}%"
+										></div>
+									</div>
 								</div>
-								<div class="w-full bg-gray-200 rounded-full h-2">
-									<div 
-										class="h-2 rounded-full {getStatColor(stat.base_stat)} transition-all duration-500"
-										style="width: {Math.min(stat.base_stat / 200 * 100, 100)}%"
-									></div>
-								</div>
-							</div>
-						{/each}
+							{/each}
+						</div>
 						
 						<!-- Total Stats -->
 						<div class="theme-bg-secondary rounded-lg p-4 border-2 border-blue-500/20">
@@ -190,7 +192,7 @@
 							{pokemon.name.charAt(0).toUpperCase() + pokemon.name.slice(1)} can learn {pokemon.moves.length} moves.
 						</p>
 						<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 max-h-96 overflow-y-auto">
-							{#each pokemon.moves.slice(0, 50) as move}
+							{#each pokemon.moves as move}
 								<div class="theme-bg-secondary rounded-lg p-3">
 									<span class="text-sm theme-text capitalize">
 										{move.move.name.replace('-', ' ')}
@@ -198,22 +200,9 @@
 								</div>
 							{/each}
 						</div>
-						{#if pokemon.moves.length > 50}
-							<p class="text-sm theme-text-secondary text-center">
-								... and {pokemon.moves.length - 50} more moves
-							</p>
-						{/if}
 					</div>
 				{:else if activeTab === 'Evolution'}
-					<div class="theme-bg-secondary rounded-lg p-6 text-center">
-						<svg class="mx-auto h-12 w-12 theme-text-secondary mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-						</svg>
-						<h3 class="text-lg font-medium theme-text mb-2">Evolution Chain</h3>
-						<p class="theme-text-secondary">
-							Evolution information is not available yet. This feature will be added in a future update.
-						</p>
-					</div>
+					<EvolutionChain pokemonId={pokemon.id} />
 				{/if}
 			</div>
 		</div>

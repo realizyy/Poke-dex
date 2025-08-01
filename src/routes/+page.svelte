@@ -177,7 +177,7 @@
 				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 					{#each pokemons as pokemon}
 						<a href="/pokemon/{pokemon.name}" class="group block">
-							<div class="relative overflow-hidden rounded-2xl transition-all duration-300 group-hover:scale-105 group-hover:shadow-2xl theme-border" style="background: linear-gradient(135deg, {getTypeColor(pokemon.types[0].type.name)}aa, {getTypeColor(pokemon.types[0].type.name)}dd); border-color: var(--border-color);">
+							<div class="relative overflow-hidden rounded-2xl transition-all duration-300 group-hover:scale-105 group-hover:shadow-2xl theme-border" style="background-color: {getTypeColor(pokemon.types[0].type.name)}cc; border-color: var(--border-color);">
 								<!-- Decorative elements -->
 								<div class="absolute top-4 right-4 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
 								<div class="absolute bottom-4 left-4 w-16 h-16 bg-white/5 rounded-full blur-lg"></div>
@@ -194,7 +194,7 @@
 												{/each}
 											</div>
 										</div>
-										<span class="theme-text text-sm font-bold bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">
+										<span class="theme-text text-sm font-bold bg-white/30 px-3 py-1 rounded-full backdrop-blur-sm">
 											#{pokemon.id.toString().padStart(3, '0')}
 										</span>
 									</div>
