@@ -9,6 +9,7 @@
 	import PokemonCard from '../../components/ui/PokemonCard.svelte';
 	import LoadingSpinner from '../../components/ui/LoadingSpinner.svelte';
 	import AddToTeamModal from '../../components/ui/AddToTeamModal.svelte';
+	import { toastStore } from '$lib/stores/toast-store';
 	
 	// Stores and Services
 	import { searchStore, sortedPokemons } from '$lib/stores/search';
@@ -62,8 +63,11 @@
 	}
 	
 	function handleTeamSelected(event: CustomEvent<TeamSelectedEvent>) {
-		console.log(`Pokémon ${event.detail.pokemon.name} berhasil ditambahkan ke tim!`);
-		// TODO: Add toast notification here
+		toastStore.success(
+			'Pokémon Added to Team',
+			`${event.detail.pokemon.name} has been successfully added to the team!`,
+			{ duration: 3000 }
+		);
 	}
 	
 	function navigateToPokemon(pokemonName: string) {
@@ -111,19 +115,19 @@
 					</p>
 					<div class="flex flex-wrap justify-center gap-2 px-4">
 						<button 
-							on:click={() => handleQuickSearch('pikachu')}
+							onclick={() => handleQuickSearch('pikachu')}
 							class="px-3 sm:px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors"
 						>
 							Try "Pikachu"
 						</button>
 						<button 
-							on:click={() => handleQuickSearch('charizard')}
+							onclick={() => handleQuickSearch('charizard')}
 							class="px-3 sm:px-4 py-2 bg-orange-500 hover:bg-orange-600 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors"
 						>
 							Try "Charizard"
 						</button>
 						<button 
-							on:click={() => handleQuickSearch('bulbasaur')}
+							onclick={() => handleQuickSearch('bulbasaur')}
 							class="px-3 sm:px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors"
 						>
 							Try "Bulbasaur"
@@ -161,7 +165,7 @@
 						<div class="flex items-center gap-1.5 sm:gap-2">
 							<select 
 								value={searchState.sortBy}
-								on:change={handleSortChange}
+								onchange={handleSortChange}
 								class="px-2 sm:px-3 py-1 sm:py-1.5 rounded-md theme-border theme-bg-secondary theme-text text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-blue-500"
 								style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-main);"
 							>
@@ -170,7 +174,7 @@
 								<option value="stats">Stats</option>
 							</select>
 							<button
-								on:click={handleSortOrderToggle}
+								onclick={handleSortOrderToggle}
 								class="p-1 sm:p-1.5 rounded-md theme-border theme-bg-secondary hover:theme-bg-tertiary transition-colors"
 								style="background-color: var(--bg-secondary); border-color: var(--border-color);"
 								title="Toggle sort order"
@@ -211,7 +215,7 @@
 								Try adjusting your search criteria
 							</p>
 							<button
-								on:click={handleClear}
+								onclick={handleClear}
 								class="px-3 sm:px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors"
 							>
 								Clear Search
@@ -232,7 +236,7 @@
 								>
 									<div slot="add-to-team">
 										<button
-											on:click|stopPropagation={() => openAddToTeamModal(pokemon)}
+											onclick={(e) => { e.stopPropagation(); openAddToTeamModal(pokemon); }}
 											class="w-full px-2 sm:px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors flex items-center justify-center gap-1.5 sm:gap-2"
 										>
 											<svg class="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -260,7 +264,7 @@
 								</div>
 							{:else}
 								<button
-									on:click={handleLoadMore}
+									onclick={handleLoadMore}
 									class="px-4 sm:px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-xs sm:text-sm font-medium transition-colors"
 								>
 									{#if searchState.query}
