@@ -20,12 +20,13 @@
 		"@eslint/compat": "^1.2.5",
 		"@eslint/js": "^9.18.0",
 		"@playwright/test": "^1.49.1",
-		"@sveltejs/adapter-node": "^5.2.11",
-		"@sveltejs/kit": "^2.16.0",
+		"@sveltejs/adapter-node": "^5.5.4",
+		"@sveltejs/kit": "^2.55.0",
 		"@sveltejs/vite-plugin-svelte": "^5.0.0",
 		"@tailwindcss/vite": "^4.0.0",
 		"@testing-library/jest-dom": "^6.6.3",
 		"@testing-library/svelte": "^5.2.4",
+		"@types/node": "^25.5.0",
 		"eslint": "^9.18.0",
 		"eslint-config-prettier": "^10.0.1",
 		"eslint-plugin-svelte": "^2.46.1",
@@ -43,9 +44,16 @@
 		"vitest": "^3.0.0"
 	},
 	"dependencies": {
-		"@inlang/paraglide-sveltekit": "^0.15.5",
+		"@inlang/paraglide-js": "^2.15.0",
+		"@tanstack/svelte-virtual": "^3.13.23",
 		"axios": "^1.7.9",
 		"axios-cache-interceptor": "^1.6.2",
+		"daisyui": "^5.5.19",
+		"lucide-svelte": "^0.577.0",
 		"pokenode-ts": "^1.20.0"
+	},
+	"overrides": {
+		"cookie": "^0.7.2",
+		"kysely": "^0.28.12"
 	}
 }

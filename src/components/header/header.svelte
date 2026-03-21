@@ -1,55 +1,32 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { Home, Search, Users, Swords, Package, Menu, X, ArrowLeftRight } from '$lib/icons';
 	import ThemeToggle from '../ui/ThemeToggle.svelte';
 
 	const navItems = [
-		{
-			href: '/',
-			label: 'Home',
-			icon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
-			</svg>`
-		},
-		{
-			href: '/search',
-			label: 'Search',
-			icon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-			</svg>`
-		},
-		{
-			href: '/teams',
-			label: 'Teams',
-			icon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-			</svg>`
-		},
-		{
-			href: '/battle',
-			label: 'Battle',
-			icon: `<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-			</svg>`
-		}
+		{ href: '/',        label: 'Home',    Icon: Home },
+		{ href: '/search',  label: 'Search',  Icon: Search },
+		{ href: '/teams',   label: 'Teams',   Icon: Users },
+		{ href: '/battle',  label: 'Battle',  Icon: Swords },
+		{ href: '/items',   label: 'Items',   Icon: Package },
+		{ href: '/compare', label: 'Compare', Icon: ArrowLeftRight }
 	];
 
 	const currentPath = $derived($page.url.pathname);
-	
-	// Mobile menu state
+
 	let isMobileMenuOpen = $state(false);
-	
+
 	function toggleMobileMenu() {
 		isMobileMenuOpen = !isMobileMenuOpen;
 	}
-	
+
 	function closeMobileMenu() {
 		isMobileMenuOpen = false;
 	}
-	
+
 	function handleNavigation(href: string) {
 		closeMobileMenu();
-		// Force navigation for battle page to prevent state issues
 		if (currentPath === '/battle' && href !== '/battle') {
 			window.location.href = href;
 		} else {
@@ -59,56 +36,55 @@
 </script>
 
 <header
-	class="theme-border sticky top-0 z-50 shadow-sm backdrop-blur-xl"
-	style="background-color: var(--bg-main); border-color: var(--border-color); opacity: 0.9;"
+	class="sticky top-0 z-50 backdrop-blur-xl"
+	style="background-color: color-mix(in oklch, var(--bg-main) 85%, transparent); border-bottom: 1px solid var(--border-color);"
 >
 	<div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-		<div class="flex h-16 items-center justify-between">
-			<!-- Logo and Title -->
-			<div class="flex items-center space-x-3">
-				<button
-					onclick={() => goto('/')}
-					class="group flex items-center space-x-3 transition-all duration-200 hover:scale-105"
-					aria-label="Go to home page"
-				>
-					<div class="relative">
-						<div
-							class="flex h-10 w-10 items-center justify-center rounded-xl border border-red-500 bg-gradient-to-br from-red-500 to-red-600 shadow-lg transition-shadow group-hover:shadow-xl"
-							style="border-color: var(--border-color);"
-						>
-							<span class="text-xl font-bold text-white">P</span>
-						</div>
-						<div
-							class="absolute -top-1 -right-1 h-4 w-4 rounded-full border-2 bg-gradient-to-br from-yellow-400 to-yellow-500"
-							style="border-color: var(--border-color);"
-						></div>
-					</div>
-					<h1 class="theme-text text-2xl font-bold">Pokédx</h1>
-				</button>
-			</div>
+		<div class="flex h-16 items-center justify-between gap-4">
+			<!-- Logo + Brand -->
+			<button
+				onclick={() => goto('/')}
+				class="group flex flex-shrink-0 items-center gap-2.5 transition-all duration-200"
+				aria-label="Go to home page"
+			>
+				<!-- Circular avatar container -->
+				<span class="relative flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full shadow-md transition-all duration-200"
+					style="background: radial-gradient(circle at 35% 35%, #ef4444, #991b1b); outline: 2px solid color-mix(in oklch, var(--color-primary) 40%, transparent); outline-offset: 1px; group-hover:outline-4;">
+					<img
+						src="/poke_1.png"
+						alt="Pokédex logo"
+						class="h-6 w-6 rounded-full object-contain drop-shadow-sm"
+						width="40" height="40"
+						loading="eager"
+						fetchpriority="high"
+					/>
+				</span>
+				<!-- Brand name -->
+				<span class="hidden text-base font-bold tracking-tight sm:block"
+					style="color: var(--text-main);">
+					Pokédex
+				</span>
+			</button>
 
-			<!-- Navigation -->
-			<nav class="hidden items-center space-x-1 md:flex">
+			<!-- Navigation: pill container -->
+			<nav
+				class="hidden items-center gap-1 rounded-2xl p-1 md:flex"
+				style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
+			>
 				{#each navItems as item}
+					{@const isActive = currentPath === item.href}
 					<button
 						onclick={() => handleNavigation(item.href)}
-						class="group relative flex items-center space-x-2 rounded-xl px-4 py-2 text-sm font-medium transition-all duration-200"
-						class:active={currentPath === item.href}
-						style={currentPath === item.href
-							? 'color: #3b82f6; background-color: var(--bg-tertiary);'
-							: 'color: var(--text-secondary);'}
-						aria-current={currentPath === item.href ? 'page' : undefined}
+						class="group flex items-center gap-1.5 rounded-xl px-3.5 py-1.5 text-sm font-medium transition-all duration-200"
+						style={isActive
+							? 'color: var(--color-primary-content); background-color: var(--color-primary);'
+							: 'color: var(--text-secondary); background: transparent;'}
+						aria-current={isActive ? 'page' : undefined}
 					>
-						<span class="transition-transform duration-200 group-hover:scale-110">
-							{@html item.icon}
+						<span class="transition-transform duration-150 group-hover:scale-110">
+							<item.Icon size={16} />
 						</span>
 						<span>{item.label}</span>
-
-						{#if currentPath === item.href}
-							<div
-								class="absolute bottom-0 left-1/2 h-1 w-1 -translate-x-1/2 transform rounded-full bg-blue-600"
-							></div>
-						{/if}
 					</button>
 				{/each}
 			</nav>
@@ -126,25 +102,9 @@
 					aria-expanded={isMobileMenuOpen}
 				>
 					{#if isMobileMenuOpen}
-						<!-- Close Icon (X) -->
-						<svg class="h-5 w-5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M6 18L18 6M6 6l12 12"
-							></path>
-						</svg>
+						<X size={20} />
 					{:else}
-						<!-- Hamburger Icon -->
-						<svg class="h-5 w-5 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path
-								stroke-linecap="round"
-								stroke-linejoin="round"
-								stroke-width="2"
-								d="M4 6h16M4 12h16M4 18h16"
-							></path>
-						</svg>
+						<Menu size={20} />
 					{/if}
 				</button>
 			</div>
@@ -160,19 +120,20 @@
 			>
 				<nav class="grid grid-cols-2 gap-2">
 					{#each navItems as item}
+						{@const isActive = currentPath === item.href}
 						<button
 							onclick={() => handleNavigation(item.href)}
 							class="flex w-full items-center space-x-3 rounded-xl px-4 py-3 text-sm font-medium transition-all duration-200"
-							style={currentPath === item.href
-								? 'color: #3b82f6; background-color: var(--bg-tertiary);'
+							style={isActive
+								? 'color: var(--brand-red); background-color: var(--bg-tertiary);'
 								: 'color: var(--text-secondary);'}
-							aria-current={currentPath === item.href ? 'page' : undefined}
+							aria-current={isActive ? 'page' : undefined}
 						>
-													<span class="flex-shrink-0">
-							{@html item.icon}
-						</span>
-						<span>{item.label}</span>
-					</button>
+							<span class="flex-shrink-0">
+								<item.Icon size={20} />
+							</span>
+							<span>{item.label}</span>
+						</button>
 					{/each}
 				</nav>
 			</div>

@@ -1,3 +1,3 @@
-import * as runtime from '$lib/paraglide/runtime';
-import { createI18n } from '@inlang/paraglide-sveltekit';
-export const i18n = createI18n(runtime);
+// i18n is now handled directly by @inlang/paraglide-js v2 via the vite plugin.
+// See src/hooks.server.ts and src/hooks.ts for the middleware and reroute setup.
+export {};

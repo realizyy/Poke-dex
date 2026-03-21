@@ -1,31 +1,31 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { teamStore, currentTeam } from '$lib/stores/team';
-	import type { Team, TeamPokemon, Pokemon } from '$lib/types';
+	import { teamStore } from '$lib/stores/team.svelte';
+	import type { Team } from '$lib/types';
 	import { calculateTeamCoverage, getTypeColor } from '$lib/utils/pokemon-utils';
 	import PokemonCard from '../ui/PokemonCard.svelte';
+	import { X, Plus } from '$lib/icons';
+	import type { Snippet } from 'svelte';
 
-	export let team: Team;
-	export let showAnalysis = true;
-	export let allowEditing = true;
-	export let pokemonSelector: any = undefined;
+	let {
+		team,
+		showAnalysis = true,
+		allowEditing = true,
+		pokemonSelector
+	}: {
+		team: Team;
+		showAnalysis?: boolean;
+		allowEditing?: boolean;
+		pokemonSelector?: Snippet;
+	} = $props();
 
-	let teamCoverage: ReturnType<typeof calculateTeamCoverage>;
-	let showAddPokemon = false;
+	let showAddPokemon = $state(false);
 
-	$: if (team) {
-		teamCoverage = calculateTeamCoverage(team.pokemons);
-	}
+	const teamCoverage = $derived(calculateTeamCoverage(team.pokemons));
 
 	function removePokemon(index: number) {
 		if (allowEditing) {
 			teamStore.removePokemonFromTeam(team.id, index);
 		}
-	}
-
-	function openAddPokemon() {
-		showAddPokemon = true;
-		currentTeam.set(team);
 	}
 
 	function getCoverageColor(count: number): string {
@@ -43,19 +43,10 @@
 		let grade = 'F';
 		let color = 'text-red-600';
 
-		if (score >= 90) {
-			grade = 'A';
-			color = 'text-green-600';
-		} else if (score >= 80) {
-			grade = 'B';
-			color = 'text-blue-600';
-		} else if (score >= 70) {
-			grade = 'C';
-			color = 'text-yellow-600';
-		} else if (score >= 60) {
-			grade = 'D';
-			color = 'text-orange-600';
-		}
+		if (score >= 90) { grade = 'A'; color = 'text-green-600'; }
+		else if (score >= 80) { grade = 'B'; color = 'text-blue-600'; }
+		else if (score >= 70) { grade = 'C'; color = 'text-yellow-600'; }
+		else if (score >= 60) { grade = 'D'; color = 'text-orange-600'; }
 
 		return { score: Math.round(score), grade, color };
 	}
@@ -120,20 +111,13 @@
 
 							<!-- Compact Remove Button -->
 							{#if allowEditing}
-															<button
-								onclick={() => removePokemon(index)}
-								class="flex-shrink-0 flex h-5 w-5 items-center justify-center rounded-full bg-red-500/80 text-white transition-all hover:bg-red-600 hover:scale-110 focus:outline-none focus:ring-2 focus:ring-red-300"
-								title="Remove from team"
-								aria-label="Remove {teamPokemon.pokemon.name} from team"
-							>
-									<svg class="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											stroke-width="2.5"
-											d="M6 18L18 6M6 6l12 12"
-										></path>
-									</svg>
+								<button
+									onclick={() => removePokemon(index)}
+									class="btn btn-circle btn-xs bg-error/80 text-white hover:bg-error border-none flex-shrink-0"
+									title="Remove from team"
+									aria-label="Remove {teamPokemon.pokemon.name} from team"
+								>
+									<X size={12} />
 								</button>
 							{/if}
 						</div>
@@ -147,17 +131,10 @@
 				>
 					{#if allowEditing}
 						<button
-							onclick={openAddPokemon}
+							onclick={() => showAddPokemon = true}
 							class="flex flex-col items-center gap-2 transition-colors hover:text-blue-500"
 						>
-							<svg class="h-8 w-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path
-									stroke-linecap="round"
-									stroke-linejoin="round"
-									stroke-width="2"
-									d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-								></path>
-							</svg>
+							<Plus size={32} />
 							<span class="text-sm">Add Pokémon</span>
 						</button>
 					{:else}
@@ -268,17 +245,10 @@
 				</h3>
 				<button
 					onclick={() => (showAddPokemon = false)}
-					class="theme-text-muted hover:theme-text-secondary"
+					class="btn btn-ghost btn-sm btn-circle"
 					aria-label="Close add Pokémon dialog"
 				>
-					<svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							stroke-width="2"
-							d="M6 18L18 6M6 6l12 12"
-						></path>
-					</svg>
+					<X size={20} />
 				</button>
 			</div>
 			<div class="overflow-y-auto p-4" style="max-height: calc(90vh - 80px);">

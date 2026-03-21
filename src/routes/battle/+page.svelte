@@ -1,33 +1,17 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
-	import { teamStore } from '$lib/stores/team';
-	import { battleStore } from '$lib/stores/battle-store';
-	import type { Team } from '$lib/types';
+	import { onMount } from 'svelte';
+	import { teamStore } from '$lib/stores/team.svelte';
+	import { battleStore } from '$lib/stores/battle-store.svelte';
 	import BattleArena from '../../components/battle/BattleArena.svelte';
 	import TeamSelector from '../../components/battle/TeamSelector.svelte';
-	
-	let teams: Team[] = [];
-	
+	import { Users } from '$lib/icons';
+
+	const eligibleTeams = $derived(teamStore.teams.filter(team => team.pokemons.length > 0));
+
 	onMount(() => {
-		// Load teams
 		teamStore.loadTeams();
-		
-		// Reset battle state when entering page
-		battleStore.resetAll();
+		battleStore.loadBattleState(teamStore.teams);
 	});
-	
-	onDestroy(() => {
-		// Reset battle state when leaving page
-		battleStore.resetAll();
-	});
-	
-	// Subscribe to teams (reactive)
-	teamStore.subscribe((value: Team[]) => {
-		teams = value;
-	});
-	
-	// Get teams with Pokemon
-	$: eligibleTeams = teams.filter(team => team.pokemons.length > 0);
 </script>
 
 <svelte:head>
@@ -36,24 +20,56 @@
 </svelte:head>
 
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+	<!-- Dramatic page header -->
+	<div class="text-center mb-10">
+		<div class="flex items-center justify-center gap-3 mb-2">
+			<div class="flex-1 h-px" style="background: linear-gradient(to right, transparent, var(--border-color));"></div>
+			<h1 class="pokemon-logo-style tracking-widest" style="font-size: var(--text-3xl); color: var(--brand-red); letter-spacing: 0.15em;">BATTLE ARENA</h1>
+			<div class="flex-1 h-px" style="background: linear-gradient(to left, transparent, var(--border-color));"></div>
+		</div>
+		<p class="theme-text-secondary text-sm">Select two teams and simulate the battle.</p>
+	</div>
+
 	{#if eligibleTeams.length < 2}
-		<!-- Need More Teams Message -->
-		<div class="theme-bg-secondary rounded-xl shadow-lg p-12 theme-border" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
-			<div class="text-center">
-				<svg class="mx-auto h-16 w-16 theme-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-				</svg>
-				<h3 class="mt-4 text-xl font-medium theme-text">Need More Teams</h3>
-				<p class="mt-2 theme-text-secondary mb-6">
-					You need at least 2 teams with Pokémon to battle. Create teams in the Team Builder first.
+		<!-- Need More Teams: VS split-screen -->
+		<div class="rounded-2xl overflow-hidden shadow-xl" style="border: 1px solid var(--border-color);">
+			<div class="grid grid-cols-1 sm:grid-cols-2" style="min-height: 280px;">
+				<!-- Left team slot -->
+				<div class="relative flex flex-col items-center justify-center p-10"
+					style="background: linear-gradient(135deg, rgba(220,38,38,0.08), rgba(220,38,38,0.02));">
+					<div class="w-24 h-24 pokeball-deco mb-4" style="opacity: 0.6;"></div>
+					<p class="text-sm font-semibold theme-text-secondary">
+						{#if eligibleTeams.length === 0}Team 1{:else}Team 2{/if}
+					</p>
+					<p class="text-xs theme-text-muted mt-1">
+						{eligibleTeams.length === 0 ? 'Not ready' : eligibleTeams[0].name}
+					</p>
+				</div>
+
+				<!-- VS badge -->
+				<div class="sm:hidden flex items-center justify-center py-2" style="background-color: var(--bg-main)">
+					<span class="pokemon-logo-style text-2xl" style="color: var(--brand-red);">VS</span>
+				</div>
+				<div class="hidden sm:flex absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-12 h-12 rounded-full items-center justify-center shadow-lg pokemon-logo-style text-lg"
+					style="background: var(--brand-red); color: white;">VS</div>
+
+				<!-- Right team slot -->
+				<div class="relative flex flex-col items-center justify-center p-10"
+					style="background: linear-gradient(135deg, rgba(59,130,246,0.08), rgba(59,130,246,0.02));">
+					<div class="w-24 h-24 pokeball-deco mb-4" style="opacity: 0.6; filter: hue-rotate(160deg);"></div>
+					<p class="text-sm font-semibold theme-text-secondary">Opponent</p>
+					<p class="text-xs theme-text-muted mt-1">Not ready</p>
+				</div>
+			</div>
+
+			<!-- Action area -->
+			<div class="px-8 py-6 text-center" style="background-color: var(--bg-secondary); border-top: 1px solid var(--border-color);">
+				<p class="theme-text font-semibold mb-1">You need at least 2 teams to battle</p>
+				<p class="theme-text-secondary text-sm mb-5">
+					Head to the Team Builder, create two teams, then come back here.
 				</p>
-				<a 
-					href="/teams" 
-					class="inline-flex items-center px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors"
-				>
-					<svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-					</svg>
+				<a href="/teams" class="btn btn-primary inline-flex items-center gap-2">
+					<Users size={18} />
 					Go to Team Builder
 				</a>
 			</div>
@@ -61,7 +77,7 @@
 	{:else}
 		<!-- Team Selection Component -->
 		<TeamSelector {eligibleTeams} />
-		
+
 		<!-- Battle Arena Component -->
 		<BattleArena />
 	{/if}

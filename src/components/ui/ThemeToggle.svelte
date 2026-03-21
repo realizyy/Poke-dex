@@ -1,13 +1,11 @@
 <script lang="ts">
-	import { theme, toggleTheme } from '$lib/stores/theme';
+	import { themeStore } from '$lib/stores/theme.svelte';
 	import { browser } from '$app/environment';
-	
-	// Reactive statement untuk menentukan apakah dalam dark mode
-	$: isDark = $theme === 'dark' || ($theme === 'system' && browser && window?.matchMedia?.('(prefers-color-scheme: dark)').matches);
-	
-	function handleToggle() {
-		toggleTheme();
-	}
+
+	const isDark = $derived(
+		themeStore.theme === 'dark' ||
+		(themeStore.theme === 'system' && browser && window?.matchMedia?.('(prefers-color-scheme: dark)').matches)
+	);
 </script>
 
 <div class="theme-switcher-container">
@@ -16,7 +14,7 @@
 		id="switcher-input" 
 		class="switcher-input" 
 		checked={isDark}
-		on:change={handleToggle}
+		onchange={() => themeStore.toggle()}
 	/>
 	<label for="switcher-input" class="switcher-label">
 		<div class="icon-container">

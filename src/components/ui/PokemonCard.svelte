@@ -1,6 +1,8 @@
 <script lang="ts">
 	import type { Pokemon } from '$lib/types';
-	import { getTypeColor, formatStatName, getStatTotal } from '$lib/utils/pokemon-utils';
+	import { getStatTotal } from '$lib/utils/pokemon-utils';
+	import TypeBadge from './TypeBadge.svelte';
+	import StatBar from './StatBar.svelte';
 	
 	export let pokemon: Pokemon;
 	export let showStats = false;
@@ -13,11 +15,11 @@
 			onClick();
 		}
 	}
-	
-	function getStatColor(value: number): string {
-		if (value >= 120) return 'text-green-600';
-		if (value >= 90) return 'text-blue-600';
-		if (value >= 60) return 'text-yellow-600';
+
+	function getStatTotalColor(value: number): string {
+		if (value >= 600) return 'text-green-600';
+		if (value >= 450) return 'text-blue-600';
+		if (value >= 300) return 'text-yellow-600';
 		return 'text-red-600';
 	}
 </script>
@@ -38,6 +40,8 @@
 				src={pokemon.sprites.other['official-artwork'].front_default || '/favicon.png'}
 				alt={pokemon.name}
 				class="{compact ? 'w-12 h-12 sm:w-16 sm:h-16' : 'w-16 h-16 sm:w-20 sm:h-20'} object-contain"
+				width={compact ? 64 : 80}
+				height={compact ? 64 : 80}
 				loading="lazy"
 			/>
 		</div>
@@ -55,19 +59,14 @@
 			<!-- Types -->
 			<div class="flex gap-1 mb-1.5 sm:mb-2 flex-wrap">
 				{#each pokemon.types as type}
-					<span
-						class="px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-semibold text-white capitalize"
-						style="background-color: {getTypeColor(type.type.name)}"
-					>
-						{type.type.name}
-					</span>
+					<TypeBadge type={type.type.name} size={compact ? 'sm' : 'md'} />
 				{/each}
 			</div>
 			
 			<!-- Stats Total (if not compact) -->
 			{#if !compact}
 				<div class="text-xs sm:text-sm theme-text-secondary">
-					Base Stats Total: <span class="font-semibold {getStatColor(getStatTotal(pokemon))}">{getStatTotal(pokemon)}</span>
+					Base Stats Total: <span class="font-semibold {getStatTotalColor(getStatTotal(pokemon))}">{getStatTotal(pokemon)}</span>
 				</div>
 			{/if}
 		</div>
@@ -77,16 +76,9 @@
 	{#if showStats && !compact}
 		<div class="mt-3 sm:mt-4 pt-3 sm:pt-4 theme-border" style="border-top: 1px solid var(--border-color);">
 			<h4 class="text-xs sm:text-sm font-semibold theme-text-secondary mb-1.5 sm:mb-2">Base Stats</h4>
-			<div class="grid grid-cols-2 gap-1.5 sm:gap-2 text-xs">
+			<div class="space-y-1.5">
 				{#each pokemon.stats as stat}
-					<div class="flex justify-between">
-						<span class="theme-text-muted">
-							{formatStatName(stat.stat.name)}:
-						</span>
-						<span class="font-semibold {getStatColor(stat.base_stat)}">
-							{stat.base_stat}
-						</span>
-					</div>
+					<StatBar name={stat.stat.name} value={stat.base_stat} />
 				{/each}
 			</div>
 		</div>
@@ -112,6 +104,8 @@
 				src={pokemon.sprites.other['official-artwork'].front_default || '/favicon.png'}
 				alt={pokemon.name}
 				class="{compact ? 'w-12 h-12 sm:w-16 sm:h-16' : 'w-16 h-16 sm:w-20 sm:h-20'} object-contain"
+				width={compact ? 64 : 80}
+				height={compact ? 64 : 80}
 				loading="lazy"
 			/>
 		</div>
@@ -129,19 +123,14 @@
 			<!-- Types -->
 			<div class="flex gap-1 mb-1.5 sm:mb-2 flex-wrap">
 				{#each pokemon.types as type}
-					<span
-						class="px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-full text-xs font-semibold text-white capitalize"
-						style="background-color: {getTypeColor(type.type.name)}"
-					>
-						{type.type.name}
-					</span>
+					<TypeBadge type={type.type.name} size={compact ? 'sm' : 'md'} />
 				{/each}
 			</div>
 			
 			<!-- Stats Total (if not compact) -->
 			{#if !compact}
 				<div class="text-xs sm:text-sm theme-text-secondary">
-					Base Stats Total: <span class="font-semibold {getStatColor(getStatTotal(pokemon))}">{getStatTotal(pokemon)}</span>
+					Base Stats Total: <span class="font-semibold {getStatTotalColor(getStatTotal(pokemon))}">{getStatTotal(pokemon)}</span>
 				</div>
 			{/if}
 		</div>
@@ -151,16 +140,9 @@
 	{#if showStats && !compact}
 		<div class="mt-3 sm:mt-4 pt-3 sm:pt-4 theme-border" style="border-top: 1px solid var(--border-color);">
 			<h4 class="text-xs sm:text-sm font-semibold theme-text-secondary mb-1.5 sm:mb-2">Base Stats</h4>
-			<div class="grid grid-cols-2 gap-1.5 sm:gap-2 text-xs">
+			<div class="space-y-1.5">
 				{#each pokemon.stats as stat}
-					<div class="flex justify-between">
-						<span class="theme-text-muted">
-							{formatStatName(stat.stat.name)}:
-						</span>
-						<span class="font-semibold {getStatColor(stat.base_stat)}">
-							{stat.base_stat}
-						</span>
-					</div>
+					<StatBar name={stat.stat.name} value={stat.base_stat} />
 				{/each}
 			</div>
 		</div>

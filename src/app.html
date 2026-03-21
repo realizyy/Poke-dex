@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="%paraglide.lang%" dir="%paraglide.textDirection%">
+<html lang="%lang%" dir="%dir%" data-theme="pokedex">
 	<head>
 		<meta charset="utf-8" />
 		<link rel="icon" href="%sveltekit.assets%/favicon.png" />
@@ -14,8 +14,10 @@
 				const html = document.documentElement;
 				if (isDark) {
 					html.classList.add('dark');
+					html.dataset.theme = 'pokedex-dark';
 				} else {
 					html.classList.remove('dark');
+					html.dataset.theme = 'pokedex';
 				}
 			})();
 		</script>

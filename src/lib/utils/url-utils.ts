@@ -4,7 +4,9 @@ import type { SearchFilters } from '$lib/types';
 
 export class URLUtils {
 	/**
-	 * Update search URL with current parameters
+	 * Update the URL bar to reflect current search parameters.
+	 * Uses history.replaceState so the URL changes visually without
+	 * triggering any SvelteKit navigation or server-load re-runs.
 	 */
 	static updateSearchUrl(query: string, filters: SearchFilters, offset: number = 0): void {
 		if (!browser) return;
@@ -28,7 +30,7 @@ export class URLUtils {
 		}
 		
 		const url = `/search${params.toString() ? '?' + params.toString() : ''}`;
-		goto(url, { replaceState: true });
+		history.replaceState(history.state, '', url);
 	}
 
 	/**

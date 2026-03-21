@@ -1,17 +1,124 @@
 @import 'tailwindcss';
+@plugin "daisyui";
+
+/* ============================================================
+   DaisyUI v5 Theme — Pokédex custom light/dark
+   (overrides come after @plugin so they win the cascade)
+   ============================================================ */
+:root,
+[data-theme="pokedex"] {
+  /* DaisyUI color variables — light */
+  --color-primary:           oklch(50.6% 0.24 22.4);   /* #dc2626 brand red */
+  --color-primary-content:   oklch(100% 0 0);
+  --color-secondary:         oklch(79% 0.165 87);       /* #fbbf24 yellow */
+  --color-secondary-content: oklch(20% 0 0);
+  --color-accent:            oklch(55% 0.18 262);
+  --color-accent-content:    oklch(100% 0 0);
+  --color-neutral:           oklch(25% 0.02 253);
+  --color-neutral-content:   oklch(95% 0 0);
+  --color-base-100:          oklch(100% 0 0);           /* white */
+  --color-base-200:          oklch(96.5% 0.007 248);    /* slate-100 */
+  --color-base-300:          oklch(92% 0.013 248);      /* slate-200 */
+  --color-base-content:      oklch(13% 0.01 253);       /* gray-900 */
+  --color-info:              oklch(60% 0.2 250);
+  --color-info-content:      oklch(100% 0 0);
+  --color-success:           oklch(60% 0.17 145);
+  --color-success-content:   oklch(100% 0 0);
+  --color-warning:           oklch(79% 0.165 87);
+  --color-warning-content:   oklch(20% 0 0);
+  --color-error:             oklch(50.6% 0.24 22.4);
+  --color-error-content:     oklch(100% 0 0);
+  --radius-box:              var(--radius-md, 0.75rem);
+  --radius-btn:              var(--radius-md, 0.75rem);
+}
+
+.dark,
+[data-theme="pokedex-dark"] {
+  /* DaisyUI color variables — dark */
+  --color-primary:           oklch(50.6% 0.24 22.4);
+  --color-primary-content:   oklch(100% 0 0);
+  --color-secondary:         oklch(79% 0.165 87);
+  --color-secondary-content: oklch(20% 0 0);
+  --color-accent:            oklch(55% 0.18 262);
+  --color-accent-content:    oklch(100% 0 0);
+  --color-neutral:           oklch(25% 0.02 253);
+  --color-neutral-content:   oklch(95% 0 0);
+  --color-base-100:          oklch(16% 0.01 253);       /* gray-900 */
+  --color-base-200:          oklch(22% 0.015 253);      /* gray-800 */
+  --color-base-300:          oklch(32% 0.015 256);      /* gray-700 */
+  --color-base-content:      oklch(96% 0 0);            /* gray-100 */
+  --color-info:              oklch(60% 0.2 250);
+  --color-info-content:      oklch(100% 0 0);
+  --color-success:           oklch(60% 0.17 145);
+  --color-success-content:   oklch(100% 0 0);
+  --color-warning:           oklch(79% 0.165 87);
+  --color-warning-content:   oklch(20% 0 0);
+  --color-error:             oklch(50.6% 0.24 22.4);
+  --color-error-content:     oklch(100% 0 0);
+}
 
 /* CSS Variables for Theme Colors */
 :root {
-  /* Light theme colors */
-  --bg-main: rgb(249 250 251); /* gray-50 */
-  --bg-secondary: rgb(243 244 246); /* gray-100 */
-  --bg-tertiary: rgb(229 231 235); /* gray-200 */
+  /* Light theme colors — improved contrast (Phase B) */
+  --bg-main: #ffffff;         /* pure white — clear base layer */
+  --bg-secondary: #f1f5f9;    /* slate-100 — visible secondary layer */
+  --bg-tertiary: #e2e8f0;     /* slate-200 — visible tertiary layer */
   --text-main: rgb(17 24 39); /* gray-900 */
   --text-secondary: rgb(55 65 81); /* gray-700 */
   --text-muted: rgb(107 114 128); /* gray-500 */
-  --border-color: rgb(209 213 219); /* gray-300 */
+  --border-color: #cbd5e1;    /* slate-300 — stronger border */
   --shadow-color: rgba(0, 0, 0, 0.1);
-  
+  --surface-raised: #ffffff;
+  --surface-inset:  #f8fafc;  /* slate-50 — inset sections */
+
+  /* === Design Tokens (Impeccable /typeset + /arrange) === */
+
+  /* Fluid type scale — clamp(min, preferred, max) */
+  --text-xs:   clamp(0.694rem, 0.68rem + 0.07vw,  0.75rem);
+  --text-sm:   clamp(0.833rem, 0.81rem + 0.11vw,  0.875rem);
+  --text-base: clamp(0.938rem, 0.91rem + 0.14vw,  1rem);
+  --text-lg:   clamp(1.063rem, 1.02rem + 0.21vw,  1.125rem);
+  --text-xl:   clamp(1.188rem, 1.13rem + 0.29vw,  1.25rem);
+  --text-2xl:  clamp(1.375rem, 1.28rem + 0.47vw,  1.5rem);
+  --text-3xl:  clamp(1.688rem, 1.52rem + 0.84vw,  1.875rem);
+  --text-4xl:  clamp(2.063rem, 1.77rem + 1.47vw,  2.25rem);
+  --text-5xl:  clamp(2.5rem,   2.0rem  + 2.5vw,   3rem);
+  --text-hero: clamp(3rem,     2.5rem  + 2.5vw,   4.5rem);
+
+  /* Spacing tokens */
+  --space-1:  0.25rem;
+  --space-2:  0.5rem;
+  --space-3:  0.75rem;
+  --space-4:  1rem;
+  --space-5:  1.25rem;
+  --space-6:  1.5rem;
+  --space-8:  2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* Brand palette */
+  --brand-red:         #dc2626;
+  --brand-red-hover:   #b91c1c;
+  --brand-red-muted:   rgba(220, 38, 38, 0.15);
+  --brand-yellow:      #fbbf24;
+  --brand-yellow-bright: #ffcb04;
+  --brand-blue-dark:   #001f5c;
+
+  /* Elevation system */
+  --shadow-card:    0 4px 6px -1px rgba(0,0,0,.08), 0 2px 4px -1px rgba(0,0,0,.05);
+  --shadow-hover:   0 20px 25px -5px rgba(0,0,0,.1), 0 8px 10px -6px rgba(0,0,0,.05);
+  --shadow-overlay: 0 25px 50px -12px rgba(0,0,0,.25);
+  --shadow-glow-red:    0 0 20px rgba(220, 38, 38, 0.35);
+  --shadow-glow-yellow: 0 0 20px rgba(251, 191, 36, 0.4);
+
+  /* Border radius */
+  --radius-sm:   0.375rem;
+  --radius-md:   0.75rem;
+  --radius-lg:   1rem;
+  --radius-xl:   1.5rem;
+  --radius-full: 9999px;
+
   /* Scrollbar colors */
   --scrollbar-track: rgb(243 244 246); /* gray-100 */
   --scrollbar-thumb: rgb(209 213 219); /* gray-300 */
@@ -36,10 +143,13 @@
 }
 
 @layer base {
-  * {
+  /* Scope theme transitions to structural elements only — avoid layout thrashing */
+  html, body, header, nav, main, section, aside, article, footer,
+  .theme-bg, .theme-bg-secondary, .theme-bg-tertiary,
+  .theme-text, .theme-text-secondary, .theme-text-muted {
     transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
   }
-  
+
   html {
     scroll-behavior: smooth;
     background-color: var(--bg-main);
@@ -53,9 +163,9 @@
     transition: background-color 0.3s ease, color 0.3s ease;
   }
   
-  /* Ensure all containers follow theme */
-  main, section, div, header, nav {
-    transition: background-color 0.3s ease, color 0.3s ease;
+  /* Ensure form elements inherit theme */
+  input, select, textarea, button {
+    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
   }
   
   /* Ensure proper dark mode initialization */
@@ -359,3 +469,140 @@
   0% { background-position: -200% 0; }
   100% { background-position: 200% 0; }
 }
+
+/* === New animation keyframes (Impeccable /delight) === */
+
+@keyframes poke-enter {
+  0%   { opacity: 0; transform: translateY(14px) scale(0.96); }
+  60%  { opacity: 1; transform: translateY(-3px) scale(1.01); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes poke-slide-up {
+  0%   { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes poke-scale-in {
+  0%   { opacity: 0; transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pokeball-rotate-in {
+  0%   { opacity: 0; transform: rotate(-180deg) scale(0.5); }
+  100% { opacity: 1; transform: rotate(0deg) scale(1); }
+}
+
+@keyframes shimmer-sweep {
+  0%   { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes battle-flash {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+/* Stagger animation utilities */
+.poke-enter {
+  animation: poke-enter 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.poke-slide-up {
+  animation: poke-slide-up 0.35s ease both;
+}
+
+.poke-scale-in {
+  animation: poke-scale-in 0.3s ease both;
+}
+
+/* Grid stagger: apply .poke-stagger to the grid container */
+.poke-stagger > *:nth-child(1)  { animation-delay: 0ms; }
+.poke-stagger > *:nth-child(2)  { animation-delay: 50ms; }
+.poke-stagger > *:nth-child(3)  { animation-delay: 100ms; }
+.poke-stagger > *:nth-child(4)  { animation-delay: 150ms; }
+.poke-stagger > *:nth-child(5)  { animation-delay: 200ms; }
+.poke-stagger > *:nth-child(6)  { animation-delay: 250ms; }
+.poke-stagger > *:nth-child(7)  { animation-delay: 300ms; }
+.poke-stagger > *:nth-child(8)  { animation-delay: 350ms; }
+.poke-stagger > *:nth-child(9)  { animation-delay: 400ms; }
+.poke-stagger > *:nth-child(10) { animation-delay: 450ms; }
+.poke-stagger > *:nth-child(11) { animation-delay: 480ms; }
+.poke-stagger > *:nth-child(12) { animation-delay: 510ms; }
+.poke-stagger > *:nth-child(n+13) { animation-delay: 540ms; }
+
+/* === Brand CTA button (Impeccable /colorize + /bolder) === */
+.btn-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  background: var(--brand-red); /* solid, no gradient — better contrast */
+  color: #fff;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+  border: 2px solid transparent;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+}
+.btn-brand:hover {
+  background: var(--brand-red-hover);
+  box-shadow: var(--shadow-glow-red);
+  transform: translateY(-1px);
+}
+.btn-brand:active { transform: translateY(0); }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.5rem;
+  background: var(--bg-tertiary);
+  color: var(--text-main);
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  transition: background 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
+}
+.btn-secondary:hover {
+  background: var(--bg-secondary);
+  border-color: var(--brand-red);
+}
+
+/* Type-glow hover cards */
+.card-hover {
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+.card-hover:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: var(--shadow-hover);
+}
+
+/* Decorative pokeball shape (CSS only) */
+.pokeball-deco {
+  display: block;
+  border-radius: 50%;
+  background:
+    /* Center button */
+    radial-gradient(circle at center, #fff 0%, #fff 18%, transparent 18%),
+    radial-gradient(circle at center, #1f2937 0%, #1f2937 22%, transparent 22%),
+    /* Horizontal divider */
+    linear-gradient(#1f2937 0%, #1f2937 100%) center / 100% 3px no-repeat,
+    /* Top half red, bottom half white */
+    linear-gradient(to bottom, var(--brand-red) 50%, #f9fafb 50%);
+  border: 3px solid #1f2937;
+  opacity: 0.06; /* light mode: subtle but visible */
+}
+
+.dark .pokeball-deco {
+  opacity: 0.15; /* dark mode: more visible against dark bg */
+}
+
+/* Accent border variants */
+.accent-top-red    { border-top: 3px solid var(--brand-red); }
+.accent-top-blue   { border-top: 3px solid #3b82f6; }
+.accent-top-green  { border-top: 3px solid #22c55e; }
+.accent-top-yellow { border-top: 3px solid var(--brand-yellow); }
+.accent-left-blue  { border-left: 4px solid #3b82f6; }

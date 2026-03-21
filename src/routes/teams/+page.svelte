@@ -1,59 +1,38 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { teamStore, currentTeam } from '$lib/stores/team';
+	import { teamStore } from '$lib/stores/team.svelte';
 	import type { Team } from '$lib/types';
+	import { Download, Trash2, Users } from '$lib/icons';
 	import TeamBuilder from '../../components/team/TeamBuilder.svelte';
-	
-	let teams: Team[] = [];
-	let showCreateModal = false;
-	let newTeamName = '';
-	let selectedTeam: Team | null = null;
-	let showPokemonSelector = false;
-	
-	// Subscribe to team store
-	teamStore.subscribe((value: Team[]) => {
-		teams = value;
-		
-		// Update selectedTeam if it exists in the updated teams
-		if (selectedTeam) {
-			const updatedSelectedTeam = value.find(team => team.id === selectedTeam!.id);
-			if (updatedSelectedTeam) {
-				selectedTeam = updatedSelectedTeam;
-			} else {
-				// Team was deleted, clear selection
-				selectedTeam = null;
-			}
-		}
-	});
-	
+	import { getTypeColor } from '$lib/utils/pokemon-utils';
+
+	let showCreateModal = $state(false);
+	let newTeamName = $state('');
+
 	onMount(() => {
 		teamStore.loadTeams();
 	});
-	
+
 	function createTeam() {
 		if (newTeamName.trim()) {
 			const team = teamStore.createTeam(newTeamName.trim());
 			newTeamName = '';
 			showCreateModal = false;
-			selectedTeam = team;
+			teamStore.selectTeam(team);
 		}
 	}
-	
+
 	function deleteTeam(teamId: string) {
 		if (confirm('Are you sure you want to delete this team?')) {
 			teamStore.deleteTeam(teamId);
-			if (selectedTeam?.id === teamId) {
-				selectedTeam = null;
-			}
 		}
 	}
-	
+
 	function selectTeam(team: Team) {
-		selectedTeam = team;
-		currentTeam.set(team);
+		teamStore.selectTeam(team);
 	}
-	
+
 	function exportTeam(team: Team) {
 		const teamData = {
 			name: team.name,
@@ -64,7 +43,7 @@
 				moves: tp.moves
 			}))
 		};
-		
+
 		const blob = new Blob([JSON.stringify(teamData, null, 2)], { type: 'application/json' });
 		const url = URL.createObjectURL(blob);
 		const a = document.createElement('a');
@@ -88,67 +67,67 @@
 				<div class="flex justify-between items-center mb-4">
 					<h2 class="text-xl font-bold theme-text">Your Teams</h2>
 					<button
-						on:click={() => showCreateModal = true}
-						class="px-3 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition-colors"
+						onclick={() => showCreateModal = true}
+						class="btn btn-primary btn-sm"
 					>
-						New Team
+						+ New
 					</button>
 				</div>
 				
-				{#if teams.length === 0}
+				{#if teamStore.teams.length === 0}
 					<div class="text-center py-8">
-						<svg class="mx-auto h-12 w-12 theme-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-						</svg>
+						<Users size={48} class="mx-auto theme-text-muted mb-2" />
 						<h3 class="mt-2 text-sm font-medium theme-text">No teams yet</h3>
 						<p class="mt-1 text-sm theme-text-secondary">
 							Create your first team to get started.
 						</p>
 					</div>
 				{:else}
-					<div class="space-y-3">
-						{#each teams as team}
-							<div 
-								class="p-3 rounded-lg border-2 cursor-pointer transition-all {selectedTeam?.id === team.id 
-									? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' 
-									: 'theme-border hover:border-blue-300 dark:hover:border-blue-500'}"
-								style="{selectedTeam?.id === team.id 
-									? 'border-color: #3b82f6; background-color: rgba(59, 130, 246, 0.1);' 
-									: 'border-color: var(--border-color);'}"
-								on:click={() => selectTeam(team)}
-								on:keydown={(e) => e.key === 'Enter' && selectTeam(team)}
+					<div class="space-y-2">
+						{#each teamStore.teams as team}
+							{@const typeColors = [...new Set(team.pokemons.flatMap(tp => tp.pokemon?.types?.map(t => t.type.name) ?? []))].slice(0, 6)}
+							<div
+								class="p-3 rounded-lg cursor-pointer transition-all"
+								style="border: 1px solid var(--border-color); border-left: 4px solid {teamStore.currentTeam?.id === team.id ? 'var(--brand-red)' : 'transparent'}; background-color: {teamStore.currentTeam?.id === team.id ? 'var(--brand-red-muted)' : 'var(--bg-main)'};"
+								onclick={() => selectTeam(team)}
+								onkeydown={(e) => e.key === 'Enter' && selectTeam(team)}
 								role="button"
 								tabindex="0"
 							>
 								<div class="flex justify-between items-start">
 									<div class="flex-1 min-w-0">
-										<h3 class="font-semibold theme-text truncate">
-											{team.name}
-										</h3>
-										<p class="text-sm theme-text-secondary">
-											{team.pokemons.length}/6 Pokémon
-										</p>
+									<h3 class="font-semibold theme-text truncate text-sm">
+										{team.name}
+									</h3>
+									<p class="text-xs theme-text-secondary">{team.pokemons.length}/6 Pokémon</p>
+									{#if typeColors.length > 0}
+										<div class="flex gap-1 mt-1.5">
+											{#each typeColors as type}
+												<span
+													title={type}
+													class="w-2.5 h-2.5 rounded-full border border-white/30 flex-shrink-0"
+													style="background-color: {getTypeColor(type)};"
+												></span>
+											{/each}
+										</div>
+									{/if}
 									</div>
 									<div class="flex gap-1 ml-2">
 										<button
-											on:click|stopPropagation={() => exportTeam(team)}
-											class="p-1 theme-text-muted hover:text-blue-500 transition-colors"
+											onclick={(e) => { e.stopPropagation(); exportTeam(team); }}
+											class="btn btn-ghost btn-xs"
 											title="Export team"
-                                            aria-label="Export team"
+											aria-label="Export team"
 										>
-											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-											</svg>
+											<Download size={16} />
 										</button>
 										<button
-											on:click|stopPropagation={() => deleteTeam(team.id)}
-											class="p-1 theme-text-muted hover:text-red-500 transition-colors"
+											onclick={(e) => { e.stopPropagation(); deleteTeam(team.id); }}
+											class="btn btn-ghost btn-xs text-error"
 											title="Delete team"
-                                            aria-label="Delete team"
+											aria-label="Delete team"
 										>
-											<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
-											</svg>
+											<Trash2 size={16} />
 										</button>
 									</div>
 								</div>
@@ -161,44 +140,54 @@
 		
 		<!-- Team Details -->
 		<div class="lg:col-span-3">
-			{#if selectedTeam}
+			{#if teamStore.currentTeam}
 				{#snippet pokemonSelector()}
-					<div>
-						<div class="text-center py-8">
-							<p class="theme-text-secondary mb-4">
-								To add Pokémon to your team, use the 
-								<a href="/search" class="text-blue-500 hover:text-blue-600 font-medium">Advanced Search</a>
-								page and select this team from the dropdown.
-							</p>
-							<button
-								on:click={() => goto('/search')}
-								class="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors"
-							>
-								Go to Search
-							</button>
-						</div>
+					<div class="text-center py-8">
+						<p class="theme-text-secondary mb-4">
+							To add Pokémon, search the Pokédex and pick <em>Add to Team</em>.
+						</p>
+						<button onclick={() => goto('/search')} class="btn btn-primary">
+							Open Pokédex Search
+						</button>
 					</div>
 				{/snippet}
-				<TeamBuilder team={selectedTeam} showAnalysis={true} allowEditing={true} {pokemonSelector} />
+				<TeamBuilder team={teamStore.currentTeam} showAnalysis={true} allowEditing={true} {pokemonSelector} />
 			{:else}
-				<div class="theme-bg-secondary rounded-xl shadow-lg p-12 theme-border" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
-					<div class="text-center">
-						<svg class="mx-auto h-16 w-16 theme-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-						</svg>
-						<h3 class="mt-4 text-xl font-medium theme-text">Select a Team</h3>
-                        {#if teams.length === 0}
-                            <p class="mt-2 theme-text-secondary">
-                                You have no teams yet. Create one to get started.
-                            </p>
-                        {:else}
-                            <p class="mt-2 theme-text-secondary">
-                                Select a team from the list on the left to view or edit its details.
-                            </p>
-                            <p class="mt-2 theme-text-muted">
-                                You can also create a new team using the button above.
-                            </p>
-                        {/if}
+				<div class="rounded-xl shadow-lg p-10" style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);">
+					<div class="text-center max-w-sm mx-auto">
+						<!-- Pokeball trio illustration -->
+						<div class="flex justify-center items-end gap-3 mb-8">
+							<div class="w-12 h-12 pokeball-deco" style="opacity: 0.3;"></div>
+							<div class="w-16 h-16 pokeball-deco" style="opacity: 0.7;"></div>
+							<div class="w-12 h-12 pokeball-deco" style="opacity: 0.3;"></div>
+						</div>
+
+						{#if teamStore.teams.length === 0}
+							<h3 class="text-xl font-bold theme-text mb-2">Build Your First Team</h3>
+							<p class="theme-text-secondary text-sm mb-6">Get started in three steps.</p>
+							<ol class="text-left space-y-3 mb-8 rounded-xl p-5" style="background-color: var(--bg-tertiary);">
+								<li class="flex items-start gap-3">
+									<span class="flex-shrink-0 w-6 h-6 rounded-full text-white text-xs font-bold flex items-center justify-center" style="background: var(--brand-red);">1</span>
+									<span class="text-sm theme-text-secondary">Click <strong class="theme-text">+ New</strong> to create a team.</span>
+								</li>
+								<li class="flex items-start gap-3">
+									<span class="flex-shrink-0 w-6 h-6 rounded-full text-white text-xs font-bold flex items-center justify-center" style="background: var(--brand-red);">2</span>
+									<span class="text-sm theme-text-secondary">Search the Pokédex and tap <strong class="theme-text">Add to Team</strong>.</span>
+								</li>
+								<li class="flex items-start gap-3">
+									<span class="flex-shrink-0 w-6 h-6 rounded-full text-white text-xs font-bold flex items-center justify-center" style="background: var(--brand-red);">3</span>
+									<span class="text-sm theme-text-secondary">Analyze coverage and battle your rivals.</span>
+								</li>
+							</ol>
+							<button onclick={() => showCreateModal = true} class="btn btn-primary btn-lg">
+								Create First Team
+							</button>
+						{:else}
+							<h3 class="text-xl font-bold theme-text mb-2">Select a Team</h3>
+							<p class="theme-text-secondary text-sm">
+								Pick a team from the list on the left to view and edit your squad.
+							</p>
+						{/if}
 					</div>
 				</div>
 			{/if}
@@ -214,7 +203,7 @@
 				Create New Team
 			</h3>
 			
-			<form on:submit|preventDefault={createTeam}>
+			<form onsubmit={(e) => { e.preventDefault(); createTeam(); }}>
 				<div class="mb-4">
 					<label for="team-name-input" class="block text-sm font-medium theme-text-secondary mb-2">
 						Team Name
@@ -233,15 +222,14 @@
 				<div class="flex justify-end gap-3">
 					<button
 						type="button"
-						on:click={() => { showCreateModal = false; newTeamName = ''; }}
-						class="px-4 py-2 theme-text-secondary hover:theme-bg-tertiary rounded-lg transition-colors"
-						style="color: var(--text-secondary);"
+						onclick={() => { showCreateModal = false; newTeamName = ''; }}
+						class="btn btn-ghost"
 					>
-						Cancel
+					Cancel
 					</button>
 					<button
 						type="submit"
-						class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
+						class="btn btn-primary"
 						disabled={!newTeamName.trim()}
 					>
 						Create Team

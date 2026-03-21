@@ -4,13 +4,15 @@
 export { SearchService } from './services/search-service';
 export { PokemonService } from './services/pokemon-service';
 export { BattleService } from './services/battle-service';
+export { ItemService } from './services/item-service';
 
-// Stores
-export { searchStore, sortedPokemons } from './stores/search';
-export { modalStore } from './stores/modal';
-export { teamStore, currentTeam } from './stores/team';
-export { battleStore } from './stores/battle-store';
-export { toastStore } from './stores/toast-store';
+// Stores (Svelte 5 class-based .svelte.ts)
+export { searchStore } from './stores/search.svelte';
+export { modalStore } from './stores/modal.svelte';
+export { teamStore } from './stores/team.svelte';
+export { battleStore } from './stores/battle-store.svelte';
+export { toastStore } from './stores/toast-store.svelte';
+export { themeStore } from './stores/theme.svelte';
 
 // Utils
 export { SortUtils } from './utils/sort-utils';

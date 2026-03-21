@@ -5,7 +5,6 @@
 	import { page } from '$app/stores';
 	import { get } from 'svelte/store';
 	import { getTypeColor } from '$lib/utils/pokemon-utils';
-	import LoadingSpinner from '../components/ui/LoadingSpinner.svelte';
 
 	let pokemons: Pokemon[] = [];
 	let loading = true;
@@ -13,7 +12,7 @@
 
 	onMount(() => {
 		const data = get(page).data;
-		pokemons = data.pokemons;
+		pokemons = data.pokemons ?? [];
 		loading = false;
 	});
 
@@ -22,208 +21,241 @@
 			goto(`/search?q=${encodeURIComponent(searchQuery.trim())}`);
 		}
 	}
+
+	const features = [
+		{ num: '01', label: 'Search',  desc: 'Filter 1,025+ Pokémon by type, generation and stat ranges.',  href: '/search',  color: '#3b82f6' },
+		{ num: '02', label: 'Compare', desc: 'Place two Pokémon side-by-side and see every difference.',     href: '/compare', color: '#8b5cf6' },
+		{ num: '03', label: 'Teams',   desc: 'Build a six-slot team and analyse type coverage.',             href: '/teams',   color: '#22c55e' },
+		{ num: '04', label: 'Battle',  desc: 'Simulate turn-by-turn battles with move and type logic.',      href: '/battle',  color: '#ef4444' },
+		{ num: '05', label: 'Items',   desc: 'Browse held items, berries, TMs and key items.',               href: '/items',   color: '#f59e0b' },
+		{ num: '06', label: 'Natures', desc: 'Compare all 25 natures and their stat and flavour effects.',  href: '/natures', color: '#10b981' },
+	];
 </script>
 
 <svelte:head>
-	<title>Pokédex - Explore the World of Pokémon</title>
-	<meta name="description" content="Discover, analyze, and build teams with your favorite Pokémon. Access detailed stats, type coverage, and battle simulations." />
+	<title>Pokédex – Every Pokémon. Every stat.</title>
+	<meta name="description" content="Search, compare, build teams and simulate battles for all 1,025 Pokémon — all in one place." />
 </svelte:head>
 
-<main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-	<div class="text-center mb-12">
-		<h1 class="text-4xl md:text-6xl font-bold mb-4">
-			<span class="bg-gradient-to-r from-blue-600 via-purple-600 to-red-600 bg-clip-text text-transparent">
-				Explore the World
-			</span>
-		</h1>
-		<h2 class="text-3xl md:text-5xl font-bold mb-6">
-				<span class="theme-text-secondary mr-4">of</span>
-				<span class="relative inline-block">
-					<span class="pokemon-logo-style text-5xl md:text-6xl lg:text-7xl">
-						Pokémon
-					</span>
-				</span>
-			</h2>
-			<p class="text-lg theme-text-secondary max-w-2xl mx-auto">
-				Discover, analyze, and build teams with your favorite Pokémon. Access detailed stats, type coverage, and battle simulations.
-			</p>
-		</div>
-		
-		<!-- Quick Search -->
-		<div class="max-w-2xl mx-auto mb-12">
-			<form on:submit|preventDefault={handleSearch} class="relative">
-				<div class="relative">
-					<input
-						type="text"
-						placeholder="Search for any Pokémon..."
-						bind:value={searchQuery}
-						class="w-full pl-12 pr-32 py-4 rounded-2xl theme-border theme-bg-secondary backdrop-blur-xl theme-text theme-placeholder focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-lg transition-all duration-200"
-						style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-main);"
+<!-- ─── Hero ─────────────────────────────────────────────────────────────── -->
+<section
+	class="border-b"
+	style="border-color: var(--border-color); background-color: var(--bg-main);"
+>
+	<div class="mx-auto max-w-5xl px-6 py-16 md:py-24">
+		<div class="grid grid-cols-1 items-center gap-12 md:grid-cols-[1fr_auto]">
+
+			<!-- Left: identity + headline + search -->
+			<div class="poke-slide-up">
+				<!-- Identity mark -->
+				<div class="mb-6 flex items-center gap-2.5" style="animation-delay: 0ms;">
+					<img
+						src="/poke_1.png"
+						alt=""
+						aria-hidden="true"
+						class="h-6 w-6 rounded-full object-contain"
+						width="24" height="24"
+						loading="eager"
+						fetchpriority="high"
 					/>
-					<div class="absolute left-4 top-1/2 transform -translate-y-1/2">
-						<svg class="w-5 h-5 theme-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-						</svg>
-					</div>
-					<button
-						type="submit"
-						class="absolute right-2 top-1/2 transform -translate-y-1/2 px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white rounded-xl font-medium transition-all duration-200 shadow-lg hover:shadow-xl"
+					<span class="text-xs font-bold uppercase tracking-[0.18em]" style="color: var(--brand-red);">Pokédex</span>
+				</div>
+
+				<!-- Headline -->
+				<h1
+					class="mb-4 font-extrabold leading-none tracking-tight"
+					style="font-size: var(--text-hero); color: var(--text-main);"
+				>
+					Every Pokémon.<br />Every stat.
+				</h1>
+
+				<!-- Sub-copy -->
+				<p class="mb-10 max-w-md text-lg leading-relaxed" style="color: var(--text-secondary); font-size: var(--text-lg);">
+					Search, compare, build teams and simulate battles — all in one place.
+				</p>
+
+				<!-- Search bar -->
+				<form onsubmit={(e) => { e.preventDefault(); handleSearch(); }}>
+					<div
+						class="flex items-center gap-2 rounded-2xl p-2 shadow-[var(--shadow-card)]"
+						style="background-color: var(--bg-secondary); border: 1px solid var(--border-color); max-width: 28rem;"
 					>
-						Search
-					</button>
+						<div class="flex-shrink-0 pl-3">
+							<svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="color: var(--text-muted);">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+							</svg>
+						</div>
+						<input
+							type="text"
+							placeholder="Name or #ID…"
+							bind:value={searchQuery}
+							class="min-w-0 flex-1 bg-transparent py-3 text-base focus:outline-none"
+							style="color: var(--text-main);"
+						/>
+						<button type="submit" class="btn-brand flex-shrink-0 rounded-xl px-5 py-2.5 text-sm font-semibold">
+							Search
+						</button>
+					</div>
+				</form>
+			</div>
+
+			<!-- Right: hero Pokémon illustration -->
+			<div class="hidden md:flex items-center justify-center">
+				<div class="relative flex h-56 w-56 items-center justify-center rounded-full"
+					style="background: radial-gradient(circle, rgba(139,92,246,0.12) 0%, transparent 70%);">
+					<img
+						src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/150.png"
+						alt="Mewtwo"
+						class="h-52 w-52 object-contain drop-shadow-2xl poke-scale-in"
+						width="208" height="208"
+						loading="eager"
+					/>
 				</div>
-			</form>
+			</div>
+
 		</div>
-		
-		<!-- Quick Actions -->
-		<div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-			<a 
-				href="/search" 
-				class="group block p-8 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-2xl transform hover:-translate-y-1 theme-bg-secondary theme-border"
-				style="background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary)); border: 1px solid var(--border-color);"
-			>
-				<div class="flex items-center gap-4 mb-4">
-					<div class="p-3 bg-blue-500/20 rounded-xl group-hover:scale-110 transition-transform duration-300">
-						<svg class="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+	</div>
+</section>
+
+<!-- ─── Feature grid ──────────────────────────────────────────────────────── -->
+<section class="border-b" style="border-color: var(--border-color); background-color: var(--bg-main);">
+	<div class="mx-auto max-w-5xl px-6 py-14">
+
+		<!-- Section head -->
+		<div class="mb-10">
+			<p class="mb-1 text-xs font-bold uppercase tracking-[0.18em]" style="color: var(--text-muted);">Features</p>
+			<h2 class="font-extrabold leading-tight" style="font-size: var(--text-3xl); color: var(--text-main);">Six tools, one Pokédex.</h2>
+		</div>
+
+		<!-- Publication-style grid — gap becomes the divider line -->
+		<div
+			class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 overflow-hidden rounded-xl"
+			style="gap: 1px; background-color: var(--border-color);"
+		>
+			{#each features as f}
+				<a
+					href={f.href}
+					class="group flex flex-col gap-3 p-6 transition-colors duration-150"
+					style="background-color: var(--bg-main);"
+					onmouseenter={(e) => (e.currentTarget as HTMLElement).style.backgroundColor = 'var(--bg-secondary)'}
+					onmouseleave={(e) => (e.currentTarget as HTMLElement).style.backgroundColor = 'var(--bg-main)'}
+				>
+					<!-- Number chip -->
+					<span
+						class="font-mono text-xs font-bold"
+						style="color: {f.color};"
+					>{f.num}</span>
+
+					<!-- Name + arrow -->
+					<div class="flex items-center gap-2">
+						<span class="text-base font-bold" style="color: var(--text-main);">{f.label}</span>
+						<svg
+							class="h-3.5 w-3.5 translate-x-0 opacity-0 transition-all duration-200 group-hover:translate-x-1 group-hover:opacity-100"
+							fill="none" stroke="currentColor" viewBox="0 0 24 24"
+							style="color: {f.color};"
+						>
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
 						</svg>
 					</div>
-					<div>
-						<h3 class="text-xl font-bold theme-text">Advanced Search</h3>
-						<p class="theme-text-secondary text-sm opacity-90">Filter by type, generation, and stats</p>
-					</div>
-				</div>
-				<div class="flex items-center text-sm font-medium text-blue-600">
-					<span>Explore filters</span>
-					<svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-					</svg>
-				</div>
-			</a>
-			
-			<a 
-				href="/teams" 
-				class="group block p-8 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-2xl transform hover:-translate-y-1 theme-bg-secondary theme-border"
-				style="background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary)); border: 1px solid var(--border-color);"
+
+					<!-- Description -->
+					<p class="text-sm leading-relaxed" style="color: var(--text-muted);">{f.desc}</p>
+				</a>
+			{/each}
+		</div>
+	</div>
+</section>
+
+<!-- ─── Spotlight grid ────────────────────────────────────────────────────── -->
+<section style="background-color: var(--bg-main);">
+	<div class="mx-auto max-w-5xl px-6 py-14">
+
+		<!-- Section head -->
+		<div class="mb-8 flex items-baseline justify-between">
+			<div>
+				<p class="mb-1 text-xs font-bold uppercase tracking-[0.18em]" style="color: var(--text-muted);">Pokémon</p>
+				<h2 class="font-extrabold leading-tight" style="font-size: var(--text-2xl); color: var(--text-main);">Spotlight</h2>
+			</div>
+			<a
+				href="/search"
+				class="group flex items-center gap-1 text-sm font-semibold transition-colors"
+				style="color: var(--brand-red);"
 			>
-				<div class="flex items-center gap-4 mb-4">
-					<div class="p-3 bg-green-500/20 rounded-xl group-hover:scale-110 transition-transform duration-300">
-						<svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
-						</svg>
-					</div>
-					<div>
-						<h3 class="text-xl font-bold theme-text">Team Builder</h3>
-						<p class="theme-text-secondary text-sm opacity-90">Build teams with type coverage analysis</p>
-					</div>
-				</div>
-				<div class="flex items-center text-sm font-medium text-green-600">
-					<span>Start building</span>
-					<svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-					</svg>
-				</div>
-			</a>
-			
-			<a 
-				href="/battle" 
-				class="group block p-8 rounded-2xl transition-all duration-300 shadow-lg hover:shadow-2xl transform hover:-translate-y-1 theme-bg-secondary theme-border"
-				style="background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary)); border: 1px solid var(--border-color);"
-			>
-				<div class="flex items-center gap-4 mb-4">
-					<div class="p-3 bg-red-500/20 rounded-xl group-hover:scale-110 transition-transform duration-300">
-						<svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
-						</svg>
-					</div>
-					<div>
-						<h3 class="text-xl font-bold theme-text">Battle Simulator</h3>
-						<p class="theme-text-secondary text-sm opacity-90">Test your teams in battle</p>
-					</div>
-				</div>
-				<div class="flex items-center text-sm font-medium text-red-600">
-					<span>Enter battle</span>
-					<svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-					</svg>
-				</div>
+				All Pokémon
+				<svg class="h-4 w-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+				</svg>
 			</a>
 		</div>
-		
-		<!-- Featured Pokémon Section -->
+
+		<!-- Uniform 4-col card grid -->
 		{#if loading}
-			<div class="flex justify-center items-center h-64">
-				<LoadingSpinner 
-					size="lg" 
-					text="Loading..." 
-					showText={true}
-				/>
+			<div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+				{#each Array.from({ length: 8 }) as _}
+					<div
+						class="h-44 animate-pulse rounded-2xl"
+						style="background-color: var(--bg-secondary);"
+					></div>
+				{/each}
 			</div>
 		{:else}
-			<section>
-				<div class="flex items-center justify-between mb-8">
-					<h2 class="text-3xl font-bold theme-text">Featured Pokémon</h2>
-					<a 
-						href="/search" 
-						class="flex items-center text-blue-600 hover:text-blue-700 font-medium transition-colors"
+			<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 poke-stagger">
+				{#each pokemons as pokemon}
+					<a
+						href="/pokemon/{pokemon.name}"
+						class="group poke-enter block rounded-2xl p-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-[var(--shadow-hover)]"
+						style="background-color: {getTypeColor(pokemon.types[0].type.name)}cc;"
 					>
-						View all
-						<svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-						</svg>
+						<!-- ID -->
+						<p class="mb-0.5 text-[10px] font-bold uppercase tracking-widest text-white/60">
+							#{pokemon.id.toString().padStart(3, '0')}
+						</p>
+
+						<!-- Name -->
+						<h3 class="mb-2 text-sm font-bold capitalize leading-tight text-white">
+							{pokemon.name}
+						</h3>
+
+						<!-- Type pills -->
+						<div class="mb-3 flex flex-wrap gap-1">
+							{#each pokemon.types as t}
+								<span class="rounded-full bg-black/20 px-2 py-0.5 text-[10px] font-medium capitalize text-white/90">
+									{t.type.name}
+								</span>
+							{/each}
+						</div>
+
+						<!-- Sprite -->
+						<div class="flex justify-center">
+							<img
+								src={pokemon.sprites?.other?.['official-artwork']?.front_default ?? pokemon.sprites?.front_default ?? ''}
+								alt={pokemon.name}
+								class="h-20 w-20 object-contain drop-shadow-lg transition-transform duration-200 group-hover:scale-110"
+								loading="lazy"
+							/>
+						</div>
 					</a>
-				</div>
-				
-				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-					{#each pokemons as pokemon}
-						<a href="/pokemon/{pokemon.name}" class="group block">
-							<div class="relative overflow-hidden rounded-2xl transition-all duration-300 group-hover:scale-105 group-hover:shadow-2xl theme-border" style="background-color: {getTypeColor(pokemon.types[0].type.name)}cc; border-color: var(--border-color);">
-								<!-- Decorative elements -->
-								<div class="absolute top-4 right-4 w-20 h-20 bg-white/10 rounded-full blur-xl"></div>
-								<div class="absolute bottom-4 left-4 w-16 h-16 bg-white/5 rounded-full blur-lg"></div>
-								
-								<div class="relative p-6">
-									<div class="flex justify-between items-start mb-4">
-										<div>
-											<h3 class="theme-text font-bold text-lg capitalize tracking-wide">{pokemon.name}</h3>
-											<div class="flex gap-2 mt-2">
-												{#each pokemon.types as type}
-													<span class="px-3 py-1 bg-white/20 backdrop-blur-sm theme-text capitalize text-xs rounded-full font-medium border border-white/20">
-														{type.type.name}
-													</span>
-												{/each}
-											</div>
-										</div>
-										<span class="theme-text text-sm font-bold bg-white/30 px-3 py-1 rounded-full backdrop-blur-sm">
-											#{pokemon.id.toString().padStart(3, '0')}
-										</span>
-									</div>
-									
-									<div class="flex justify-center mb-4">
-										<div class="relative">
-											<div class="absolute inset-0 bg-white/20 rounded-full blur-lg scale-110"></div>
-											<img
-												src={pokemon.sprites.other['official-artwork'].front_default || '/favicon.png'}
-												alt={pokemon.name}
-												class="relative w-24 h-24 object-contain transform group-hover:scale-110 transition-transform duration-300"
-												loading="lazy"
-											/>
-										</div>
-									</div>
-									
-									<div class="text-center">
-										<div class="inline-flex items-center theme-text text-sm font-medium bg-white/20 px-3 py-1 rounded-full backdrop-blur-sm">
-											<span>View Details</span>
-											<svg class="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-											</svg>
-										</div>
-									</div>
-								</div>
-							</div>
-						</a>
-					{/each}
-				</div>
-			</section>
+				{/each}
+			</div>
 		{/if}
-	</main>
+	</div>
+</section>
+
+<!-- ─── Stats strip ───────────────────────────────────────────────────────── -->
+<div class="border-t" style="border-color: var(--border-color); background-color: var(--bg-secondary);">
+	<div class="mx-auto max-w-5xl px-6 py-10">
+		<dl class="flex flex-wrap justify-center gap-x-16 gap-y-6 text-center">
+			{#each [
+				{ value: '1,025', label: 'Pokémon' },
+				{ value: '18',    label: 'Types' },
+				{ value: '9',     label: 'Generations' },
+				{ value: '6',     label: 'Features' },
+			] as stat}
+				<div>
+					<dt class="text-3xl font-extrabold tabular-nums" style="color: var(--brand-red); font-size: var(--text-4xl);">{stat.value}</dt>
+					<dd class="mt-1 text-xs font-bold uppercase tracking-[0.15em]" style="color: var(--text-muted);">{stat.label}</dd>
+				</div>
+			{/each}
+		</dl>
+	</div>
+</div>

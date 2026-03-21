@@ -1,4 +1,4 @@
-<script lang="ts">
+﻿<script lang="ts">
 	import { onMount } from 'svelte';
 	import { PokemonService } from '$lib/services/pokemon-service';
 	import { getTypeColor } from '$lib/utils/pokemon-utils';
@@ -144,7 +144,7 @@
 		<h3 class="text-lg font-medium theme-text mb-2">Error Loading Evolution Chain</h3>
 		<p class="theme-text-secondary mb-4">Failed to load evolution information</p>
 		<button
-			on:click={loadEvolutionChain}
+			onclick={loadEvolutionChain}
 			class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-medium transition-colors"
 		>
 			Try Again
@@ -154,15 +154,15 @@
 	{@const evolutions = parseEvolutionChain(evolutionChain)}
 	<div class="space-y-6">
 		<!-- Evolution Chain -->
-		<div class="flex flex-wrap justify-center items-center gap-8">
+		<div class="flex flex-wrap justify-center items-center gap-4">
 			{#each evolutions as evolution, index}
 				<div class="flex items-center">
 					<!-- Pokemon Card -->
-					<div class="theme-bg-secondary rounded-xl p-8 text-center min-w-[180px] cursor-pointer hover:scale-105 transition-transform shadow-lg"
-						on:click={() => goto(`/pokemon/${evolution.name}`)}
+					<div class="theme-bg-secondary rounded-xl p-4 text-center cursor-pointer hover:scale-105 transition-transform"
+						onclick={() => goto(`/pokemon/${evolution.name}`)}
 						role="button"
 						tabindex="0"
-						on:keydown={(e) => {
+						onkeydown={(e) => {
 							if (e.key === 'Enter' || e.key === ' ') {
 								goto(`/pokemon/${evolution.name}`);
 							}
@@ -171,15 +171,17 @@
 						<img
 							src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${evolution.id}.png`}
 							alt={evolution.name}
-							class="w-32 h-32 mx-auto mb-4 object-contain"
-							on:error={(e) => {
+						class="w-20 h-20 mx-auto mb-3 object-contain"
+						width="80" height="80"
+							loading="lazy"
+							onerror={(e) => {
 								const target = e.target as HTMLImageElement;
 								if (target) {
 									target.src = '/favicon.png';
 								}
 							}}
 						/>
-						<div class="text-base font-bold theme-text capitalize mb-3">
+						<div class="text-sm font-bold theme-text capitalize mb-2">
 							#{evolution.id} {evolution.name}
 						</div>
 						<!-- Type badges will be loaded dynamically -->
@@ -188,7 +190,7 @@
 								<div class="w-8 h-4 bg-gray-300 rounded animate-pulse"></div>
 							{:then types}
 								{#each types as type}
-									<span class="px-4 py-1 rounded-full text-sm font-medium text-white capitalize"
+									<span class="px-2 py-0.5 rounded-full text-xs font-medium text-white capitalize"
 										style="background-color: {getTypeColor(type)}">
 										{type}
 									</span>
@@ -201,25 +203,17 @@
 					
 					<!-- Evolution Arrow -->
 					{#if index < evolutions.length - 1}
-						<div class="mx-8 text-center">
-							<svg class="w-10 h-10 theme-text-secondary mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<div class="mx-3 text-center">
+							<svg class="w-5 h-5 theme-text-secondary mx-auto mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
 							</svg>
-							<div class="text-base theme-text-secondary font-medium">
+							<div class="text-xs theme-text-secondary font-medium">
 								{getEvolutionConditionForArrow(evolutionChain, index)}
 							</div>
 						</div>
 					{/if}
 				</div>
 			{/each}
-		</div>
-		
-		<!-- Evolution Info -->
-		<div class="theme-bg-secondary rounded-xl p-6">
-			<h4 class="text-lg font-semibold theme-text mb-3">Evolution Chain</h4>
-			<p class="text-sm theme-text-secondary">
-				This Pokemon has {evolutions.length} evolution stage{evolutions.length > 1 ? 's' : ''}.
-			</p>
 		</div>
 	</div>
 {:else}

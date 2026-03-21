@@ -1,27 +1,31 @@
-<script lang="ts">
-	import { createEventDispatcher } from 'svelte';
-	import type { Pokemon, Team, TeamSelectedEvent } from '$lib/types';
-	import { teamStore } from '$lib/stores/team';
-	import { modalStore } from '$lib/stores/modal';
+﻿<script lang="ts">
+	import type { Pokemon, TeamSelectedEvent } from '$lib/types';
+	import { teamStore } from '$lib/stores/team.svelte';
+	import { modalStore } from '$lib/stores/modal.svelte';
 	import { getTypeColor } from '$lib/utils/pokemon-utils';
+	import { X, Plus, ChevronLeft } from '$lib/icons';
 
-	const dispatch = createEventDispatcher<{
-		close: void;
-		teamSelected: TeamSelectedEvent;
-	}>();
+	let {
+		pokemon,
+		show = $bindable(false),
+		onclose,
+		onteamselected
+	}: {
+		pokemon: Pokemon;
+		show?: boolean;
+		onclose?: () => void;
+		onteamselected?: (event: TeamSelectedEvent) => void;
+	} = $props();
 
-	export let pokemon: Pokemon;
-	export let teams: Team[] = [];
-	export let show = false;
+	let createNewTeam = $state(false);
+	let newTeamName = $state('');
+	let selectedTeamId = $state('');
 
-	let createNewTeam = false;
-	let newTeamName = '';
-	let selectedTeamId = '';
+	$effect(() => {
+		if (show) resetModalState();
+	});
 
-	// Reset state when modal opens/closes
-	$: if (show) {
-		resetModalState();
-	}
+	const availableTeams = $derived(teamStore.teams.filter(team => team.pokemons.length < 6));
 
 	function resetModalState() {
 		createNewTeam = false;
@@ -31,7 +35,7 @@
 
 	function handleClose() {
 		modalStore.closeAddToTeamModal();
-		dispatch('close');
+		onclose?.();
 	}
 
 	function handleCreateTeam() {
@@ -46,39 +50,31 @@
 	function handleAddToTeam() {
 		if (selectedTeamId && pokemon) {
 			teamStore.addPokemonToTeam(selectedTeamId, pokemon);
-			dispatch('teamSelected', { teamId: selectedTeamId, pokemon });
+			onteamselected?.({ teamId: selectedTeamId, pokemon });
 			handleClose();
 		}
 	}
 
 	function handleBackdropClick(event: MouseEvent) {
-		if (event.target === event.currentTarget) {
-			handleClose();
-		}
+		if (event.target === event.currentTarget) handleClose();
 	}
 
 	function handleKeydown(event: KeyboardEvent) {
-		if (event.key === 'Escape') {
-			handleClose();
-		}
-		if (event.key === 'Enter' && createNewTeam && newTeamName.trim()) {
-			handleCreateTeam();
-		}
+		if (event.key === 'Escape') handleClose();
+		if (event.key === 'Enter' && createNewTeam && newTeamName.trim()) handleCreateTeam();
 	}
-
-	$: availableTeams = teams.filter(team => team.pokemons.length < 6);
 </script>
 
 {#if show}
 	<!-- Modal Backdrop -->
-	<div 
+	<div
 		class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
-		on:click={handleBackdropClick}
-		on:keydown={handleKeydown}
+		onclick={handleBackdropClick}
+		onkeydown={handleKeydown}
 		role="presentation"
 	>
 		<!-- Modal Content -->
-		<div 
+		<div
 			class="theme-bg-secondary rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-hidden theme-border"
 			style="background-color: var(--bg-secondary); border-color: var(--border-color);"
 			role="dialog"
@@ -92,10 +88,12 @@
 						src={pokemon.sprites.other['official-artwork'].front_default || '/favicon.png'}
 						alt={pokemon.name}
 						class="w-12 h-12 object-contain"
+						width="48" height="48"
+						loading="lazy"
 					/>
 					<div>
 						<h2 id="modal-title" class="text-lg font-bold theme-text capitalize">
-							Tambah {pokemon.name} ke Tim
+							Add {pokemon.name} to Team
 						</h2>
 						<div class="flex gap-1 mt-1">
 							{#each pokemon.types as type}
@@ -109,14 +107,8 @@
 						</div>
 					</div>
 				</div>
-				<button
-					on:click={handleClose}
-					class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors"
-					aria-label="Tutup modal"
-				>
-					<svg class="w-5 h-5 theme-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-					</svg>
+				<button onclick={handleClose} class="btn btn-ghost btn-sm btn-circle" aria-label="Close modal">
+					<X size={18} />
 				</button>
 			</div>
 
@@ -125,19 +117,13 @@
 				{#if !createNewTeam}
 					<!-- Team Selection -->
 					<div class="space-y-3">
-						<h3 class="text-sm font-semibold theme-text">Pilih Tim:</h3>
-						
+						<h3 class="text-sm font-semibold theme-text">Select Team:</h3>
+
 						{#if availableTeams.length === 0}
 							<div class="text-center py-6">
-								<svg class="mx-auto h-10 w-10 theme-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-								</svg>
-								<p class="mt-2 text-sm theme-text-secondary">
-									Tidak ada tim yang tersedia atau semua tim sudah penuh
-								</p>
-								<p class="text-xs theme-text-muted">
-									Buat tim baru untuk menambahkan Pokémon ini
-								</p>
+								<Plus size={40} class="mx-auto theme-text-secondary mb-2" />
+								<p class="mt-2 text-sm theme-text-secondary">No teams available or all teams are full</p>
+								<p class="text-xs theme-text-muted">Create a new team to add this PokÃ©mon</p>
 							</div>
 						{:else}
 							<div class="space-y-2">
@@ -148,13 +134,11 @@
 											type="radio"
 											bind:group={selectedTeamId}
 											value={team.id}
-											class="text-blue-600 focus:ring-blue-500"
+											class="radio radio-primary"
 										/>
 										<div class="flex-1">
 											<div class="font-medium theme-text">{team.name}</div>
-											<div class="text-sm theme-text-secondary">
-												{team.pokemons.length}/6 Pokémon
-											</div>
+											<div class="text-sm theme-text-secondary">{team.pokemons.length}/6 PokÃ©mon</div>
 										</div>
 									</label>
 								{/each}
@@ -163,55 +147,48 @@
 
 						<!-- Create New Team Button -->
 						<button
-							on:click={() => createNewTeam = true}
-							class="w-full flex items-center justify-center gap-2 p-3 border-2 border-dashed theme-border theme-text-secondary hover:theme-bg-tertiary transition-colors rounded-lg"
-							style="border-color: var(--border-color);"
+							onclick={() => createNewTeam = true}
+							class="btn btn-outline btn-sm w-full gap-2"
 						>
-							<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-							</svg>
-							Buat Tim Baru
+							<Plus size={14} />
+							Create New Team
 						</button>
 					</div>
 				{:else}
 					<!-- Create New Team Form -->
 					<div class="space-y-3">
 						<div class="flex items-center gap-2">
-												<button
-						on:click={() => { createNewTeam = false; newTeamName = ''; }}
-						class="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
-						aria-label="Kembali ke pilihan tim"
-					>
-						<svg class="w-4 h-4 theme-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-						</svg>
-					</button>
-							<h3 class="text-sm font-semibold theme-text">Buat Tim Baru:</h3>
+							<button
+								onclick={() => { createNewTeam = false; newTeamName = ''; }}
+								class="btn btn-ghost btn-xs btn-circle"
+								aria-label="Back to team selection"
+							>
+								<ChevronLeft size={16} />
+							</button>
+							<h3 class="text-sm font-semibold theme-text">Create New Team:</h3>
 						</div>
-						
+
 						<div class="space-y-3">
 							<div>
-								<label for="team-name" class="block text-sm font-medium theme-text mb-1">
-									Nama Tim
-								</label>
+								<label for="team-name" class="block text-sm font-medium theme-text mb-1">Team Name</label>
 								<input
 									id="team-name"
 									type="text"
 									bind:value={newTeamName}
-									placeholder="Masukkan nama tim..."
-									class="w-full px-3 py-2 rounded-lg theme-border theme-bg-secondary theme-text focus:outline-none focus:ring-2 focus:ring-blue-500"
+									placeholder="Enter team name..."
+									class="input input-bordered w-full"
 									style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-main);"
 									maxlength="50"
-									on:keydown={(e) => e.key === 'Enter' && handleCreateTeam()}
+									onkeydown={(e) => e.key === 'Enter' && handleCreateTeam()}
 								/>
 							</div>
-							
+
 							<button
-								on:click={handleCreateTeam}
+								onclick={handleCreateTeam}
 								disabled={!newTeamName.trim()}
-								class="w-full px-4 py-2 bg-green-500 hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors"
+								class="btn btn-success w-full"
 							>
-								Buat Tim
+								Create Team
 							</button>
 						</div>
 					</div>
@@ -221,19 +198,13 @@
 			<!-- Modal Footer -->
 			{#if !createNewTeam}
 				<div class="flex gap-3 p-6 theme-border-t" style="border-color: var(--border-color);">
+					<button onclick={handleClose} class="btn btn-ghost flex-1">Cancel</button>
 					<button
-						on:click={handleClose}
-						class="flex-1 px-4 py-2 theme-border theme-text hover:theme-bg-tertiary rounded-lg font-medium transition-colors"
-						style="border-color: var(--border-color);"
-					>
-						Batal
-					</button>
-					<button
-						on:click={handleAddToTeam}
+						onclick={handleAddToTeam}
 						disabled={!selectedTeamId}
-						class="flex-1 px-4 py-2 bg-blue-500 hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-lg font-medium transition-colors"
+						class="btn btn-primary flex-1"
 					>
-						Tambahkan
+						Add to Team
 					</button>
 				</div>
 			{/if}

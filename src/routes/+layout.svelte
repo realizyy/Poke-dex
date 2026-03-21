@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { i18n } from '$lib/i18n';
-	import { ParaglideJS } from '@inlang/paraglide-sveltekit';
 	import '../app.css';
 	import '$lib/fonts.css';
 	// Import theme store to ensure it's initialized
@@ -19,13 +17,11 @@
 	<link rel="icon" type="image/png" href="/favicon.ico" />
 </svelte:head>
 
-<ParaglideJS {i18n}>
-	<div class="min-h-screen transition-colors duration-300" style="background-color: var(--bg-main); color: var(--text-primary);">
-		<Header />
-		<main>
-			{@render children()}
-		</main>
-		<CacheStatus />
-		<ToastContainer />
-	</div>
-</ParaglideJS>
+<div class="min-h-screen transition-colors duration-300" style="background-color: var(--bg-main); color: var(--text-primary);">
+	<Header />
+	<main>
+		{@render children()}
+	</main>
+	<CacheStatus />
+	<ToastContainer />
+</div>

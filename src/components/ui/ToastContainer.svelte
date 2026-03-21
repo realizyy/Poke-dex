@@ -1,54 +1,42 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition';
 	import { flip } from 'svelte/animate';
-	import { toastStore } from '$lib/stores/toast-store';
+	import { toastStore } from '$lib/stores/toast-store.svelte';
 	import Toast from './Toast.svelte';
-	import type { Toast as ToastType } from '$lib/types';
-	
-	let toasts: ToastType[] = [];
-	
-	// Subscribe to toast store
-	toastStore.subscribe(value => {
-		toasts = value;
-	});
-	
-	function handleToastClose(event: CustomEvent<string>) {
-		toastStore.remove(event.detail);
-	}
 </script>
 
-<!-- Toast Container -->
+<!-- Toast Container — desktop (top-right) -->
 <div
-	class="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm w-full pointer-events-none"
+	class="fixed top-4 right-4 z-50 hidden flex-col gap-2 max-w-sm w-full pointer-events-none md:flex"
 	aria-live="polite"
 	aria-label="Notifications"
 >
-	{#each toasts as toast (toast.id)}
+	{#each toastStore.toasts as toast (toast.id)}
 		<div
 			class="pointer-events-auto"
 			animate:flip={{ duration: 300 }}
-			in:fly={{ x: 400, duration: 300, delay: 0 }}
+			in:fly={{ x: 400, duration: 300 }}
 			out:fly={{ x: 400, duration: 200 }}
 		>
-			<Toast {toast} on:close={handleToastClose} />
+			<Toast {toast} onclose={(id) => toastStore.remove(id)} />
 		</div>
 	{/each}
 </div>
 
-<!-- Mobile Toast Container -->
+<!-- Toast Container — mobile (below header) -->
 <div
 	class="fixed top-16 left-4 right-4 z-50 flex flex-col gap-2 pointer-events-none md:hidden"
 	aria-live="polite"
 	aria-label="Mobile notifications"
 >
-	{#each toasts as toast (toast.id)}
+	{#each toastStore.toasts as toast (toast.id)}
 		<div
 			class="pointer-events-auto"
 			animate:flip={{ duration: 300 }}
-			in:fly={{ y: -100, duration: 300, delay: 0 }}
+			in:fly={{ y: -100, duration: 300 }}
 			out:fly={{ y: -100, duration: 200 }}
 		>
-			<Toast {toast} on:close={handleToastClose} />
+			<Toast {toast} onclose={(id) => toastStore.remove(id)} />
 		</div>
 	{/each}
 </div>

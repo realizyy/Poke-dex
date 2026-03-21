@@ -1,4 +1,4 @@
-import type { Pokemon, PokemonSpecies, SearchFilters } from '$lib/types';
+import type { Pokemon, PokemonSpecies, SearchFilters, EncounterArea } from '$lib/types';
 import { toastStore } from '$lib/stores/toast-store';
 
 const POKEMON_API_BASE = 'https://pokeapi.co/api/v2';
@@ -11,6 +11,12 @@ const CACHE_METADATA = new Map<string, { timestamp: number, expiry: number }>();
 // Popular/Featured Pokemon IDs that should be preloaded
 const FEATURED_POKEMON_IDS = [1, 4, 7, 25, 39, 52, 54, 74, 104, 113, 133, 143, 150, 151, 251, 384, 493];
 const INITIAL_BATCH_SIZE = 50;
+
+// ID ranges per generation — used to limit fetches when a gen filter is active
+const GENERATION_ID_RANGES: Record<number, [number, number]> = {
+	1: [1, 151],   2: [152, 251], 3: [252, 386], 4: [387, 493],
+	5: [494, 649], 6: [650, 721], 7: [722, 809], 8: [810, 905], 9: [906, 1025]
+};
 
 export class PokemonService {
 	// Cache management methods
@@ -86,6 +92,18 @@ export class PokemonService {
 			throw error;
 		}
 	}
+
+	static async fetchPokemonByName(name: string): Promise<Pokemon> {
+		const key = name.toLowerCase().trim();
+		const cacheKey = `pokemon-${key}`;
+		const cached = this.getCachedData(cacheKey);
+		if (cached) return cached;
+		const response = await fetch(`${POKEMON_API_BASE}/pokemon/${key}`);
+		if (!response.ok) throw new Error(`Pokemon "${name}" not found`);
+		const pokemon = await response.json();
+		this.setCacheWithTTL(cacheKey, pokemon);
+		return pokemon;
+	}
 	
 	static async fetchPokemonSpecies(id: number): Promise<PokemonSpecies> {
 		const cacheKey = `species-${id}`;
@@ -103,6 +121,17 @@ export class PokemonService {
 		const species = await response.json();
 		this.setCacheWithTTL(cacheKey, species);
 		return species;
+	}
+
+	static async fetchEncounters(pokemonId: number): Promise<EncounterArea[]> {
+		const cacheKey = `encounters-${pokemonId}`;
+		const cached = this.getCachedData(cacheKey);
+		if (cached) return cached;
+		const response = await fetch(`${POKEMON_API_BASE}/pokemon/${pokemonId}/encounters`);
+		if (!response.ok) throw new Error(`Failed to fetch encounters for Pokemon ${pokemonId}`);
+		const data: EncounterArea[] = await response.json();
+		this.setCacheWithTTL(cacheKey, data, 15 * 60 * 1000);
+		return data;
 	}
 
 	static async fetchEvolutionChain(chainId: number): Promise<any> {
@@ -205,58 +234,95 @@ export class PokemonService {
 		return ids.map(id => allResults.find(p => p.id === id)).filter(Boolean) as Pokemon[];
 	}
 	
-	static async fetchPokemonWithFilters(filters: SearchFilters, limit: number = 50, offset: number = 0): Promise<{pokemons: Pokemon[], hasMore: boolean}> {
-		// Don't fetch anything if no filters are active and no query
-		const hasActiveFilters = filters.types.length > 0 || 
-			(filters.minStats && Object.keys(filters.minStats).length > 0) ||
-			(filters.maxStats && Object.keys(filters.maxStats).length > 0);
-		
-		if (!hasActiveFilters) {
-			return {
-				pokemons: [],
-				hasMore: false
-			};
+	/**
+	 * Fetches the list of Pokémon IDs that belong to a given type via the /type endpoint.
+	 * Returns IDs ≤ 10000 (filters out non-standard forms above that range).
+	 */
+	static async fetchIdsByType(typeName: string): Promise<number[]> {
+		const cacheKey = `type-ids-${typeName}`;
+		const cached = this.getCachedData(cacheKey);
+		if (cached) return cached;
+
+		const response = await fetch(`${POKEMON_API_BASE}/type/${typeName}`);
+		if (!response.ok) throw new Error(`Failed to fetch type: ${typeName}`);
+
+		const data = await response.json();
+		const ids: number[] = data.pokemon
+			.map((entry: { pokemon: { url: string } }) => this.extractIdFromUrl(entry.pokemon.url))
+			.filter((id: number) => id <= 10000); // exclude non-standard form IDs
+
+		this.setCacheWithTTL(cacheKey, ids, CACHE_TTL * 3); // type lists rarely change
+		return ids;
+	}
+
+	static async fetchPokemonWithFilters(filters: SearchFilters, limit: number = 50, offset: number = 0): Promise<{pokemons: Pokemon[], hasMore: boolean, totalResults: number}> {
+		const hasTypeFilter = filters.types.length > 0;
+		const hasGenFilter  = filters.generations && filters.generations.length > 0;
+		const hasStatFilter =
+			(filters.minStats && Object.values(filters.minStats).some(Boolean)) ||
+			(filters.maxStats && Object.values(filters.maxStats).some(Boolean));
+
+		if (!hasTypeFilter && !hasGenFilter && !hasStatFilter) {
+			return { pokemons: [], hasMore: false, totalResults: 0 };
 		}
 
-		// For complex filters, fetch a reasonable range and filter client-side
-		const fetchSize = Math.min(1000, offset + limit * 2);
-		const allPokemon = await this.fetchPokemonRange(1, fetchSize);
-		
-		let filtered = allPokemon.filter(pokemon => {
-			// Filter by types
-			if (filters.types.length > 0) {
-				const hasMatchingType = pokemon.types.some(t => 
-					filters.types.includes(t.type.name)
-				);
-				if (!hasMatchingType) return false;
+		let idsToFetch: number[];
+
+		if (hasTypeFilter) {
+			// Use the /type endpoint — fetches only the Pokémon for each selected type
+			// (union: Pokémon that have ANY of the selected types)
+			const typeLists = await Promise.all(filters.types.map(t => this.fetchIdsByType(t)));
+			const unionSet = new Set<number>();
+			for (const list of typeLists) list.forEach(id => unionSet.add(id));
+			idsToFetch = Array.from(unionSet);
+
+			// Intersect with generation ranges if a gen filter is also active
+			if (hasGenFilter) {
+				const genSet = new Set<number>();
+				for (const gen of filters.generations!) {
+					const range = GENERATION_ID_RANGES[parseInt(gen.toString())];
+					if (range) for (let id = range[0]; id <= range[1]; id++) genSet.add(id);
+				}
+				idsToFetch = idsToFetch.filter(id => genSet.has(id));
 			}
-			
-			// Filter by stats
-			if (filters.minStats || filters.maxStats) {
+		} else if (hasGenFilter) {
+			// Gen filter only — use known ID ranges
+			idsToFetch = [];
+			for (const gen of filters.generations!) {
+				const range = GENERATION_ID_RANGES[parseInt(gen.toString())];
+				if (range) for (let id = range[0]; id <= range[1]; id++) idsToFetch.push(id);
+			}
+		} else {
+			// Stat filter only — must scan all Pokémon
+			idsToFetch = Array.from({ length: 1025 }, (_, i) => i + 1);
+		}
+
+		// Sort by ID for consistent ordering
+		idsToFetch.sort((a, b) => a - b);
+
+		const allPokemon = await this.fetchPokemonBatch(idsToFetch);
+
+		const filtered = allPokemon.filter(pokemon => {
+			if (hasStatFilter) {
 				const stats = this.getPokemonStats(pokemon);
-				
 				if (filters.minStats) {
-					for (const [statName, minValue] of Object.entries(filters.minStats)) {
-						if (minValue && stats[statName] < minValue) return false;
+					for (const [k, min] of Object.entries(filters.minStats)) {
+						if (min && stats[k] < min) return false;
 					}
 				}
-				
 				if (filters.maxStats) {
-					for (const [statName, maxValue] of Object.entries(filters.maxStats)) {
-						if (maxValue && stats[statName] > maxValue) return false;
+					for (const [k, max] of Object.entries(filters.maxStats)) {
+						if (max && stats[k] > max) return false;
 					}
 				}
 			}
-			
 			return true;
 		});
-		
-		const paginatedResults = filtered.slice(offset, offset + limit);
-		const hasMore = filtered.length > offset + limit;
-		
+
 		return {
-			pokemons: paginatedResults,
-			hasMore
+			pokemons: filtered.slice(offset, offset + limit),
+			hasMore: filtered.length > offset + limit,
+			totalResults: filtered.length
 		};
 	}
 	
