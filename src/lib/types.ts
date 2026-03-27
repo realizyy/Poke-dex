@@ -17,7 +17,7 @@ export interface Pokemon {
 		};
 	};
 	stats: { base_stat: number; stat: { name: string } }[];
-	abilities: { ability: { name: string } }[];
+	abilities: { ability: { name: string }; is_hidden: boolean }[];
 	moves: { move: { name: string } }[];
 	species: { url: string };
 	base_experience: number;
@@ -30,7 +30,9 @@ export interface PokemonSpecies {
 	color: { name: string };
 	habitat: { name: string } | null;
 	capture_rate: number;
+	base_happiness: number;
 	evolution_chain?: { url: string };
+	flavor_text_entries: { flavor_text: string; language: { name: string }; version: { name: string } }[];
 	// Breeding / egg data
 	egg_groups: { name: string; url: string }[];
 	gender_rate: number; // -1 = genderless; 0–8 (female fraction × 8)
@@ -341,4 +343,101 @@ export interface Machine {
 	item: { name: string; url: string };
 	move: { name: string; url: string };
 	version_group: { name: string; url: string };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TCG types (TCGDex API — https://tcgdex.dev)
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Brief card object returned by list/search endpoints */
+export interface TcgCardBrief {
+	id: string;       // e.g. "swsh3-136"
+	localId: string;  // e.g. "136"
+	name: string;
+	image?: string;   // base URL — append "/high.webp" or "/low.webp"
+}
+
+/** Attack on a TCG card */
+export interface TcgAttack {
+	cost: string[];       // energy cost, e.g. ["Fire", "Colorless"]
+	name: string;
+	effect?: string;
+	damage?: number | string;
+}
+
+/** Weakness / Resistance entry */
+export interface TcgWeakness {
+	type: string;
+	value: string; // e.g. "×2", "+30", "-20"
+}
+
+/** Card variant flags */
+export interface TcgVariants {
+	firstEdition: boolean;
+	holo: boolean;
+	normal: boolean;
+	reverse: boolean;
+	wPromo: boolean;
+}
+
+/** Format legality */
+export interface TcgLegal {
+	standard: boolean;
+	expanded: boolean;
+}
+
+/** Full card object returned by /cards/{id} */
+export interface TcgCard {
+	category: 'Pokemon' | 'Trainer' | 'Energy';
+	id: string;
+	localId: string;
+	name: string;
+	image?: string;
+	illustrator?: string;
+	rarity?: string;
+	hp?: number;
+	types?: string[];
+	evolveFrom?: string;
+	description?: string;
+	stage?: string;        // "Basic" | "Stage1" | "Stage2" | "VMAX" | etc.
+	attacks?: TcgAttack[];
+	weaknesses?: TcgWeakness[];
+	resistances?: TcgWeakness[];
+	retreat?: number;
+	regulationMark?: string;
+	variants?: TcgVariants;
+	legal?: TcgLegal;
+	set: TcgSetBrief;
+}
+
+/** Brief set object returned by list endpoints */
+export interface TcgSetBrief {
+	id: string;       // e.g. "swsh3"
+	name: string;
+	logo?: string;    // full URL to logo image
+	symbol?: string;  // full URL to set symbol
+	cardCount: { total: number; official: number };
+}
+
+/** Full set object returned by /sets/{id} */
+export interface TcgSet extends TcgSetBrief {
+	serie?: { id: string; name: string };
+	releaseDate?: string;
+	cards: TcgCardBrief[];
+}
+
+/** Series (generation group) object */
+export interface TcgSeries {
+	id: string;
+	name: string;
+	logo?: string;
+	sets: TcgSetBrief[];
+}
+
+/** Lightweight card brief returned when searching by Pokémon name */
+export interface TcgSearchResult {
+	cards: TcgCardBrief[];
+	total: number;
+	page: number;
+	itemsPerPage: number;
 }

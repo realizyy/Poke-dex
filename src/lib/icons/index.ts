@@ -47,5 +47,7 @@ export {
 	MapPin,
 	Baby,
 	Images,
-	Disc
+	Disc,
+	// TCG
+	Layers
 } from 'lucide-svelte';

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { Home, Search, Users, Swords, Package, Menu, X, ArrowLeftRight } from '$lib/icons';
+	import { Home, Search, Users, Swords, Package, Menu, X, ArrowLeftRight, Layers } from '$lib/icons';
 	import ThemeToggle from '../ui/ThemeToggle.svelte';
 
 	const navItems = [
@@ -10,7 +10,8 @@
 		{ href: '/teams',   label: 'Teams',   Icon: Users },
 		{ href: '/battle',  label: 'Battle',  Icon: Swords },
 		{ href: '/items',   label: 'Items',   Icon: Package },
-		{ href: '/compare', label: 'Compare', Icon: ArrowLeftRight }
+		{ href: '/compare', label: 'Compare', Icon: ArrowLeftRight },
+		{ href: '/tcg',     label: 'TCG',     Icon: Layers }
 	];
 
 	const currentPath = $derived($page.url.pathname);
