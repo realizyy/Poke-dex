@@ -65,6 +65,6 @@ CI (`.github/workflows/ci.yml`) runs lint, type check, unit tests, build and e2e
 ## Known gaps
 
 - Offline support (a service worker) is not implemented.
-- 76 `{#each}` blocks have no key. ESLint reports them as warnings.
+- 75 `{#each}` blocks have no key. ESLint reports them as warnings.
 - Some decorative overlays on type colored cards still fail color contrast. The budgets in `e2e/a11y.test.ts` show where.
 - TypeScript stays on 6 because SvelteKit 3 requires `typescript ^6`.
