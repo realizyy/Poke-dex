@@ -3,7 +3,7 @@
 	import { TcgService } from '$lib/services/tcg-service';
 	import type { TcgCard } from '$lib/types';
 
-	let { data } = $props<{ data: { card: TcgCard } }>();
+	let { data }: { data: { card: TcgCard } } = $props();
 	const card = $derived(data.card);
 
 	// Energy type → colour mapping (unofficial but widely recognised)

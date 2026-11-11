@@ -4,7 +4,7 @@
 	import { TcgService } from '$lib/services/tcg-service';
 	import type { TcgCardBrief } from '$lib/types';
 
-	let { data } = $props<{ data: { cards: TcgCardBrief[]; query: { name: string; types: string; rarity: string; hpMin?: number; hpMax?: number; setId: string; page: number; } } }>();
+	let { data }: { data: { cards: TcgCardBrief[]; query: { name: string; types: string; rarity: string; hpMin?: number; hpMax?: number; setId: string; page: number; } } } = $props();
 
 	const cards = $derived(data.cards ?? []);
 	const query = $derived(data.query);

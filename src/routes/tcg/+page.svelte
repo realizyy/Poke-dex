@@ -2,7 +2,7 @@
 	import { Layers } from '$lib/icons';
 	import type { TcgSeries, TcgSetBrief } from '$lib/types';
 
-	let { data } = $props<{ data: { series: TcgSeries[] } }>();
+	let { data }: { data: { series: TcgSeries[] } } = $props();
 
 	const series = $derived(data.series ?? []);
 

@@ -3,7 +3,7 @@
 	import type { TcgSet, TcgCardBrief } from '$lib/types';
 	import { TcgService } from '$lib/services/tcg-service';
 
-	let { data } = $props<{ data: { set: TcgSet } }>();
+	let { data }: { data: { set: TcgSet } } = $props();
 	const set = $derived(data.set);
 
 	const rarityOrder = [
