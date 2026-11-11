@@ -14,11 +14,11 @@
 </script>
 
 <div>
-	<div class="flex justify-between items-center mb-1">
-		<span class="text-sm font-medium theme-text-secondary">{getStatName(name)}</span>
-		<span class="text-sm font-bold theme-text">{value}</span>
+	<div class="mb-1 flex items-center justify-between">
+		<span class="theme-text-secondary text-sm font-medium">{getStatName(name)}</span>
+		<span class="theme-text text-sm font-bold">{value}</span>
 	</div>
-	<div class="w-full rounded-full h-2" style="background-color: var(--bg-tertiary);">
+	<div class="h-2 w-full rounded-full" style="background-color: var(--bg-tertiary);">
 		<div
 			class="h-2 rounded-full {getStatColor(value)} transition-all duration-500"
 			style="width: {pct}%;"

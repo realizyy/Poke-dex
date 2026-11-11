@@ -67,7 +67,7 @@ export class SearchFilterUtils {
 	static toggleType(filters: SearchFilters, type: string): SearchFilters {
 		const newFilters = { ...filters };
 		if (newFilters.types.includes(type)) {
-			newFilters.types = newFilters.types.filter(t => t !== type);
+			newFilters.types = newFilters.types.filter((t) => t !== type);
 		} else {
 			newFilters.types = [...newFilters.types, type];
 		}
@@ -80,9 +80,9 @@ export class SearchFilterUtils {
 	static toggleGeneration(filters: SearchFilters, generation: number): SearchFilters {
 		const genString = generation.toString();
 		const newFilters = { ...filters };
-		
+
 		if (newFilters.generations.includes(genString)) {
-			newFilters.generations = newFilters.generations.filter(g => g !== genString);
+			newFilters.generations = newFilters.generations.filter((g) => g !== genString);
 		} else {
 			newFilters.generations = [...newFilters.generations, genString];
 		}
@@ -99,7 +99,7 @@ export class SearchFilterUtils {
 		value: number
 	): SearchFilters {
 		const newFilters = { ...filters };
-		
+
 		if (type === 'min') {
 			if (!newFilters.minStats) newFilters.minStats = {};
 			newFilters.minStats[statName] = value;
@@ -107,7 +107,7 @@ export class SearchFilterUtils {
 			if (!newFilters.maxStats) newFilters.maxStats = {};
 			newFilters.maxStats[statName] = value;
 		}
-		
+
 		return newFilters;
 	}
 

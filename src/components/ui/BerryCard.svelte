@@ -16,11 +16,11 @@
 	const typeColor = $derived(getTypeColor(berry.natural_gift_type.name));
 
 	const FLAVOR_COLORS: Record<string, string> = {
-		spicy:  '#ef4444',
-		dry:    '#38bdf8',
-		sweet:  '#f472b6',
+		spicy: '#ef4444',
+		dry: '#38bdf8',
+		sweet: '#f472b6',
 		bitter: '#84cc16',
-		sour:   '#eab308'
+		sour: '#eab308'
 	};
 	const FLAVOR_NAMES = ['spicy', 'dry', 'sweet', 'bitter', 'sour'] as const;
 
@@ -31,7 +31,7 @@
 
 <button
 	{onclick}
-	class="group relative flex w-full flex-col overflow-hidden rounded-2xl text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+	class="group relative flex w-full flex-col overflow-hidden rounded-2xl text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-lg focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:outline-none"
 	style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
 >
 	<!-- Type color accent strip -->
@@ -41,27 +41,28 @@
 		<!-- Sprite with soft glow -->
 		<div class="relative flex h-14 w-14 items-center justify-center">
 			<div
-				class="absolute inset-0 rounded-full blur-md opacity-25 transition-opacity duration-300 group-hover:opacity-40"
+				class="absolute inset-0 rounded-full opacity-25 blur-md transition-opacity duration-300 group-hover:opacity-40"
 				style="background-color: {typeColor};"
 			></div>
 			<img
 				src={spriteUrl}
 				alt="{displayName} Berry"
 				class="relative z-10 h-12 w-12 object-contain drop-shadow"
-				width="48" height="48"
+				width="48"
+				height="48"
 				onerror={(e) => ((e.currentTarget as HTMLImageElement).style.display = 'none')}
 			/>
 		</div>
 
 		<!-- Name -->
-		<p class="text-center text-sm font-bold leading-snug theme-text">
+		<p class="theme-text text-center text-sm leading-snug font-bold">
 			{displayName} Berry
 		</p>
 
 		<!-- Type badge + power -->
 		<div class="flex flex-wrap items-center justify-center gap-1.5">
 			<span
-				class="rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize text-white"
+				class="rounded-full px-2.5 py-0.5 text-xs font-semibold text-white capitalize"
 				style="background-color: {typeColor};"
 			>
 				{berry.natural_gift_type.name}

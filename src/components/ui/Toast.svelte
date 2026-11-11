@@ -55,8 +55,8 @@
 	</div>
 
 	<!-- Content -->
-	<div class="flex-1 min-w-0">
-		<p class="font-semibold leading-snug">{toast.title}</p>
+	<div class="min-w-0 flex-1">
+		<p class="leading-snug font-semibold">{toast.title}</p>
 		{#if toast.message}
 			<p class="mt-0.5 text-sm opacity-80">{toast.message}</p>
 		{/if}

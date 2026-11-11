@@ -93,9 +93,7 @@ export class NatureService {
 		const cached = get<Nature[]>(key);
 		if (cached) return cached;
 
-		const list = await fetchJSON<{ results: { url: string }[] }>(
-			`${API_BASE}/nature?limit=25`
-		);
+		const list = await fetchJSON<{ results: { url: string }[] }>(`${API_BASE}/nature?limit=25`);
 		const natures = await batchFetch<Nature>(
 			list.results.map((r) => r.url),
 			(url) => {

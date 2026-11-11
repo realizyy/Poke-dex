@@ -70,9 +70,7 @@ export class ItemService {
 		const cached = get<Berry[]>(key);
 		if (cached) return cached;
 
-		const list = await fetchJSON<{ results: { url: string }[] }>(
-			`${API_BASE}/berry?limit=64`
-		);
+		const list = await fetchJSON<{ results: { url: string }[] }>(`${API_BASE}/berry?limit=64`);
 		const berries = await batchFetch<Berry>(
 			list.results.map((r) => r.url),
 			(url) => {
@@ -99,9 +97,7 @@ export class ItemService {
 		const cached = get<ItemPocket[]>(key);
 		if (cached) return cached;
 
-		const list = await fetchJSON<{ results: { url: string }[] }>(
-			`${API_BASE}/item-pocket`
-		);
+		const list = await fetchJSON<{ results: { url: string }[] }>(`${API_BASE}/item-pocket`);
 		const pockets = await batchFetch<ItemPocket>(
 			list.results.map((r) => r.url),
 			(url) => {
@@ -111,7 +107,17 @@ export class ItemService {
 			TTL.pocket
 		);
 		// Sort into a sensible display order
-		const ORDER = ['pokeballs', 'medicine', 'hold-items', 'machines', 'misc', 'berries', 'mail', 'battle', 'key'];
+		const ORDER = [
+			'pokeballs',
+			'medicine',
+			'hold-items',
+			'machines',
+			'misc',
+			'berries',
+			'mail',
+			'battle',
+			'key'
+		];
 		pockets.sort((a, b) => {
 			const ia = ORDER.indexOf(a.name);
 			const ib = ORDER.indexOf(b.name);

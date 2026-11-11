@@ -12,7 +12,7 @@ export class SortUtils {
 
 		return [...pokemons].sort((a, b) => {
 			let comparison = 0;
-			
+
 			switch (sortBy) {
 				case 'id':
 					comparison = a.id - b.id;
@@ -26,7 +26,7 @@ export class SortUtils {
 				default:
 					comparison = a.id - b.id;
 			}
-			
+
 			return sortOrder === 'desc' ? -comparison : comparison;
 		});
 	}

@@ -17,7 +17,10 @@
 	<link rel="icon" type="image/png" href="/favicon.ico" />
 </svelte:head>
 
-<div class="min-h-screen transition-colors duration-300" style="background-color: var(--bg-main); color: var(--text-primary);">
+<div
+	class="min-h-screen transition-colors duration-300"
+	style="background-color: var(--bg-main); color: var(--text-primary);"
+>
 	<Header />
 	<main>
 		{@render children()}

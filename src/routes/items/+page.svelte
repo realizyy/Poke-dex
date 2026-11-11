@@ -27,9 +27,7 @@
 	);
 	const total = $derived(categoryOverride ? categoryOverride.total : data.total);
 	const offset = $derived(
-		categoryOverride
-			? categoryOverride.items.length
-			: data.initialItems.length + extraOffset
+		categoryOverride ? categoryOverride.items.length : data.initialItems.length + extraOffset
 	);
 	const hasMore = $derived(!categoryOverride && offset < data.total);
 
@@ -42,22 +40,24 @@
 	);
 
 	const POCKET_META: Record<string, { label: string; emoji: string; color: string }> = {
-		pokeballs:    { label: 'Poké Balls',  emoji: '🔴', color: '#ef4444' },
-		medicine:     { label: 'Medicine',    emoji: '💊', color: '#22c55e' },
-		'hold-items': { label: 'Hold Items',  emoji: '🛡️', color: '#8b5cf6' },
-		machines:     { label: 'Machines',    emoji: '💿', color: '#f59e0b' },
-		misc:         { label: 'Misc',        emoji: '🎁', color: '#6b7280' },
-		mail:         { label: 'Mail',        emoji: '✉️', color: '#64748b' },
-		battle:       { label: 'Battle',      emoji: '⚔️', color: '#dc2626' },
-		key:          { label: 'Key Items',   emoji: '🗝️', color: '#3b82f6' }
+		pokeballs: { label: 'Poké Balls', emoji: '🔴', color: '#ef4444' },
+		medicine: { label: 'Medicine', emoji: '💊', color: '#22c55e' },
+		'hold-items': { label: 'Hold Items', emoji: '🛡️', color: '#8b5cf6' },
+		machines: { label: 'Machines', emoji: '💿', color: '#f59e0b' },
+		misc: { label: 'Misc', emoji: '🎁', color: '#6b7280' },
+		mail: { label: 'Mail', emoji: '✉️', color: '#64748b' },
+		battle: { label: 'Battle', emoji: '⚔️', color: '#dc2626' },
+		key: { label: 'Key Items', emoji: '🗝️', color: '#3b82f6' }
 	};
 
 	function pocketMeta(name: string) {
-		return POCKET_META[name] ?? {
-			label: name.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
-			emoji: '',
-			color: '#6b7280'
-		};
+		return (
+			POCKET_META[name] ?? {
+				label: name.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase()),
+				emoji: '',
+				color: '#6b7280'
+			}
+		);
 	}
 
 	async function selectCategory(pocketName: string, categoryName: string) {
@@ -99,21 +99,33 @@
 
 <svelte:head>
 	<title>Item Encyclopedia — Pokédex</title>
-	<meta name="description" content="Browse all Pokémon items: medicines, hold items, Poké Balls, TMs, key items and more." />
+	<meta
+		name="description"
+		content="Browse all Pokémon items: medicines, hold items, Poké Balls, TMs, key items and more."
+	/>
 </svelte:head>
 
 <!-- Hero -->
-<div class="relative overflow-hidden border-b" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
+<div
+	class="relative overflow-hidden border-b"
+	style="background-color: var(--bg-secondary); border-color: var(--border-color);"
+>
 	<!-- Pokéball decorative rings — clipped to right half to prevent arc bleeding onto left -->
 	<div class="pointer-events-none absolute inset-y-0 right-0 w-1/2 overflow-hidden">
-		<div class="absolute -right-16 -top-16 h-80 w-80 rounded-full border-[30px]" style="border-color: #7c3aed1A;"></div>
-		<div class="absolute -right-2 top-12 h-48 w-48 rounded-full border-[18px]" style="border-color: #7c3aed0D;"></div>
+		<div
+			class="absolute -top-16 -right-16 h-80 w-80 rounded-full border-[30px]"
+			style="border-color: #7c3aed1A;"
+		></div>
+		<div
+			class="absolute top-12 -right-2 h-48 w-48 rounded-full border-[18px]"
+			style="border-color: #7c3aed0D;"
+		></div>
 	</div>
 
 	<div class="relative mx-auto max-w-7xl px-5 py-8 sm:px-8 lg:px-12">
 		<div class="flex items-start gap-4">
 			<div>
-				<h1 class="text-2xl font-bold leading-tight theme-text sm:text-3xl">Item Encyclopedia</h1>
+				<h1 class="theme-text text-2xl leading-tight font-bold sm:text-3xl">Item Encyclopedia</h1>
 				<p class="mt-0.5 text-sm" style="color: var(--text-secondary);">
 					{data.total.toLocaleString()} items across {data.pockets.length} pockets
 				</p>
@@ -129,7 +141,9 @@
 				<span class="text-3xl leading-none">🍒</span>
 				<div>
 					<p class="font-bold">Berry Encyclopedia</p>
-					<p class="text-xs" style="color: rgba(255,255,255,0.75);">All 64 berries · flavors, types and growth stats</p>
+					<p class="text-xs" style="color: rgba(255,255,255,0.75);">
+						All 64 berries · flavors, types and growth stats
+					</p>
 				</div>
 			</button>
 
@@ -141,7 +155,9 @@
 				<span class="text-3xl leading-none">💿</span>
 				<div>
 					<p class="font-bold">TM / HM Browser</p>
-					<p class="text-xs" style="color: rgba(255,255,255,0.75);">All machines · moves, versions and more</p>
+					<p class="text-xs" style="color: rgba(255,255,255,0.75);">
+						All machines · moves, versions and more
+					</p>
 				</div>
 			</button>
 		</div>
@@ -151,7 +167,6 @@
 <!-- Main content -->
 <div class="mx-auto max-w-7xl px-5 py-6 sm:px-8 lg:px-12">
 	<div class="flex gap-8">
-
 		<!-- Sidebar -->
 		<aside class="hidden w-52 shrink-0 lg:block">
 			<div class="sticky top-20 space-y-5">
@@ -175,7 +190,7 @@
 						<div>
 							<div class="flex items-center gap-1.5 px-3 py-1">
 								<span class="text-sm leading-none">{meta.emoji}</span>
-								<p class="text-xs font-bold uppercase tracking-wider" style="color: {meta.color};">
+								<p class="text-xs font-bold tracking-wider uppercase" style="color: {meta.color};">
 									{meta.label}
 								</p>
 							</div>
@@ -200,22 +215,25 @@
 
 		<!-- Content area -->
 		<div class="min-w-0 flex-1">
-
 			<!-- Search bar + mobile filter toggle -->
 			<div class="mb-5 flex gap-2">
 				<div class="relative flex-1">
-					<Search size={16} class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2" style="color: var(--text-muted);" />
+					<Search
+						size={16}
+						class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2"
+						style="color: var(--text-muted);"
+					/>
 					<input
 						type="search"
 						placeholder="Search items"
 						bind:value={searchQuery}
-						class="w-full rounded-xl border py-2.5 pl-9 pr-4 text-sm outline-none transition-shadow focus:ring-2"
+						class="w-full rounded-xl border py-2.5 pr-4 pl-9 text-sm transition-shadow outline-none focus:ring-2"
 						style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-main);"
 					/>
 					{#if searchQuery}
 						<button
 							onclick={() => (searchQuery = '')}
-							class="absolute right-3 top-1/2 -translate-y-1/2"
+							class="absolute top-1/2 right-3 -translate-y-1/2"
 							style="color: var(--text-muted);"
 						>
 							<X size={14} />
@@ -251,7 +269,7 @@
 				>
 					<button
 						onclick={clearCategory}
-						class="mb-3 flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold theme-text"
+						class="theme-text mb-3 flex w-full items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold"
 						style="background-color: var(--bg-tertiary);"
 					>
 						<span>📦</span> All Items
@@ -260,10 +278,11 @@
 						{#if pocket.name !== 'berries'}
 							{@const meta = pocketMeta(pocket.name)}
 							<p
-								class="mb-1 mt-3 flex items-center gap-1.5 px-3 text-xs font-bold uppercase tracking-wider"
+								class="mt-3 mb-1 flex items-center gap-1.5 px-3 text-xs font-bold tracking-wider uppercase"
 								style="color: {meta.color};"
 							>
-								<span>{meta.emoji}</span> {meta.label}
+								<span>{meta.emoji}</span>
+								{meta.label}
 							</p>
 							{#each pocket.categories as cat}
 								<button
@@ -295,7 +314,9 @@
 				</div>
 			{:else if searchQuery}
 				<p class="mb-4 text-xs" style="color: var(--text-muted);">
-					{visibleItems.length} result{visibleItems.length !== 1 ? 's' : ''} for "<strong class="theme-text">{searchQuery}</strong>"
+					{visibleItems.length} result{visibleItems.length !== 1 ? 's' : ''} for "<strong
+						class="theme-text">{searchQuery}</strong
+					>"
 				</p>
 			{:else}
 				<p class="mb-4 text-xs" style="color: var(--text-muted);">
@@ -319,8 +340,10 @@
 					>
 						<Package size={32} style="color: var(--text-muted);" />
 					</div>
-					<p class="font-semibold theme-text">No items found</p>
-					<p class="mt-1 text-sm" style="color: var(--text-secondary);">Try a different search or category</p>
+					<p class="theme-text font-semibold">No items found</p>
+					<p class="mt-1 text-sm" style="color: var(--text-secondary);">
+						Try a different search or category
+					</p>
 				</div>
 			{:else}
 				<div class="grid grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -339,12 +362,12 @@
 						class="rounded-xl px-8 py-3 text-sm font-semibold text-white transition-opacity disabled:opacity-50"
 						style="background-color: var(--color-primary);"
 					>
-						{loadingMore ? 'Loading…' : `Load more · ${(total - offset).toLocaleString()} remaining`}
+						{loadingMore
+							? 'Loading…'
+							: `Load more · ${(total - offset).toLocaleString()} remaining`}
 					</button>
 				</div>
 			{/if}
-
 		</div>
 	</div>
 </div>
-

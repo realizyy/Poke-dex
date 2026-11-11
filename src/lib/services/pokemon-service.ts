@@ -1,4 +1,10 @@
-import type { Pokemon, PokemonSpecies, SearchFilters, EncounterArea, EvolutionChain } from '$lib/types';
+import type {
+	Pokemon,
+	PokemonSpecies,
+	SearchFilters,
+	EncounterArea,
+	EvolutionChain
+} from '$lib/types';
 import { toastStore } from '$lib/stores/toast-store.svelte';
 
 const POKEMON_API_BASE = 'https://pokeapi.co/api/v2';
@@ -6,16 +12,25 @@ const POKEMON_CACHE = new Map<string, any>();
 
 // Enhanced caching with TTL and preload strategies
 const CACHE_TTL = 10 * 60 * 1000; // 10 minutes
-const CACHE_METADATA = new Map<string, { timestamp: number, expiry: number }>();
+const CACHE_METADATA = new Map<string, { timestamp: number; expiry: number }>();
 
 // Popular/Featured Pokemon IDs that should be preloaded
-const FEATURED_POKEMON_IDS = [1, 4, 7, 25, 39, 52, 54, 74, 104, 113, 133, 143, 150, 151, 251, 384, 493];
+const FEATURED_POKEMON_IDS = [
+	1, 4, 7, 25, 39, 52, 54, 74, 104, 113, 133, 143, 150, 151, 251, 384, 493
+];
 const INITIAL_BATCH_SIZE = 50;
 
 // ID ranges per generation — used to limit fetches when a gen filter is active
 const GENERATION_ID_RANGES: Record<number, [number, number]> = {
-	1: [1, 151],   2: [152, 251], 3: [252, 386], 4: [387, 493],
-	5: [494, 649], 6: [650, 721], 7: [722, 809], 8: [810, 905], 9: [906, 1025]
+	1: [1, 151],
+	2: [152, 251],
+	3: [252, 386],
+	4: [387, 493],
+	5: [494, 649],
+	6: [650, 721],
+	7: [722, 809],
+	8: [810, 905],
+	9: [906, 1025]
 };
 
 export class PokemonService {
@@ -46,10 +61,8 @@ export class PokemonService {
 
 	// Preload strategies
 	static async preloadFeaturedPokemon(): Promise<void> {
-		const uncachedIds = FEATURED_POKEMON_IDS.filter(id => 
-			!this.isCacheValid(`pokemon-${id}`)
-		);
-		
+		const uncachedIds = FEATURED_POKEMON_IDS.filter((id) => !this.isCacheValid(`pokemon-${id}`));
+
 		if (uncachedIds.length > 0) {
 			// Background preload without blocking
 			this.fetchPokemonBatch(uncachedIds).catch(console.error);
@@ -59,7 +72,7 @@ export class PokemonService {
 	static async preloadInitialBatch(): Promise<Pokemon[]> {
 		const cacheKey = 'initial-batch-50';
 		const cached = this.getCachedData(cacheKey);
-		
+
 		if (cached) {
 			return cached;
 		}
@@ -72,23 +85,26 @@ export class PokemonService {
 	static async fetchPokemon(id: number): Promise<Pokemon> {
 		const cacheKey = `pokemon-${id}`;
 		const cached = this.getCachedData(cacheKey);
-		
+
 		if (cached) {
 			return cached;
 		}
-		
+
 		try {
 			const response = await fetch(`${POKEMON_API_BASE}/pokemon/${id}`);
 			if (!response.ok) {
 				toastStore.error('Pokemon Not Found', `Could not find Pokemon with ID ${id}`);
 				throw new Error(`Failed to fetch Pokemon with id ${id}`);
 			}
-			
+
 			const pokemon = await response.json();
 			this.setCacheWithTTL(cacheKey, pokemon);
 			return pokemon;
 		} catch (error) {
-			toastStore.error('Network Error', 'Failed to load Pokemon data. Please check your connection.');
+			toastStore.error(
+				'Network Error',
+				'Failed to load Pokemon data. Please check your connection.'
+			);
 			throw error;
 		}
 	}
@@ -104,20 +120,20 @@ export class PokemonService {
 		this.setCacheWithTTL(cacheKey, pokemon);
 		return pokemon;
 	}
-	
+
 	static async fetchPokemonSpecies(id: number): Promise<PokemonSpecies> {
 		const cacheKey = `species-${id}`;
 		const cached = this.getCachedData(cacheKey);
-		
+
 		if (cached) {
 			return cached;
 		}
-		
+
 		const response = await fetch(`${POKEMON_API_BASE}/pokemon-species/${id}`);
 		if (!response.ok) {
 			throw new Error(`Failed to fetch Pokemon species with id ${id}`);
 		}
-		
+
 		const species = await response.json();
 		this.setCacheWithTTL(cacheKey, species);
 		return species;
@@ -137,16 +153,16 @@ export class PokemonService {
 	static async fetchEvolutionChain(chainId: number): Promise<EvolutionChain> {
 		const cacheKey = `evolution-chain-${chainId}`;
 		const cached = this.getCachedData(cacheKey);
-		
+
 		if (cached) {
 			return cached;
 		}
-		
+
 		const response = await fetch(`${POKEMON_API_BASE}/evolution-chain/${chainId}`);
 		if (!response.ok) {
 			throw new Error(`Failed to fetch evolution chain with id ${chainId}`);
 		}
-		
+
 		const evolutionChain = await response.json();
 		this.setCacheWithTTL(cacheKey, evolutionChain);
 		return evolutionChain;
@@ -157,11 +173,11 @@ export class PokemonService {
 			// First get the species to find the evolution chain URL
 			const species = await this.fetchPokemonSpecies(pokemonId);
 			const evolutionChainUrl = species.evolution_chain?.url;
-			
+
 			if (!evolutionChainUrl) {
 				return null;
 			}
-			
+
 			// Extract chain ID from URL
 			const chainId = this.extractIdFromUrl(evolutionChainUrl);
 			return await this.fetchEvolutionChain(chainId);
@@ -170,45 +186,48 @@ export class PokemonService {
 			return null;
 		}
 	}
-	
-	static async fetchPokemonList(limit: number = 1000, offset: number = 0): Promise<{results: {name: string, url: string}[], count: number}> {
+
+	static async fetchPokemonList(
+		limit: number = 1000,
+		offset: number = 0
+	): Promise<{ results: { name: string; url: string }[]; count: number }> {
 		const cacheKey = `list-${limit}-${offset}`;
 		const cached = this.getCachedData(cacheKey);
-		
+
 		if (cached) {
 			return cached;
 		}
-		
+
 		const response = await fetch(`${POKEMON_API_BASE}/pokemon?limit=${limit}&offset=${offset}`);
 		if (!response.ok) {
 			throw new Error('Failed to fetch Pokemon list');
 		}
-		
+
 		const data = await response.json();
 		this.setCacheWithTTL(cacheKey, data, CACHE_TTL * 3); // Longer TTL for list data
 		return data;
 	}
-	
+
 	static async searchPokemon(query: string, limit: number = 20): Promise<Pokemon[]> {
 		const pokemonList = await this.fetchPokemonList(1000);
 		const filteredNames = pokemonList.results
-			.filter(p => p.name.toLowerCase().includes(query.toLowerCase()))
+			.filter((p) => p.name.toLowerCase().includes(query.toLowerCase()))
 			.slice(0, limit);
-		
-		const pokemonPromises = filteredNames.map(p => {
+
+		const pokemonPromises = filteredNames.map((p) => {
 			const id = this.extractIdFromUrl(p.url);
 			return this.fetchPokemon(id);
 		});
-		
+
 		return Promise.all(pokemonPromises);
 	}
-	
+
 	static async fetchPokemonBatch(ids: number[]): Promise<Pokemon[]> {
 		// Separate cached and uncached IDs
 		const cached: Pokemon[] = [];
 		const uncachedIds: number[] = [];
-		
-		ids.forEach(id => {
+
+		ids.forEach((id) => {
 			const cachedPokemon = this.getCachedData(`pokemon-${id}`);
 			if (cachedPokemon) {
 				cached.push(cachedPokemon);
@@ -216,24 +235,24 @@ export class PokemonService {
 				uncachedIds.push(id);
 			}
 		});
-		
+
 		// Fetch uncached Pokemon in batches to avoid overwhelming the API
 		const batchSize = 10;
 		const uncachedPromises: Promise<Pokemon>[] = [];
-		
+
 		for (let i = 0; i < uncachedIds.length; i += batchSize) {
 			const batch = uncachedIds.slice(i, i + batchSize);
-			const batchPromises = batch.map(id => this.fetchPokemon(id));
+			const batchPromises = batch.map((id) => this.fetchPokemon(id));
 			uncachedPromises.push(...batchPromises);
 		}
-		
+
 		const uncachedResults = await Promise.all(uncachedPromises);
-		
+
 		// Combine and sort by original order
 		const allResults = [...cached, ...uncachedResults];
-		return ids.map(id => allResults.find(p => p.id === id)).filter(Boolean) as Pokemon[];
+		return ids.map((id) => allResults.find((p) => p.id === id)).filter(Boolean) as Pokemon[];
 	}
-	
+
 	/**
 	 * Fetches the list of Pokémon IDs that belong to a given type via the /type endpoint.
 	 * Returns IDs ≤ 10000 (filters out non-standard forms above that range).
@@ -255,9 +274,13 @@ export class PokemonService {
 		return ids;
 	}
 
-	static async fetchPokemonWithFilters(filters: SearchFilters, limit: number = 50, offset: number = 0): Promise<{pokemons: Pokemon[], hasMore: boolean, totalResults: number}> {
+	static async fetchPokemonWithFilters(
+		filters: SearchFilters,
+		limit: number = 50,
+		offset: number = 0
+	): Promise<{ pokemons: Pokemon[]; hasMore: boolean; totalResults: number }> {
 		const hasTypeFilter = filters.types.length > 0;
-		const hasGenFilter  = filters.generations && filters.generations.length > 0;
+		const hasGenFilter = filters.generations && filters.generations.length > 0;
 		const hasStatFilter =
 			(filters.minStats && Object.values(filters.minStats).some(Boolean)) ||
 			(filters.maxStats && Object.values(filters.maxStats).some(Boolean));
@@ -271,9 +294,9 @@ export class PokemonService {
 		if (hasTypeFilter) {
 			// Use the /type endpoint — fetches only the Pokémon for each selected type
 			// (union: Pokémon that have ANY of the selected types)
-			const typeLists = await Promise.all(filters.types.map(t => this.fetchIdsByType(t)));
+			const typeLists = await Promise.all(filters.types.map((t) => this.fetchIdsByType(t)));
 			const unionSet = new Set<number>();
-			for (const list of typeLists) list.forEach(id => unionSet.add(id));
+			for (const list of typeLists) list.forEach((id) => unionSet.add(id));
 			idsToFetch = Array.from(unionSet);
 
 			// Intersect with generation ranges if a gen filter is also active
@@ -283,7 +306,7 @@ export class PokemonService {
 					const range = GENERATION_ID_RANGES[parseInt(gen.toString())];
 					if (range) for (let id = range[0]; id <= range[1]; id++) genSet.add(id);
 				}
-				idsToFetch = idsToFetch.filter(id => genSet.has(id));
+				idsToFetch = idsToFetch.filter((id) => genSet.has(id));
 			}
 		} else if (hasGenFilter) {
 			// Gen filter only — use known ID ranges
@@ -302,7 +325,7 @@ export class PokemonService {
 
 		const allPokemon = await this.fetchPokemonBatch(idsToFetch);
 
-		const filtered = allPokemon.filter(pokemon => {
+		const filtered = allPokemon.filter((pokemon) => {
 			if (hasStatFilter) {
 				const stats = this.getPokemonStats(pokemon);
 				if (filters.minStats) {
@@ -325,28 +348,28 @@ export class PokemonService {
 			totalResults: filtered.length
 		};
 	}
-	
+
 	static async fetchPokemonRange(start: number, end: number): Promise<Pokemon[]> {
 		const cacheKey = `range-${start}-${end}`;
 		const cached = this.getCachedData(cacheKey);
-		
+
 		if (cached) {
 			return cached;
 		}
-		
+
 		const ids = Array.from({ length: end - start + 1 }, (_, i) => start + i);
 		const results = await this.fetchPokemonBatch(ids);
-		
+
 		// Cache the range result
 		this.setCacheWithTTL(cacheKey, results, CACHE_TTL * 2);
 		return results;
 	}
 
 	// Cache statistics and management
-	static getCacheStats(): { size: number, hitRate: number, memoryUsage: string } {
+	static getCacheStats(): { size: number; hitRate: number; memoryUsage: string } {
 		const cacheSize = POKEMON_CACHE.size;
 		const memoryUsage = `${Math.round(JSON.stringify(Array.from(POKEMON_CACHE.values())).length / 1024 / 1024)} MB`;
-		
+
 		return {
 			size: cacheSize,
 			hitRate: 0, // Could be implemented with hit/miss counters
@@ -368,15 +391,15 @@ export class PokemonService {
 		POKEMON_CACHE.clear();
 		CACHE_METADATA.clear();
 	}
-	
+
 	private static extractIdFromUrl(url: string): number {
 		const matches = url.match(/\/(\d+)\/$/);
 		return matches ? parseInt(matches[1]) : 0;
 	}
-	
-	private static getPokemonStats(pokemon: Pokemon): {[key: string]: number} {
-		const stats: {[key: string]: number} = {};
-		pokemon.stats.forEach(stat => {
+
+	private static getPokemonStats(pokemon: Pokemon): { [key: string]: number } {
+		const stats: { [key: string]: number } = {};
+		pokemon.stats.forEach((stat) => {
 			const statName = stat.stat.name.replace('-', '');
 			stats[statName] = stat.base_stat;
 		});

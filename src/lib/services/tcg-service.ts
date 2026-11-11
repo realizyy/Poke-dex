@@ -6,7 +6,7 @@ const TCG_API_BASE = 'https://api.tcgdex.net/v2/en';
 const TCG_CACHE = new Map<string, unknown>();
 const CACHE_METADATA = new Map<string, { expiry: number }>();
 
-const TTL_LONG = 30 * 60 * 1000;  // 30 min — sets & series rarely change
+const TTL_LONG = 30 * 60 * 1000; // 30 min — sets & series rarely change
 const TTL_SHORT = 10 * 60 * 1000; // 10 min — card search results
 
 async function fetchWithRetry(url: string, retries = 3, timeoutMs = 20000): Promise<Response> {

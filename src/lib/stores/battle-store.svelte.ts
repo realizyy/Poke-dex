@@ -20,8 +20,8 @@ class BattleStore {
 		if (typeof window === 'undefined') return;
 		const t1Id = localStorage.getItem('battle-team1');
 		const t2Id = localStorage.getItem('battle-team2');
-		if (t1Id) this.selectedTeam1 = teams.find(t => t.id === t1Id) ?? null;
-		if (t2Id) this.selectedTeam2 = teams.find(t => t.id === t2Id) ?? null;
+		if (t1Id) this.selectedTeam1 = teams.find((t) => t.id === t1Id) ?? null;
+		if (t2Id) this.selectedTeam2 = teams.find((t) => t.id === t2Id) ?? null;
 	}
 
 	selectTeam1(team: Team | null) {
@@ -60,7 +60,10 @@ class BattleStore {
 
 	simulateBattle() {
 		if (!this.selectedPokemon1 || !this.selectedPokemon2) {
-			toastStore.error('Battle Error', 'Please select Pokémon for both teams before starting battle');
+			toastStore.error(
+				'Battle Error',
+				'Please select Pokémon for both teams before starting battle'
+			);
 			return;
 		}
 

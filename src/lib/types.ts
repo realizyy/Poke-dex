@@ -13,7 +13,12 @@ export interface Pokemon {
 		other: {
 			'official-artwork': { front_default: string; front_shiny: string | null };
 			dream_world: { front_default: string | null; front_female: string | null };
-			home: { front_default: string | null; front_shiny: string | null; front_female: string | null; front_shiny_female: string | null };
+			home: {
+				front_default: string | null;
+				front_shiny: string | null;
+				front_female: string | null;
+				front_shiny_female: string | null;
+			};
 		};
 	};
 	stats: { base_stat: number; stat: { name: string } }[];
@@ -32,7 +37,11 @@ export interface PokemonSpecies {
 	capture_rate: number;
 	base_happiness: number;
 	evolution_chain?: { url: string };
-	flavor_text_entries: { flavor_text: string; language: { name: string }; version: { name: string } }[];
+	flavor_text_entries: {
+		flavor_text: string;
+		language: { name: string };
+		version: { name: string };
+	}[];
 	// Breeding / egg data
 	egg_groups: { name: string; url: string }[];
 	gender_rate: number; // -1 = genderless; 0–8 (female fraction × 8)
@@ -351,15 +360,15 @@ export interface Machine {
 
 /** Brief card object returned by list/search endpoints */
 export interface TcgCardBrief {
-	id: string;       // e.g. "swsh3-136"
-	localId: string;  // e.g. "136"
+	id: string; // e.g. "swsh3-136"
+	localId: string; // e.g. "136"
 	name: string;
-	image?: string;   // base URL — append "/high.webp" or "/low.webp"
+	image?: string; // base URL — append "/high.webp" or "/low.webp"
 }
 
 /** Attack on a TCG card */
 export interface TcgAttack {
-	cost: string[];       // energy cost, e.g. ["Fire", "Colorless"]
+	cost: string[]; // energy cost, e.g. ["Fire", "Colorless"]
 	name: string;
 	effect?: string;
 	damage?: number | string;
@@ -399,7 +408,7 @@ export interface TcgCard {
 	types?: string[];
 	evolveFrom?: string;
 	description?: string;
-	stage?: string;        // "Basic" | "Stage1" | "Stage2" | "VMAX" | etc.
+	stage?: string; // "Basic" | "Stage1" | "Stage2" | "VMAX" | etc.
 	attacks?: TcgAttack[];
 	weaknesses?: TcgWeakness[];
 	resistances?: TcgWeakness[];
@@ -412,10 +421,10 @@ export interface TcgCard {
 
 /** Brief set object returned by list endpoints */
 export interface TcgSetBrief {
-	id: string;       // e.g. "swsh3"
+	id: string; // e.g. "swsh3"
 	name: string;
-	logo?: string;    // full URL to logo image
-	symbol?: string;  // full URL to set symbol
+	logo?: string; // full URL to logo image
+	symbol?: string; // full URL to set symbol
 	cardCount: { total: number; official: number };
 }
 

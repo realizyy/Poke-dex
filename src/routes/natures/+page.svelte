@@ -8,17 +8,13 @@
 
 	const filtered = $derived(
 		searchQuery.trim()
-			? data.natures.filter((n) =>
-					n.name.toLowerCase().includes(searchQuery.toLowerCase())
-				)
+			? data.natures.filter((n) => n.name.toLowerCase().includes(searchQuery.toLowerCase()))
 			: data.natures
 	);
 
 	function formatStat(name: string | null): string {
 		if (!name) return '—';
-		return name
-			.replace(/-/g, ' ')
-			.replace(/\b\w/g, (c) => c.toUpperCase());
+		return name.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 	}
 
 	function formatFlavor(name: string | null): string {
@@ -36,14 +32,11 @@
 </svelte:head>
 
 <!-- Hero -->
-<div
-	class="relative overflow-hidden px-6 py-14 text-white"
-	style="background-color: #d97706;"
->
+<div class="relative overflow-hidden px-6 py-14 text-white" style="background-color: #d97706;">
 	<!-- Decorative rings — clipped to right/bottom-left corners to prevent arc bleed -->
 	<div class="pointer-events-none absolute inset-y-0 right-0 w-1/2 overflow-hidden">
 		<div
-			class="absolute -right-16 -top-16 h-64 w-64 rounded-full"
+			class="absolute -top-16 -right-16 h-64 w-64 rounded-full"
 			style="border: 30px solid rgba(255,255,255,0.10);"
 		></div>
 	</div>
@@ -57,12 +50,12 @@
 	<div class="relative mx-auto max-w-5xl">
 		<div class="mb-3 flex items-center gap-2">
 			<Leaf size={18} />
-			<span class="text-sm font-medium uppercase tracking-widest opacity-80">Nature Chart</span>
+			<span class="text-sm font-medium tracking-widest uppercase opacity-80">Nature Chart</span>
 		</div>
 		<h1 class="text-4xl font-extrabold tracking-tight drop-shadow">Natures</h1>
 		<p class="mt-2 max-w-xl text-sm opacity-80">
-			Each nature boosts one stat by 10% and lowers another by 10%. Five natures are neutral and have
-			no stat effect.
+			Each nature boosts one stat by 10% and lowers another by 10%. Five natures are neutral and
+			have no stat effect.
 		</p>
 	</div>
 </div>
@@ -71,7 +64,7 @@
 <div class="mx-auto max-w-5xl px-4 py-6">
 	<div class="relative mb-6 max-w-sm">
 		<svg
-			class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 opacity-40"
+			class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 opacity-40"
 			width="16"
 			height="16"
 			viewBox="0 0 24 24"
@@ -86,21 +79,28 @@
 			type="text"
 			bind:value={searchQuery}
 			placeholder="Search natures…"
-			class="w-full rounded-lg border py-2 pl-9 pr-4 text-sm outline-none focus:ring-2 focus:ring-amber-500"
+			class="w-full rounded-lg border py-2 pr-4 pl-9 text-sm outline-none focus:ring-2 focus:ring-amber-500"
 			style="background: var(--bg-secondary); border-color: var(--border-color); color: var(--text-main);"
 		/>
 	</div>
 
 	<!-- Desktop Table -->
-	<div class="hidden overflow-hidden rounded-xl border md:block" style="border-color: var(--border-color);">
+	<div
+		class="hidden overflow-hidden rounded-xl border md:block"
+		style="border-color: var(--border-color);"
+	>
 		<table class="w-full text-sm">
 			<thead>
 				<tr style="background: var(--bg-secondary); border-bottom: 1px solid var(--border-color);">
 					<th class="px-4 py-3 text-left font-semibold" style="color: var(--text-main);">Nature</th>
 					<th class="px-4 py-3 text-left font-semibold text-green-500">↑ Increased Stat</th>
 					<th class="px-4 py-3 text-left font-semibold text-red-500">↓ Decreased Stat</th>
-					<th class="px-4 py-3 text-left font-semibold" style="color: var(--text-muted);">Likes Flavor</th>
-					<th class="px-4 py-3 text-left font-semibold" style="color: var(--text-muted);">Hates Flavor</th>
+					<th class="px-4 py-3 text-left font-semibold" style="color: var(--text-muted);"
+						>Likes Flavor</th
+					>
+					<th class="px-4 py-3 text-left font-semibold" style="color: var(--text-muted);"
+						>Hates Flavor</th
+					>
 				</tr>
 			</thead>
 			<tbody>

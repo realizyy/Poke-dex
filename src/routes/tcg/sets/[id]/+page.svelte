@@ -16,7 +16,9 @@
 
 	function cardTotal(): string {
 		const { total = 0, official = 0 } = set.cardCount ?? {};
-		return official > 0 && official !== total ? `${official} official / ${total} total` : `${total}`;
+		return official > 0 && official !== total
+			? `${official} official / ${total} total`
+			: `${total}`;
 	}
 </script>
 
@@ -26,7 +28,10 @@
 </svelte:head>
 
 <!-- ─── Back + Header ─────────────────────────────────────────────────────── -->
-<section class="border-b" style="border-color: var(--border-color); background-color: var(--bg-main);">
+<section
+	class="border-b"
+	style="border-color: var(--border-color); background-color: var(--bg-main);"
+>
 	<div class="mx-auto max-w-5xl px-6 py-8">
 		<a
 			href="/tcg"
@@ -45,12 +50,14 @@
 					alt={set.name}
 					class="h-20 object-contain"
 					loading="eager"
-					onerror={(e) => { (e.currentTarget as HTMLImageElement).style.display='none'; }}
+					onerror={(e) => {
+						(e.currentTarget as HTMLImageElement).style.display = 'none';
+					}}
 				/>
 			{/if}
 
-			<div class="flex-1 min-w-0">
-				<div class="flex items-center gap-2 mb-1">
+			<div class="min-w-0 flex-1">
+				<div class="mb-1 flex items-center gap-2">
 					{#if set.symbol}
 						<img
 							src="{set.symbol}/symbol.webp"
@@ -58,14 +65,22 @@
 							aria-hidden="true"
 							class="h-6 w-6 object-contain"
 							loading="eager"
-							onerror={(e) => { (e.currentTarget as HTMLImageElement).style.display='none'; }}
+							onerror={(e) => {
+								(e.currentTarget as HTMLImageElement).style.display = 'none';
+							}}
 						/>
 					{/if}
 					{#if set.serie}
-						<span class="text-xs font-bold uppercase tracking-widest" style="color: var(--text-muted);">{set.serie}</span>
+						<span
+							class="text-xs font-bold tracking-widest uppercase"
+							style="color: var(--text-muted);">{set.serie}</span
+						>
 					{/if}
 				</div>
-				<h1 class="font-extrabold leading-tight" style="font-size: var(--text-2xl); color: var(--text-main);">
+				<h1
+					class="leading-tight font-extrabold"
+					style="font-size: var(--text-2xl); color: var(--text-main);"
+				>
 					{set.name}
 				</h1>
 				<div class="mt-2 flex flex-wrap gap-3 text-sm" style="color: var(--text-secondary);">
@@ -84,12 +99,17 @@
 <section style="background-color: var(--bg-main);">
 	<div class="mx-auto max-w-5xl px-6 py-10">
 		{#if cards.length === 0}
-			<div class="flex flex-col items-center justify-center py-24" style="color: var(--text-muted);">
+			<div
+				class="flex flex-col items-center justify-center py-24"
+				style="color: var(--text-muted);"
+			>
 				<Layers size={48} class="mb-4 opacity-30" />
 				<p class="text-lg font-semibold">No cards found in this set.</p>
 			</div>
 		{:else}
-			<p class="mb-6 text-sm" style="color: var(--text-muted);">{cards.length} card{cards.length !== 1 ? 's' : ''}</p>
+			<p class="mb-6 text-sm" style="color: var(--text-muted);">
+				{cards.length} card{cards.length !== 1 ? 's' : ''}
+			</p>
 			<div class="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
 				{#each cards as card (card.id)}
 					<a
@@ -100,20 +120,31 @@
 					>
 						{#if card.image}
 							<img
-								src="{TcgService.cardImageUrl(card.image, 'low')}"
+								src={TcgService.cardImageUrl(card.image, 'low')}
 								alt="{card.name} #{card.localId}"
 								class="w-full rounded-lg object-contain transition-transform duration-200 group-hover:scale-105"
 								loading="lazy"
-								width="200" height="280"
-								onerror={(e) => { (e.currentTarget as HTMLImageElement).style.display='none'; }}
+								width="200"
+								height="280"
+								onerror={(e) => {
+									(e.currentTarget as HTMLImageElement).style.display = 'none';
+								}}
 							/>
 						{:else}
-							<div class="w-full aspect-[5/7] rounded-lg flex items-center justify-center" style="background: var(--bg-main);">
+							<div
+								class="flex aspect-[5/7] w-full items-center justify-center rounded-lg"
+								style="background: var(--bg-main);"
+							>
 								<Layers size={32} class="opacity-20" />
 							</div>
 						{/if}
 						<div class="w-full text-center">
-							<p class="truncate text-xs font-semibold leading-tight" style="color: var(--text-main);">{card.name}</p>
+							<p
+								class="truncate text-xs leading-tight font-semibold"
+								style="color: var(--text-main);"
+							>
+								{card.name}
+							</p>
 							<p class="text-[10px]" style="color: var(--text-muted);">#{card.localId}</p>
 						</div>
 					</a>

@@ -7,10 +7,10 @@ export class BattleService {
 	 */
 	static extractPokemonStats(teamPokemon: TeamPokemon): BattlePokemonStats {
 		const stats = teamPokemon.pokemon.stats;
-		const hp = stats.find(s => s.stat.name === 'hp')?.base_stat || 100;
-		const attack = stats.find(s => s.stat.name === 'attack')?.base_stat || 50;
-		const defense = stats.find(s => s.stat.name === 'defense')?.base_stat || 50;
-		const speed = stats.find(s => s.stat.name === 'speed')?.base_stat || 50;
+		const hp = stats.find((s) => s.stat.name === 'hp')?.base_stat || 100;
+		const attack = stats.find((s) => s.stat.name === 'attack')?.base_stat || 50;
+		const defense = stats.find((s) => s.stat.name === 'defense')?.base_stat || 50;
+		const speed = stats.find((s) => s.stat.name === 'speed')?.base_stat || 50;
 
 		return {
 			hp,
@@ -39,14 +39,15 @@ export class BattleService {
 
 		// Base damage formula (simplified Pokemon damage calculation)
 		const baseDamage = Math.floor(
-			((((2 * level / 5 + 2) * power * attackerStats.attack / defenderStats.defense) / 50) + 2) * random
+			((((2 * level) / 5 + 2) * power * attackerStats.attack) / defenderStats.defense / 50 + 2) *
+				random
 		);
 
 		// Type effectiveness calculation
 		let effectiveness = 1;
-		const defenderTypes = defender.pokemon.types.map(t => t.type.name);
+		const defenderTypes = defender.pokemon.types.map((t) => t.type.name);
 
-		defenderTypes.forEach(defType => {
+		defenderTypes.forEach((defType) => {
 			const typeChart = TYPE_EFFECTIVENESS[moveType];
 			if (typeChart) {
 				if (typeChart.superEffectiveAgainst.includes(defType)) {
@@ -117,7 +118,9 @@ export class BattleService {
 			onLogUpdate?.(message);
 		};
 
-		log(`${pokemon1.nickname || pokemon1.pokemon.name} vs ${pokemon2.nickname || pokemon2.pokemon.name}!`);
+		log(
+			`${pokemon1.nickname || pokemon1.pokemon.name} vs ${pokemon2.nickname || pokemon2.pokemon.name}!`
+		);
 		log(`${pokemon1.nickname || pokemon1.pokemon.name}: ${hp1} HP`);
 		log(`${pokemon2.nickname || pokemon2.pokemon.name}: ${hp2} HP`);
 		log('---');
@@ -145,7 +148,9 @@ export class BattleService {
 			if (result1.message) {
 				log(result1.message);
 			}
-			log(`${secondAttacker.nickname || secondAttacker.pokemon.name} took ${result1.damage} damage!`);
+			log(
+				`${secondAttacker.nickname || secondAttacker.pokemon.name} took ${result1.damage} damage!`
+			);
 
 			// Check if second Pokemon fainted
 			if ((isFirstAttackerPokemon1 && hp2 <= 0) || (!isFirstAttackerPokemon1 && hp1 <= 0)) {

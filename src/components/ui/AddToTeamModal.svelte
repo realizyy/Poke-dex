@@ -25,7 +25,7 @@
 		if (show) resetModalState();
 	});
 
-	const availableTeams = $derived(teamStore.teams.filter(team => team.pokemons.length < 6));
+	const availableTeams = $derived(teamStore.teams.filter((team) => team.pokemons.length < 6));
 
 	function resetModalState() {
 		createNewTeam = false;
@@ -68,37 +68,41 @@
 {#if show}
 	<!-- Modal Backdrop -->
 	<div
-		class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
+		class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4"
 		onclick={handleBackdropClick}
 		onkeydown={handleKeydown}
 		role="presentation"
 	>
 		<!-- Modal Content -->
 		<div
-			class="theme-bg-secondary rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-hidden theme-border"
+			class="theme-bg-secondary theme-border max-h-[90vh] w-full max-w-md overflow-hidden rounded-xl shadow-2xl"
 			style="background-color: var(--bg-secondary); border-color: var(--border-color);"
 			role="dialog"
 			aria-modal="true"
 			aria-labelledby="modal-title"
 		>
 			<!-- Modal Header -->
-			<div class="flex items-center justify-between p-6 theme-border-b" style="border-color: var(--border-color);">
+			<div
+				class="theme-border-b flex items-center justify-between p-6"
+				style="border-color: var(--border-color);"
+			>
 				<div class="flex items-center gap-3">
 					<img
 						src={pokemon.sprites.other['official-artwork'].front_default || '/favicon.png'}
 						alt={pokemon.name}
-						class="w-12 h-12 object-contain"
-						width="48" height="48"
+						class="h-12 w-12 object-contain"
+						width="48"
+						height="48"
 						loading="lazy"
 					/>
 					<div>
-						<h2 id="modal-title" class="text-lg font-bold theme-text capitalize">
+						<h2 id="modal-title" class="theme-text text-lg font-bold capitalize">
 							Add {pokemon.name} to Team
 						</h2>
-						<div class="flex gap-1 mt-1">
+						<div class="mt-1 flex gap-1">
 							{#each pokemon.types as type}
 								<span
-									class="px-2 py-0.5 rounded-full text-xs font-semibold text-white"
+									class="rounded-full px-2 py-0.5 text-xs font-semibold text-white"
 									style="background-color: {getTypeColor(type.type.name)}"
 								>
 									{type.type.name}
@@ -107,29 +111,37 @@
 						</div>
 					</div>
 				</div>
-				<button onclick={handleClose} class="btn btn-ghost btn-sm btn-circle" aria-label="Close modal">
+				<button
+					onclick={handleClose}
+					class="btn btn-ghost btn-sm btn-circle"
+					aria-label="Close modal"
+				>
 					<X size={18} />
 				</button>
 			</div>
 
 			<!-- Modal Body -->
-			<div class="p-6 space-y-4 max-h-[60vh] overflow-y-auto">
+			<div class="max-h-[60vh] space-y-4 overflow-y-auto p-6">
 				{#if !createNewTeam}
 					<!-- Team Selection -->
 					<div class="space-y-3">
-						<h3 class="text-sm font-semibold theme-text">Select Team:</h3>
+						<h3 class="theme-text text-sm font-semibold">Select Team:</h3>
 
 						{#if availableTeams.length === 0}
-							<div class="text-center py-6">
-								<Plus size={40} class="mx-auto theme-text-secondary mb-2" />
-								<p class="mt-2 text-sm theme-text-secondary">No teams available or all teams are full</p>
-								<p class="text-xs theme-text-muted">Create a new team to add this PokÃ©mon</p>
+							<div class="py-6 text-center">
+								<Plus size={40} class="theme-text-secondary mx-auto mb-2" />
+								<p class="theme-text-secondary mt-2 text-sm">
+									No teams available or all teams are full
+								</p>
+								<p class="theme-text-muted text-xs">Create a new team to add this PokÃ©mon</p>
 							</div>
 						{:else}
 							<div class="space-y-2">
 								{#each availableTeams as team}
-									<label class="flex items-center gap-3 p-3 rounded-lg theme-border hover:theme-bg-tertiary transition-colors cursor-pointer"
-										style="border-color: var(--border-color);">
+									<label
+										class="theme-border hover:theme-bg-tertiary flex cursor-pointer items-center gap-3 rounded-lg p-3 transition-colors"
+										style="border-color: var(--border-color);"
+									>
 										<input
 											type="radio"
 											bind:group={selectedTeamId}
@@ -137,8 +149,10 @@
 											class="radio radio-primary"
 										/>
 										<div class="flex-1">
-											<div class="font-medium theme-text">{team.name}</div>
-											<div class="text-sm theme-text-secondary">{team.pokemons.length}/6 PokÃ©mon</div>
+											<div class="theme-text font-medium">{team.name}</div>
+											<div class="theme-text-secondary text-sm">
+												{team.pokemons.length}/6 PokÃ©mon
+											</div>
 										</div>
 									</label>
 								{/each}
@@ -147,7 +161,7 @@
 
 						<!-- Create New Team Button -->
 						<button
-							onclick={() => createNewTeam = true}
+							onclick={() => (createNewTeam = true)}
 							class="btn btn-outline btn-sm w-full gap-2"
 						>
 							<Plus size={14} />
@@ -159,18 +173,23 @@
 					<div class="space-y-3">
 						<div class="flex items-center gap-2">
 							<button
-								onclick={() => { createNewTeam = false; newTeamName = ''; }}
+								onclick={() => {
+									createNewTeam = false;
+									newTeamName = '';
+								}}
 								class="btn btn-ghost btn-xs btn-circle"
 								aria-label="Back to team selection"
 							>
 								<ChevronLeft size={16} />
 							</button>
-							<h3 class="text-sm font-semibold theme-text">Create New Team:</h3>
+							<h3 class="theme-text text-sm font-semibold">Create New Team:</h3>
 						</div>
 
 						<div class="space-y-3">
 							<div>
-								<label for="team-name" class="block text-sm font-medium theme-text mb-1">Team Name</label>
+								<label for="team-name" class="theme-text mb-1 block text-sm font-medium"
+									>Team Name</label
+								>
 								<input
 									id="team-name"
 									type="text"
@@ -197,7 +216,7 @@
 
 			<!-- Modal Footer -->
 			{#if !createNewTeam}
-				<div class="flex gap-3 p-6 theme-border-t" style="border-color: var(--border-color);">
+				<div class="theme-border-t flex gap-3 p-6" style="border-color: var(--border-color);">
 					<button onclick={handleClose} class="btn btn-ghost flex-1">Cancel</button>
 					<button
 						onclick={handleAddToTeam}

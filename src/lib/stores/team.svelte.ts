@@ -14,7 +14,7 @@ class TeamStore {
 			// Restore last selected team across refreshes
 			const selectedId = localStorage.getItem('pokemon-teams-selected');
 			if (selectedId) {
-				this.currentTeam = this.teams.find(t => t.id === selectedId) ?? null;
+				this.currentTeam = this.teams.find((t) => t.id === selectedId) ?? null;
 			}
 		} catch {
 			console.error('Failed to load teams from localStorage');
@@ -71,7 +71,10 @@ class TeamStore {
 		this.save(this.teams);
 
 		if (success) {
-			toastStore.success('Pokémon Added', `${nickname ?? pokemon.name} has been added to ${teamName}!`);
+			toastStore.success(
+				'Pokémon Added',
+				`${nickname ?? pokemon.name} has been added to ${teamName}!`
+			);
 		} else {
 			toastStore.error('Team Full', 'Cannot add more Pokémon. Team is already full (6/6)');
 		}
@@ -82,7 +85,10 @@ class TeamStore {
 
 		this.teams = this.teams.map((team) => {
 			if (team.id !== teamId) return team;
-			removedName = team.pokemons[pokemonIndex]?.nickname ?? team.pokemons[pokemonIndex]?.pokemon.name ?? 'Unknown';
+			removedName =
+				team.pokemons[pokemonIndex]?.nickname ??
+				team.pokemons[pokemonIndex]?.pokemon.name ??
+				'Unknown';
 			const updated: Team = {
 				...team,
 				pokemons: team.pokemons.filter((_, i) => i !== pokemonIndex)
@@ -92,7 +98,8 @@ class TeamStore {
 		});
 
 		this.save(this.teams);
-		if (removedName) toastStore.info('Pokémon Removed', `${removedName} has been removed from the team`);
+		if (removedName)
+			toastStore.info('Pokémon Removed', `${removedName} has been removed from the team`);
 	}
 
 	updatePokemonMoves(teamId: string, pokemonIndex: number, moves: string[]) {
@@ -116,9 +123,7 @@ class TeamStore {
 	}
 
 	updateTeamName(teamId: string, newName: string) {
-		this.teams = this.teams.map((team) =>
-			team.id === teamId ? { ...team, name: newName } : team
-		);
+		this.teams = this.teams.map((team) => (team.id === teamId ? { ...team, name: newName } : team));
 		this.save(this.teams);
 	}
 
@@ -138,6 +143,10 @@ export const teamStore = new TeamStore();
 
 // Backward-compat: expose currentTeam as a direct reference
 export const currentTeamRef = {
-	get value() { return teamStore.currentTeam; },
-	set value(v: Team | null) { teamStore.currentTeam = v; }
+	get value() {
+		return teamStore.currentTeam;
+	},
+	set value(v: Team | null) {
+		teamStore.currentTeam = v;
+	}
 };

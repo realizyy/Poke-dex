@@ -4,7 +4,22 @@
 	import { TcgService } from '$lib/services/tcg-service';
 	import type { TcgCardBrief } from '$lib/types';
 
-	let { data }: { data: { cards: TcgCardBrief[]; query: { name: string; types: string; rarity: string; hpMin?: number; hpMax?: number; setId: string; page: number; } } } = $props();
+	let {
+		data
+	}: {
+		data: {
+			cards: TcgCardBrief[];
+			query: {
+				name: string;
+				types: string;
+				rarity: string;
+				hpMin?: number;
+				hpMax?: number;
+				setId: string;
+				page: number;
+			};
+		};
+	} = $props();
 
 	const cards = $derived(data.cards ?? []);
 	const query = $derived(data.query);
@@ -30,8 +45,32 @@
 	const hasNextPage = $derived(cards.length === 24);
 	const hasPrevPage = $derived(currentPage > 1);
 
-	const TCG_TYPES = ['Fire','Water','Grass','Lightning','Psychic','Fighting','Darkness','Metal','Dragon','Fairy','Colorless'];
-	const RARITIES = ['Common','Uncommon','Rare','Rare Holo','Rare Holo EX','Rare Holo GX','Rare Holo V','Rare Holo VMAX','Ultra Rare','Secret Rare','Promo'];
+	const TCG_TYPES = [
+		'Fire',
+		'Water',
+		'Grass',
+		'Lightning',
+		'Psychic',
+		'Fighting',
+		'Darkness',
+		'Metal',
+		'Dragon',
+		'Fairy',
+		'Colorless'
+	];
+	const RARITIES = [
+		'Common',
+		'Uncommon',
+		'Rare',
+		'Rare Holo',
+		'Rare Holo EX',
+		'Rare Holo GX',
+		'Rare Holo V',
+		'Rare Holo VMAX',
+		'Ultra Rare',
+		'Secret Rare',
+		'Promo'
+	];
 
 	function buildUrl(overrides: Record<string, string | number | undefined> = {}): string {
 		const params = new URLSearchParams();
@@ -42,7 +81,7 @@
 			hpMin: hpMinInput || undefined,
 			hpMax: hpMaxInput || undefined,
 			page: '1',
-			...overrides,
+			...overrides
 		};
 		for (const [k, v] of Object.entries(filters)) {
 			if (v != null && v !== '') params.set(k, String(v));
@@ -75,24 +114,42 @@
 </svelte:head>
 
 <!-- ─── Header ───────────────────────────────────────────────────────────── -->
-<section class="border-b" style="border-color: var(--border-color); background-color: var(--bg-main);">
+<section
+	class="border-b"
+	style="border-color: var(--border-color); background-color: var(--bg-main);"
+>
 	<div class="mx-auto max-w-5xl px-6 py-8">
-		<div class="flex items-center gap-3 mb-2">
+		<div class="mb-2 flex items-center gap-3">
 			<a href="/tcg" class="text-sm hover:underline" style="color: var(--text-muted);">TCG</a>
 			<span style="color: var(--text-muted);">/</span>
 			<span class="text-sm font-semibold" style="color: var(--text-main);">Search Cards</span>
 		</div>
-		<h1 class="font-extrabold leading-tight" style="font-size: var(--text-2xl); color: var(--text-main);">Card Search</h1>
+		<h1
+			class="leading-tight font-extrabold"
+			style="font-size: var(--text-2xl); color: var(--text-main);"
+		>
+			Card Search
+		</h1>
 	</div>
 </section>
 
 <!-- ─── Filters ───────────────────────────────────────────────────────────── -->
-<section class="border-b" style="border-color: var(--border-color); background-color: var(--bg-secondary);">
+<section
+	class="border-b"
+	style="border-color: var(--border-color); background-color: var(--bg-secondary);"
+>
 	<div class="mx-auto max-w-5xl px-6 py-6">
-		<form onsubmit={handleSearch} class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+		<form
+			onsubmit={handleSearch}
+			class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+		>
 			<!-- Name -->
 			<div class="flex flex-col gap-1">
-				<label class="text-xs font-bold uppercase tracking-wider" style="color: var(--text-muted);" for="tcg-name">Pokémon Name</label>
+				<label
+					class="text-xs font-bold tracking-wider uppercase"
+					style="color: var(--text-muted);"
+					for="tcg-name">Pokémon Name</label
+				>
 				<input
 					id="tcg-name"
 					type="text"
@@ -105,7 +162,11 @@
 
 			<!-- Type -->
 			<div class="flex flex-col gap-1">
-				<label class="text-xs font-bold uppercase tracking-wider" style="color: var(--text-muted);" for="tcg-type">Type</label>
+				<label
+					class="text-xs font-bold tracking-wider uppercase"
+					style="color: var(--text-muted);"
+					for="tcg-type">Type</label
+				>
 				<select
 					id="tcg-type"
 					bind:value={typesInput}
@@ -121,7 +182,11 @@
 
 			<!-- Rarity -->
 			<div class="flex flex-col gap-1">
-				<label class="text-xs font-bold uppercase tracking-wider" style="color: var(--text-muted);" for="tcg-rarity">Rarity</label>
+				<label
+					class="text-xs font-bold tracking-wider uppercase"
+					style="color: var(--text-muted);"
+					for="tcg-rarity">Rarity</label
+				>
 				<select
 					id="tcg-rarity"
 					bind:value={rarityInput}
@@ -136,8 +201,10 @@
 			</div>
 
 			<!-- HP range -->
-			<fieldset class="flex flex-col gap-1 border-none p-0 m-0">
-				<legend class="text-xs font-bold uppercase tracking-wider" style="color: var(--text-muted);">HP Range</legend>
+			<fieldset class="m-0 flex flex-col gap-1 border-none p-0">
+				<legend class="text-xs font-bold tracking-wider uppercase" style="color: var(--text-muted);"
+					>HP Range</legend
+				>
 				<div class="flex items-center gap-2">
 					<input
 						type="number"
@@ -165,7 +232,10 @@
 
 			<!-- Actions row -->
 			<div class="flex items-end gap-3 sm:col-span-2 md:col-span-3 lg:col-span-4">
-				<button type="submit" class="btn-brand flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-semibold">
+				<button
+					type="submit"
+					class="btn-brand flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-semibold"
+				>
 					<Search size={16} />
 					Search
 				</button>
@@ -186,31 +256,38 @@
 <section style="background-color: var(--bg-main);">
 	<div class="mx-auto max-w-5xl px-6 py-8">
 		{#if cards.length === 0}
-			<div class="flex flex-col items-center justify-center py-24" style="color: var(--text-muted);">
+			<div
+				class="flex flex-col items-center justify-center py-24"
+				style="color: var(--text-muted);"
+			>
 				<Layers size={48} class="mb-4 opacity-30" />
 				<p class="text-lg font-semibold">No cards found.</p>
-				<p class="text-sm mt-1">Try adjusting your search filters.</p>
+				<p class="mt-1 text-sm">Try adjusting your search filters.</p>
 			</div>
 		{:else}
 			<div class="mb-5 flex items-center justify-between">
 				<p class="text-sm" style="color: var(--text-muted);">
-					{cards.length === 24 ? `${(currentPage - 1) * 24 + 1}–${currentPage * 24}+` : `${(currentPage - 1) * 24 + 1}–${(currentPage - 1) * 24 + cards.length}`} cards
+					{cards.length === 24
+						? `${(currentPage - 1) * 24 + 1}–${currentPage * 24}+`
+						: `${(currentPage - 1) * 24 + 1}–${(currentPage - 1) * 24 + cards.length}`} cards
 				</p>
 				<!-- Pagination top -->
 				<div class="flex items-center gap-2">
 					<button
 						onclick={() => goToPage(currentPage - 1)}
 						disabled={!hasPrevPage}
-						class="rounded-lg px-3 py-1.5 text-sm font-semibold disabled:opacity-30 transition-opacity hover:opacity-70"
+						class="rounded-lg px-3 py-1.5 text-sm font-semibold transition-opacity hover:opacity-70 disabled:opacity-30"
 						style="background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-main);"
 					>
 						<ChevronLeft size={16} />
 					</button>
-					<span class="text-sm font-bold px-2" style="color: var(--text-main);">Page {currentPage}</span>
+					<span class="px-2 text-sm font-bold" style="color: var(--text-main);"
+						>Page {currentPage}</span
+					>
 					<button
 						onclick={() => goToPage(currentPage + 1)}
 						disabled={!hasNextPage}
-						class="rounded-lg px-3 py-1.5 text-sm font-semibold disabled:opacity-30 transition-opacity hover:opacity-70"
+						class="rounded-lg px-3 py-1.5 text-sm font-semibold transition-opacity hover:opacity-70 disabled:opacity-30"
 						style="background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-main);"
 					>
 						<ChevronRight size={16} />
@@ -228,20 +305,31 @@
 					>
 						{#if card.image}
 							<img
-								src="{TcgService.cardImageUrl(card.image, 'low')}"
-								alt="{card.name}"
+								src={TcgService.cardImageUrl(card.image, 'low')}
+								alt={card.name}
 								class="w-full rounded-lg object-contain transition-transform duration-200 group-hover:scale-105"
 								loading="lazy"
-								width="200" height="280"
-								onerror={(e) => { (e.currentTarget as HTMLImageElement).style.display='none'; }}
+								width="200"
+								height="280"
+								onerror={(e) => {
+									(e.currentTarget as HTMLImageElement).style.display = 'none';
+								}}
 							/>
 						{:else}
-							<div class="w-full aspect-[5/7] rounded-lg flex items-center justify-center" style="background: var(--bg-main);">
+							<div
+								class="flex aspect-[5/7] w-full items-center justify-center rounded-lg"
+								style="background: var(--bg-main);"
+							>
 								<Layers size={28} class="opacity-20" />
 							</div>
 						{/if}
 						<div class="w-full text-center">
-							<p class="truncate text-xs font-semibold leading-tight" style="color: var(--text-main);">{card.name}</p>
+							<p
+								class="truncate text-xs leading-tight font-semibold"
+								style="color: var(--text-main);"
+							>
+								{card.name}
+							</p>
 							<p class="text-[10px]" style="color: var(--text-muted);">#{card.localId}</p>
 						</div>
 					</a>
@@ -250,20 +338,22 @@
 
 			<!-- Pagination bottom -->
 			{#if hasPrevPage || hasNextPage}
-				<div class="flex items-center justify-center gap-3 mt-10">
+				<div class="mt-10 flex items-center justify-center gap-3">
 					<button
 						onclick={() => goToPage(currentPage - 1)}
 						disabled={!hasPrevPage}
-						class="flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold disabled:opacity-30 transition-opacity hover:opacity-70"
+						class="flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-opacity hover:opacity-70 disabled:opacity-30"
 						style="background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-main);"
 					>
 						<ChevronLeft size={16} /> Previous
 					</button>
-					<span class="text-sm font-bold px-2" style="color: var(--text-main);">Page {currentPage}</span>
+					<span class="px-2 text-sm font-bold" style="color: var(--text-main);"
+						>Page {currentPage}</span
+					>
 					<button
 						onclick={() => goToPage(currentPage + 1)}
 						disabled={!hasNextPage}
-						class="flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold disabled:opacity-30 transition-opacity hover:opacity-70"
+						class="flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-opacity hover:opacity-70 disabled:opacity-30"
 						style="background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-main);"
 					>
 						Next <ChevronRight size={16} />

@@ -21,7 +21,7 @@ const SPOTLIGHT_POOL = [
 	// Gen 8
 	813, 818, 884, 888, 890,
 	// Gen 9
-	906, 909, 1008,
+	906, 909, 1008
 ];
 
 function pickRandom(pool: number[], count: number): number[] {
@@ -33,7 +33,7 @@ export const load: Load = async () => {
 		const ids = pickRandom(SPOTLIGHT_POOL, 8);
 		const [pokemonDetails, allSets] = await Promise.all([
 			PokemonService.fetchPokemonBatch(ids),
-			TcgService.fetchSets().catch(() => []),
+			TcgService.fetchSets().catch(() => [])
 		]);
 		PokemonService.preloadFeaturedPokemon();
 		// Pick 4 recent sets (last in the list tend to be newest)

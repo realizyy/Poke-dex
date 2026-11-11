@@ -1,608 +1,742 @@
 @import 'tailwindcss';
-@plugin "daisyui";
+@plugin 'daisyui';
 
 /* ============================================================
    DaisyUI v5 Theme — Pokédex custom light/dark
    (overrides come after @plugin so they win the cascade)
    ============================================================ */
 :root,
-[data-theme="pokedex"] {
-  /* DaisyUI color variables — light */
-  --color-primary:           oklch(50.6% 0.24 22.4);   /* #dc2626 brand red */
-  --color-primary-content:   oklch(100% 0 0);
-  --color-secondary:         oklch(79% 0.165 87);       /* #fbbf24 yellow */
-  --color-secondary-content: oklch(20% 0 0);
-  --color-accent:            oklch(55% 0.18 262);
-  --color-accent-content:    oklch(100% 0 0);
-  --color-neutral:           oklch(25% 0.02 253);
-  --color-neutral-content:   oklch(95% 0 0);
-  --color-base-100:          oklch(100% 0 0);           /* white */
-  --color-base-200:          oklch(96.5% 0.007 248);    /* slate-100 */
-  --color-base-300:          oklch(92% 0.013 248);      /* slate-200 */
-  --color-base-content:      oklch(13% 0.01 253);       /* gray-900 */
-  --color-info:              oklch(60% 0.2 250);
-  --color-info-content:      oklch(100% 0 0);
-  --color-success:           oklch(60% 0.17 145);
-  --color-success-content:   oklch(100% 0 0);
-  --color-warning:           oklch(79% 0.165 87);
-  --color-warning-content:   oklch(20% 0 0);
-  --color-error:             oklch(50.6% 0.24 22.4);
-  --color-error-content:     oklch(100% 0 0);
-  --radius-box:              var(--radius-md, 0.75rem);
-  --radius-btn:              var(--radius-md, 0.75rem);
+[data-theme='pokedex'] {
+	/* DaisyUI color variables — light */
+	--color-primary: oklch(50.6% 0.24 22.4); /* #dc2626 brand red */
+	--color-primary-content: oklch(100% 0 0);
+	--color-secondary: oklch(79% 0.165 87); /* #fbbf24 yellow */
+	--color-secondary-content: oklch(20% 0 0);
+	--color-accent: oklch(55% 0.18 262);
+	--color-accent-content: oklch(100% 0 0);
+	--color-neutral: oklch(25% 0.02 253);
+	--color-neutral-content: oklch(95% 0 0);
+	--color-base-100: oklch(100% 0 0); /* white */
+	--color-base-200: oklch(96.5% 0.007 248); /* slate-100 */
+	--color-base-300: oklch(92% 0.013 248); /* slate-200 */
+	--color-base-content: oklch(13% 0.01 253); /* gray-900 */
+	--color-info: oklch(60% 0.2 250);
+	--color-info-content: oklch(100% 0 0);
+	--color-success: oklch(60% 0.17 145);
+	--color-success-content: oklch(100% 0 0);
+	--color-warning: oklch(79% 0.165 87);
+	--color-warning-content: oklch(20% 0 0);
+	--color-error: oklch(50.6% 0.24 22.4);
+	--color-error-content: oklch(100% 0 0);
+	--radius-box: var(--radius-md, 0.75rem);
+	--radius-btn: var(--radius-md, 0.75rem);
 }
 
 .dark,
-[data-theme="pokedex-dark"] {
-  /* DaisyUI color variables — dark */
-  --color-primary:           oklch(50.6% 0.24 22.4);
-  --color-primary-content:   oklch(100% 0 0);
-  --color-secondary:         oklch(79% 0.165 87);
-  --color-secondary-content: oklch(20% 0 0);
-  --color-accent:            oklch(55% 0.18 262);
-  --color-accent-content:    oklch(100% 0 0);
-  --color-neutral:           oklch(25% 0.02 253);
-  --color-neutral-content:   oklch(95% 0 0);
-  --color-base-100:          oklch(16% 0.01 253);       /* gray-900 */
-  --color-base-200:          oklch(22% 0.015 253);      /* gray-800 */
-  --color-base-300:          oklch(32% 0.015 256);      /* gray-700 */
-  --color-base-content:      oklch(96% 0 0);            /* gray-100 */
-  --color-info:              oklch(60% 0.2 250);
-  --color-info-content:      oklch(100% 0 0);
-  --color-success:           oklch(60% 0.17 145);
-  --color-success-content:   oklch(100% 0 0);
-  --color-warning:           oklch(79% 0.165 87);
-  --color-warning-content:   oklch(20% 0 0);
-  --color-error:             oklch(50.6% 0.24 22.4);
-  --color-error-content:     oklch(100% 0 0);
+[data-theme='pokedex-dark'] {
+	/* DaisyUI color variables — dark */
+	--color-primary: oklch(50.6% 0.24 22.4);
+	--color-primary-content: oklch(100% 0 0);
+	--color-secondary: oklch(79% 0.165 87);
+	--color-secondary-content: oklch(20% 0 0);
+	--color-accent: oklch(55% 0.18 262);
+	--color-accent-content: oklch(100% 0 0);
+	--color-neutral: oklch(25% 0.02 253);
+	--color-neutral-content: oklch(95% 0 0);
+	--color-base-100: oklch(16% 0.01 253); /* gray-900 */
+	--color-base-200: oklch(22% 0.015 253); /* gray-800 */
+	--color-base-300: oklch(32% 0.015 256); /* gray-700 */
+	--color-base-content: oklch(96% 0 0); /* gray-100 */
+	--color-info: oklch(60% 0.2 250);
+	--color-info-content: oklch(100% 0 0);
+	--color-success: oklch(60% 0.17 145);
+	--color-success-content: oklch(100% 0 0);
+	--color-warning: oklch(79% 0.165 87);
+	--color-warning-content: oklch(20% 0 0);
+	--color-error: oklch(50.6% 0.24 22.4);
+	--color-error-content: oklch(100% 0 0);
 }
 
 /* CSS Variables for Theme Colors */
 :root {
-  /* Light theme colors — improved contrast (Phase B) */
-  --bg-main: #ffffff;         /* pure white — clear base layer */
-  --bg-secondary: #f1f5f9;    /* slate-100 — visible secondary layer */
-  --bg-tertiary: #e2e8f0;     /* slate-200 — visible tertiary layer */
-  --text-main: rgb(17 24 39); /* gray-900 */
-  --text-secondary: rgb(55 65 81); /* gray-700 */
-  --text-muted: rgb(107 114 128); /* gray-500 */
-  --border-color: #cbd5e1;    /* slate-300 — stronger border */
-  --shadow-color: rgba(0, 0, 0, 0.1);
-  --surface-raised: #ffffff;
-  --surface-inset:  #f8fafc;  /* slate-50 — inset sections */
+	/* Light theme colors — improved contrast (Phase B) */
+	--bg-main: #ffffff; /* pure white — clear base layer */
+	--bg-secondary: #f1f5f9; /* slate-100 — visible secondary layer */
+	--bg-tertiary: #e2e8f0; /* slate-200 — visible tertiary layer */
+	--text-main: rgb(17 24 39); /* gray-900 */
+	--text-secondary: rgb(55 65 81); /* gray-700 */
+	--text-muted: rgb(107 114 128); /* gray-500 */
+	--border-color: #cbd5e1; /* slate-300 — stronger border */
+	--shadow-color: rgba(0, 0, 0, 0.1);
+	--surface-raised: #ffffff;
+	--surface-inset: #f8fafc; /* slate-50 — inset sections */
 
-  /* === Design Tokens (Impeccable /typeset + /arrange) === */
+	/* === Design Tokens (Impeccable /typeset + /arrange) === */
 
-  /* Fluid type scale — clamp(min, preferred, max) */
-  --text-xs:   clamp(0.694rem, 0.68rem + 0.07vw,  0.75rem);
-  --text-sm:   clamp(0.833rem, 0.81rem + 0.11vw,  0.875rem);
-  --text-base: clamp(0.938rem, 0.91rem + 0.14vw,  1rem);
-  --text-lg:   clamp(1.063rem, 1.02rem + 0.21vw,  1.125rem);
-  --text-xl:   clamp(1.188rem, 1.13rem + 0.29vw,  1.25rem);
-  --text-2xl:  clamp(1.375rem, 1.28rem + 0.47vw,  1.5rem);
-  --text-3xl:  clamp(1.688rem, 1.52rem + 0.84vw,  1.875rem);
-  --text-4xl:  clamp(2.063rem, 1.77rem + 1.47vw,  2.25rem);
-  --text-5xl:  clamp(2.5rem,   2.0rem  + 2.5vw,   3rem);
-  --text-hero: clamp(3rem,     2.5rem  + 2.5vw,   4.5rem);
+	/* Fluid type scale — clamp(min, preferred, max) */
+	--text-xs: clamp(0.694rem, 0.68rem + 0.07vw, 0.75rem);
+	--text-sm: clamp(0.833rem, 0.81rem + 0.11vw, 0.875rem);
+	--text-base: clamp(0.938rem, 0.91rem + 0.14vw, 1rem);
+	--text-lg: clamp(1.063rem, 1.02rem + 0.21vw, 1.125rem);
+	--text-xl: clamp(1.188rem, 1.13rem + 0.29vw, 1.25rem);
+	--text-2xl: clamp(1.375rem, 1.28rem + 0.47vw, 1.5rem);
+	--text-3xl: clamp(1.688rem, 1.52rem + 0.84vw, 1.875rem);
+	--text-4xl: clamp(2.063rem, 1.77rem + 1.47vw, 2.25rem);
+	--text-5xl: clamp(2.5rem, 2rem + 2.5vw, 3rem);
+	--text-hero: clamp(3rem, 2.5rem + 2.5vw, 4.5rem);
 
-  /* Spacing tokens */
-  --space-1:  0.25rem;
-  --space-2:  0.5rem;
-  --space-3:  0.75rem;
-  --space-4:  1rem;
-  --space-5:  1.25rem;
-  --space-6:  1.5rem;
-  --space-8:  2rem;
-  --space-10: 2.5rem;
-  --space-12: 3rem;
-  --space-16: 4rem;
+	/* Spacing tokens */
+	--space-1: 0.25rem;
+	--space-2: 0.5rem;
+	--space-3: 0.75rem;
+	--space-4: 1rem;
+	--space-5: 1.25rem;
+	--space-6: 1.5rem;
+	--space-8: 2rem;
+	--space-10: 2.5rem;
+	--space-12: 3rem;
+	--space-16: 4rem;
 
-  /* Brand palette */
-  --brand-red:         #dc2626;
-  --brand-red-hover:   #b91c1c;
-  --brand-red-muted:   rgba(220, 38, 38, 0.15);
-  --brand-yellow:      #fbbf24;
-  --brand-yellow-bright: #ffcb04;
-  --brand-blue-dark:   #001f5c;
+	/* Brand palette */
+	--brand-red: #dc2626;
+	--brand-red-hover: #b91c1c;
+	--brand-red-muted: rgba(220, 38, 38, 0.15);
+	--brand-yellow: #fbbf24;
+	--brand-yellow-bright: #ffcb04;
+	--brand-blue-dark: #001f5c;
 
-  /* Elevation system */
-  --shadow-card:    0 4px 6px -1px rgba(0,0,0,.08), 0 2px 4px -1px rgba(0,0,0,.05);
-  --shadow-hover:   0 20px 25px -5px rgba(0,0,0,.1), 0 8px 10px -6px rgba(0,0,0,.05);
-  --shadow-overlay: 0 25px 50px -12px rgba(0,0,0,.25);
-  --shadow-glow-red:    0 0 20px rgba(220, 38, 38, 0.35);
-  --shadow-glow-yellow: 0 0 20px rgba(251, 191, 36, 0.4);
+	/* Elevation system */
+	--shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.05);
+	--shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+	--shadow-overlay: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+	--shadow-glow-red: 0 0 20px rgba(220, 38, 38, 0.35);
+	--shadow-glow-yellow: 0 0 20px rgba(251, 191, 36, 0.4);
 
-  /* Border radius */
-  --radius-sm:   0.375rem;
-  --radius-md:   0.75rem;
-  --radius-lg:   1rem;
-  --radius-xl:   1.5rem;
-  --radius-full: 9999px;
+	/* Border radius */
+	--radius-sm: 0.375rem;
+	--radius-md: 0.75rem;
+	--radius-lg: 1rem;
+	--radius-xl: 1.5rem;
+	--radius-full: 9999px;
 
-  /* Scrollbar colors */
-  --scrollbar-track: rgb(243 244 246); /* gray-100 */
-  --scrollbar-thumb: rgb(209 213 219); /* gray-300 */
-  --scrollbar-thumb-hover: rgb(156 163 175); /* gray-400 */
+	/* Scrollbar colors */
+	--scrollbar-track: rgb(243 244 246); /* gray-100 */
+	--scrollbar-thumb: rgb(209 213 219); /* gray-300 */
+	--scrollbar-thumb-hover: rgb(156 163 175); /* gray-400 */
 }
 
 .dark {
-  /* Dark theme colors */
-  --bg-main: rgb(17 24 39); /* gray-900 */
-  --bg-secondary: rgb(31 41 55); /* gray-800 */
-  --bg-tertiary: rgb(55 65 81); /* gray-700 */
-  --text-main: rgb(243 244 246); /* gray-100 */
-  --text-secondary: rgb(209 213 219); /* gray-300 */
-  --text-muted: rgb(156 163 175); /* gray-400 */
-  --border-color: rgb(75 85 99); /* gray-600 */
-  --shadow-color: rgba(0, 0, 0, 0.3);
-  
-  /* Scrollbar colors */
-  --scrollbar-track: rgb(31 41 55); /* gray-800 */
-  --scrollbar-thumb: rgb(75 85 99); /* gray-600 */
-  --scrollbar-thumb-hover: rgb(107 114 128); /* gray-500 */
+	/* Dark theme colors */
+	--bg-main: rgb(17 24 39); /* gray-900 */
+	--bg-secondary: rgb(31 41 55); /* gray-800 */
+	--bg-tertiary: rgb(55 65 81); /* gray-700 */
+	--text-main: rgb(243 244 246); /* gray-100 */
+	--text-secondary: rgb(209 213 219); /* gray-300 */
+	--text-muted: rgb(156 163 175); /* gray-400 */
+	--border-color: rgb(75 85 99); /* gray-600 */
+	--shadow-color: rgba(0, 0, 0, 0.3);
+
+	/* Scrollbar colors */
+	--scrollbar-track: rgb(31 41 55); /* gray-800 */
+	--scrollbar-thumb: rgb(75 85 99); /* gray-600 */
+	--scrollbar-thumb-hover: rgb(107 114 128); /* gray-500 */
 }
 
 @layer base {
-  /* Scope theme transitions to structural elements only — avoid layout thrashing */
-  html, body, header, nav, main, section, aside, article, footer,
-  .theme-bg, .theme-bg-secondary, .theme-bg-tertiary,
-  .theme-text, .theme-text-secondary, .theme-text-muted {
-    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-  }
+	/* Scope theme transitions to structural elements only — avoid layout thrashing */
+	html,
+	body,
+	header,
+	nav,
+	main,
+	section,
+	aside,
+	article,
+	footer,
+	.theme-bg,
+	.theme-bg-secondary,
+	.theme-bg-tertiary,
+	.theme-text,
+	.theme-text-secondary,
+	.theme-text-muted {
+		transition:
+			background-color 0.3s ease,
+			color 0.3s ease,
+			border-color 0.3s ease;
+	}
 
-  html {
-    scroll-behavior: smooth;
-    background-color: var(--bg-main);
-    color: var(--text-main);
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  
-  body {
-    background-color: var(--bg-main);
-    color: var(--text-main);
-    transition: background-color 0.3s ease, color 0.3s ease;
-  }
-  
-  /* Ensure form elements inherit theme */
-  input, select, textarea, button {
-    transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-  }
-  
-  /* Ensure proper dark mode initialization */
-  html.dark,
-  html.dark body {
-    color-scheme: dark;
-  }
+	html {
+		scroll-behavior: smooth;
+		background-color: var(--bg-main);
+		color: var(--text-main);
+		transition:
+			background-color 0.3s ease,
+			color 0.3s ease;
+	}
 
-  /* Custom scrollbar using CSS variables */
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
+	body {
+		background-color: var(--bg-main);
+		color: var(--text-main);
+		transition:
+			background-color 0.3s ease,
+			color 0.3s ease;
+	}
 
-  ::-webkit-scrollbar-track {
-    background-color: var(--scrollbar-track);
-  }
+	/* Ensure form elements inherit theme */
+	input,
+	select,
+	textarea,
+	button {
+		transition:
+			background-color 0.2s ease,
+			color 0.2s ease,
+			border-color 0.2s ease,
+			box-shadow 0.2s ease;
+	}
 
-  ::-webkit-scrollbar-thumb {
-    background-color: var(--scrollbar-thumb);
-    border-radius: 9999px;
-  }
+	/* Ensure proper dark mode initialization */
+	html.dark,
+	html.dark body {
+		color-scheme: dark;
+	}
 
-  ::-webkit-scrollbar-thumb:hover {
-    background-color: var(--scrollbar-thumb-hover);
-  }
+	/* Custom scrollbar using CSS variables */
+	::-webkit-scrollbar {
+		width: 8px;
+	}
+
+	::-webkit-scrollbar-track {
+		background-color: var(--scrollbar-track);
+	}
+
+	::-webkit-scrollbar-thumb {
+		background-color: var(--scrollbar-thumb);
+		border-radius: 9999px;
+	}
+
+	::-webkit-scrollbar-thumb:hover {
+		background-color: var(--scrollbar-thumb-hover);
+	}
 }
 
 @layer utilities {
-  .backdrop-blur-glass {
-    backdrop-filter: blur(12px) saturate(180%);
-    -webkit-backdrop-filter: blur(12px) saturate(180%);
-  }
-  
-  .gradient-border {
-    background: linear-gradient(var(--bg-main), var(--bg-main)) padding-box,
-                linear-gradient(45deg, #3b82f6, #8b5cf6, #ef4444) border-box;
-    border: 2px solid transparent;
-  }
-  
-  /* Theme utilities using CSS variables */
-  .theme-bg {
-    background-color: var(--bg-main) !important;
-    color: var(--text-main) !important;
-  }
-  
-  .theme-bg-secondary {
-    background-color: var(--bg-secondary) !important;
-    color: var(--text-main) !important;
-  }
-  
-  .theme-bg-tertiary {
-    background-color: var(--bg-tertiary) !important;
-    color: var(--text-main) !important;
-  }
-  
-  .theme-text {
-    color: var(--text-main) !important;
-  }
-  
-  .theme-text-secondary {
-    color: var(--text-secondary) !important;
-  }
-  
-  .theme-text-muted {
-    color: var(--text-muted) !important;
-  }
-  
-  .theme-border {
-    border-color: var(--border-color) !important;
-  }
-  
-  /* Force theme application to any element */
-  .force-theme-bg {
-    background-color: var(--bg-main) !important;
-    color: var(--text-main) !important;
-    transition: background-color 0.3s ease, color 0.3s ease !important;
-  }
-  
-  .force-theme-text {
-    color: var(--text-main) !important;
-    transition: color 0.3s ease !important;
-  }
+	.backdrop-blur-glass {
+		backdrop-filter: blur(12px) saturate(180%);
+		-webkit-backdrop-filter: blur(12px) saturate(180%);
+	}
 
-  /* Hover states using theme colors */
-  .hover-theme-bg-secondary:hover {
-    background-color: var(--bg-secondary) !important;
-  }
+	.gradient-border {
+		background:
+			linear-gradient(var(--bg-main), var(--bg-main)) padding-box,
+			linear-gradient(45deg, #3b82f6, #8b5cf6, #ef4444) border-box;
+		border: 2px solid transparent;
+	}
 
-  .hover-theme-bg-tertiary:hover {
-    background-color: var(--bg-tertiary) !important;
-  }
+	/* Theme utilities using CSS variables */
+	.theme-bg {
+		background-color: var(--bg-main) !important;
+		color: var(--text-main) !important;
+	}
 
-  /* Focus states for form elements */
-  .theme-focus:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px rgb(59 130 246);
-    border-color: rgb(59 130 246);
-  }
+	.theme-bg-secondary {
+		background-color: var(--bg-secondary) !important;
+		color: var(--text-main) !important;
+	}
 
-  /* Select dropdown theming */
-  select.theme-select {
-    background-color: var(--bg-secondary);
-    border-color: var(--border-color);
-    color: var(--text-main);
-  }
+	.theme-bg-tertiary {
+		background-color: var(--bg-tertiary) !important;
+		color: var(--text-main) !important;
+	}
 
-  select.theme-select:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px rgb(59 130 246);
-    border-color: rgb(59 130 246);
-  }
+	.theme-text {
+		color: var(--text-main) !important;
+	}
 
-  select.theme-select option {
-    background-color: var(--bg-secondary);
-    color: var(--text-main);
-  }
+	.theme-text-secondary {
+		color: var(--text-secondary) !important;
+	}
 
-  /* Input theming */
-  input.theme-input {
-    background-color: var(--bg-secondary);
-    border-color: var(--border-color);
-    color: var(--text-main);
-  }
+	.theme-text-muted {
+		color: var(--text-muted) !important;
+	}
 
-  input.theme-input:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px rgb(59 130 246);
-    border-color: rgb(59 130 246);
-  }
+	.theme-border {
+		border-color: var(--border-color) !important;
+	}
 
-  input.theme-input::placeholder {
-    color: var(--text-muted);
-  }
+	/* Force theme application to any element */
+	.force-theme-bg {
+		background-color: var(--bg-main) !important;
+		color: var(--text-main) !important;
+		transition:
+			background-color 0.3s ease,
+			color 0.3s ease !important;
+	}
 
-  /* Placeholder color for all themed inputs */
-  .theme-placeholder::placeholder {
-    color: var(--text-muted) !important;
-  }
+	.force-theme-text {
+		color: var(--text-main) !important;
+		transition: color 0.3s ease !important;
+	}
 
-  /* Ensure buttons respect theme */
-  .theme-button {
-    background-color: var(--bg-secondary);
-    color: var(--text-main);
-    border-color: var(--border-color);
-  }
+	/* Hover states using theme colors */
+	.hover-theme-bg-secondary:hover {
+		background-color: var(--bg-secondary) !important;
+	}
 
-  .theme-button:hover {
-    background-color: var(--bg-tertiary);
-  }
+	.hover-theme-bg-tertiary:hover {
+		background-color: var(--bg-tertiary) !important;
+	}
+
+	/* Focus states for form elements */
+	.theme-focus:focus {
+		outline: none;
+		box-shadow: 0 0 0 2px rgb(59 130 246);
+		border-color: rgb(59 130 246);
+	}
+
+	/* Select dropdown theming */
+	select.theme-select {
+		background-color: var(--bg-secondary);
+		border-color: var(--border-color);
+		color: var(--text-main);
+	}
+
+	select.theme-select:focus {
+		outline: none;
+		box-shadow: 0 0 0 2px rgb(59 130 246);
+		border-color: rgb(59 130 246);
+	}
+
+	select.theme-select option {
+		background-color: var(--bg-secondary);
+		color: var(--text-main);
+	}
+
+	/* Input theming */
+	input.theme-input {
+		background-color: var(--bg-secondary);
+		border-color: var(--border-color);
+		color: var(--text-main);
+	}
+
+	input.theme-input:focus {
+		outline: none;
+		box-shadow: 0 0 0 2px rgb(59 130 246);
+		border-color: rgb(59 130 246);
+	}
+
+	input.theme-input::placeholder {
+		color: var(--text-muted);
+	}
+
+	/* Placeholder color for all themed inputs */
+	.theme-placeholder::placeholder {
+		color: var(--text-muted) !important;
+	}
+
+	/* Ensure buttons respect theme */
+	.theme-button {
+		background-color: var(--bg-secondary);
+		color: var(--text-main);
+		border-color: var(--border-color);
+	}
+
+	.theme-button:hover {
+		background-color: var(--bg-tertiary);
+	}
 }
 
 /* Animation keyframes */
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
+	0%,
+	100% {
+		transform: translateY(0px);
+	}
+	50% {
+		transform: translateY(-10px);
+	}
 }
 
 @keyframes pulse-glow {
-  0%, 100% { box-shadow: 0 0 20px rgba(59, 130, 246, 0.3); }
-  50% { box-shadow: 0 0 30px rgba(59, 130, 246, 0.6); }
+	0%,
+	100% {
+		box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+	}
+	50% {
+		box-shadow: 0 0 30px rgba(59, 130, 246, 0.6);
+	}
 }
 
 @keyframes pokeball-spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
 }
 
 @keyframes pokeball-pulse {
-  0%, 100% { 
-    transform: scale(1);
-    box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
-  }
-  50% { 
-    transform: scale(1.05);
-    box-shadow: 0 0 0 10px rgba(220, 38, 38, 0);
-  }
+	0%,
+	100% {
+		transform: scale(1);
+		box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7);
+	}
+	50% {
+		transform: scale(1.05);
+		box-shadow: 0 0 0 10px rgba(220, 38, 38, 0);
+	}
 }
 
 .float-animation {
-  animation: float 3s ease-in-out infinite;
+	animation: float 3s ease-in-out infinite;
 }
 
 .pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
+	animation: pulse-glow 2s ease-in-out infinite;
 }
 
 /* Pokemon logo styling */
 .pokemon-logo-style {
-  /* Main yellow gradient like official logo */
-  background: linear-gradient(180deg, 
-    #FFEF00 0%,    /* Bright Yellow */
-    #FFD700 25%,   /* Gold */
-    #FFA500 50%,   /* Orange */
-    #FFD700 75%,   /* Gold */
-    #FFEF00 100%   /* Bright Yellow */
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: #ffcb04; /* Fallback color for older browsers */
-  
-  /* Blue stroke/outline like official logo */
-  text-shadow:
-    -3px -3px 0 #001f5c,
-    3px -3px 0 #001f5c,
-    -3px 3px 0 #001f5c,
-    3px 3px 0 #001f5c,
-    -2px -2px 0 #003399,
-    2px -2px 0 #003399,
-    -2px 2px 0 #003399,
-    2px 2px 0 #003399,
-    -1px -1px 0 #0066cc,
-    1px -1px 0 #0066cc,
-    -1px 1px 0 #0066cc,
-    1px 1px 0 #0066cc,
-    0 0 10px rgba(255, 239, 0, 0.8),
-    0 0 20px rgba(255, 215, 0, 0.6),
-    0 0 30px rgba(255, 215, 0, 0.4);
-  
-  /* Use Pokemon font with fallbacks */
-  font-family: 'Pokemon Solid', 'Fredoka One', 'Cooper Black', 'Arial Black', sans-serif;
-  font-weight: normal;
-  letter-spacing: 0.08em;
-  
-  /* Add slight 3D perspective */
-  transform: perspective(1000px) rotateX(5deg);
-  filter: drop-shadow(2px 2px 4px rgba(0, 31, 92, 0.3));
-  
-  /* Improve rendering */
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-rendering: optimizeLegibility;
+	/* Main yellow gradient like official logo */
+	background: linear-gradient(
+		180deg,
+		#ffef00 0%,
+		/* Bright Yellow */ #ffd700 25%,
+		/* Gold */ #ffa500 50%,
+		/* Orange */ #ffd700 75%,
+		/* Gold */ #ffef00 100% /* Bright Yellow */
+	);
+	-webkit-background-clip: text;
+	background-clip: text;
+	color: #ffcb04; /* Fallback color for older browsers */
+
+	/* Blue stroke/outline like official logo */
+	text-shadow:
+		-3px -3px 0 #001f5c,
+		3px -3px 0 #001f5c,
+		-3px 3px 0 #001f5c,
+		3px 3px 0 #001f5c,
+		-2px -2px 0 #003399,
+		2px -2px 0 #003399,
+		-2px 2px 0 #003399,
+		2px 2px 0 #003399,
+		-1px -1px 0 #0066cc,
+		1px -1px 0 #0066cc,
+		-1px 1px 0 #0066cc,
+		1px 1px 0 #0066cc,
+		0 0 10px rgba(255, 239, 0, 0.8),
+		0 0 20px rgba(255, 215, 0, 0.6),
+		0 0 30px rgba(255, 215, 0, 0.4);
+
+	/* Use Pokemon font with fallbacks */
+	font-family: 'Pokemon Solid', 'Fredoka One', 'Cooper Black', 'Arial Black', sans-serif;
+	font-weight: normal;
+	letter-spacing: 0.08em;
+
+	/* Add slight 3D perspective */
+	transform: perspective(1000px) rotateX(5deg);
+	filter: drop-shadow(2px 2px 4px rgba(0, 31, 92, 0.3));
+
+	/* Improve rendering */
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+	text-rendering: optimizeLegibility;
 }
 
 /* Pokeball Spinner Styles */
 .pokeball-spinner {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  position: relative;
-  animation: pokeball-spin 1s linear infinite, pokeball-pulse 2s ease-in-out infinite;
-  
-  /* Pokeball top half - red */
-  background: linear-gradient(180deg, 
-    #dc2626 0%,     /* Red-600 */
-    #ef4444 50%,    /* Red-500 */
-    #f3f4f6 50%,    /* Gray-100 - center line (light gray) */
-    #ffffff 100%    /* White - bottom half */
-  );
-  
-  /* Center button */
-  border: 3px solid #1f2937;
+	width: 60px;
+	height: 60px;
+	border-radius: 50%;
+	position: relative;
+	animation:
+		pokeball-spin 1s linear infinite,
+		pokeball-pulse 2s ease-in-out infinite;
+
+	/* Pokeball top half - red */
+	background: linear-gradient(
+		180deg,
+		#dc2626 0%,
+		/* Red-600 */ #ef4444 50%,
+		/* Red-500 */ #f3f4f6 50%,
+		/* Gray-100 - center line (light gray) */ #ffffff 100% /* White - bottom half */
+	);
+
+	/* Center button */
+	border: 3px solid #1f2937;
 }
 
 .pokeball-spinner::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 16px;
-  height: 16px;
-  background: linear-gradient(45deg, #f3f4f6, #ffffff);
-  border: 2px solid #1f2937;
-  border-radius: 50%;
-  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 16px;
+	height: 16px;
+	background: linear-gradient(45deg, #f3f4f6, #ffffff);
+	border: 2px solid #1f2937;
+	border-radius: 50%;
+	box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .pokeball-spinner::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 8px;
-  height: 8px;
-  background: #1f2937;
-  border-radius: 50%;
+	content: '';
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 8px;
+	height: 8px;
+	background: #1f2937;
+	border-radius: 50%;
 }
 
 /* Dark mode adjustments */
 .dark .pokeball-spinner {
-  background: linear-gradient(180deg, 
-    #dc2626 0%,     /* Red-600 */
-    #ef4444 50%,    /* Red-500 */
-    #BDBDBD 50%,    /* Gray-400 - center line */
-    #E0E0E0 100%    /* Gray-300 - bottom half (lighter gray for contrast) */
-  );
-  border-color: #111827;
+	background: linear-gradient(
+		180deg,
+		#dc2626 0%,
+		/* Red-600 */ #ef4444 50%,
+		/* Red-500 */ #bdbdbd 50%,
+		/* Gray-400 - center line */ #e0e0e0 100%
+			/* Gray-300 - bottom half (lighter gray for contrast) */
+	);
+	border-color: #111827;
 }
 
 .dark .pokeball-spinner::before {
-  background: linear-gradient(45deg, #374151, #4b5563);
-  border-color: #111827;
+	background: linear-gradient(45deg, #374151, #4b5563);
+	border-color: #111827;
 }
 
 .dark .pokeball-spinner::after {
-  background: #111827;
+	background: #111827;
 }
 
 @keyframes loading-shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+	0% {
+		background-position: -200% 0;
+	}
+	100% {
+		background-position: 200% 0;
+	}
 }
 
 /* === New animation keyframes (Impeccable /delight) === */
 
 @keyframes poke-enter {
-  0%   { opacity: 0; transform: translateY(14px) scale(0.96); }
-  60%  { opacity: 1; transform: translateY(-3px) scale(1.01); }
-  100% { opacity: 1; transform: translateY(0) scale(1); }
+	0% {
+		opacity: 0;
+		transform: translateY(14px) scale(0.96);
+	}
+	60% {
+		opacity: 1;
+		transform: translateY(-3px) scale(1.01);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
 }
 
 @keyframes poke-slide-up {
-  0%   { opacity: 0; transform: translateY(20px); }
-  100% { opacity: 1; transform: translateY(0); }
+	0% {
+		opacity: 0;
+		transform: translateY(20px);
+	}
+	100% {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
 @keyframes poke-scale-in {
-  0%   { opacity: 0; transform: scale(0.9); }
-  100% { opacity: 1; transform: scale(1); }
+	0% {
+		opacity: 0;
+		transform: scale(0.9);
+	}
+	100% {
+		opacity: 1;
+		transform: scale(1);
+	}
 }
 
 @keyframes pokeball-rotate-in {
-  0%   { opacity: 0; transform: rotate(-180deg) scale(0.5); }
-  100% { opacity: 1; transform: rotate(0deg) scale(1); }
+	0% {
+		opacity: 0;
+		transform: rotate(-180deg) scale(0.5);
+	}
+	100% {
+		opacity: 1;
+		transform: rotate(0deg) scale(1);
+	}
 }
 
 @keyframes shimmer-sweep {
-  0%   { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+	0% {
+		background-position: -200% 0;
+	}
+	100% {
+		background-position: 200% 0;
+	}
 }
 
 @keyframes battle-flash {
-  0%, 100% { opacity: 1; }
-  50%       { opacity: 0.4; }
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.4;
+	}
 }
 
 /* Stagger animation utilities */
 .poke-enter {
-  animation: poke-enter 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+	animation: poke-enter 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
 }
 
 .poke-slide-up {
-  animation: poke-slide-up 0.35s ease both;
+	animation: poke-slide-up 0.35s ease both;
 }
 
 .poke-scale-in {
-  animation: poke-scale-in 0.3s ease both;
+	animation: poke-scale-in 0.3s ease both;
 }
 
 /* Grid stagger: apply .poke-stagger to the grid container */
-.poke-stagger > *:nth-child(1)  { animation-delay: 0ms; }
-.poke-stagger > *:nth-child(2)  { animation-delay: 50ms; }
-.poke-stagger > *:nth-child(3)  { animation-delay: 100ms; }
-.poke-stagger > *:nth-child(4)  { animation-delay: 150ms; }
-.poke-stagger > *:nth-child(5)  { animation-delay: 200ms; }
-.poke-stagger > *:nth-child(6)  { animation-delay: 250ms; }
-.poke-stagger > *:nth-child(7)  { animation-delay: 300ms; }
-.poke-stagger > *:nth-child(8)  { animation-delay: 350ms; }
-.poke-stagger > *:nth-child(9)  { animation-delay: 400ms; }
-.poke-stagger > *:nth-child(10) { animation-delay: 450ms; }
-.poke-stagger > *:nth-child(11) { animation-delay: 480ms; }
-.poke-stagger > *:nth-child(12) { animation-delay: 510ms; }
-.poke-stagger > *:nth-child(n+13) { animation-delay: 540ms; }
+.poke-stagger > *:nth-child(1) {
+	animation-delay: 0ms;
+}
+.poke-stagger > *:nth-child(2) {
+	animation-delay: 50ms;
+}
+.poke-stagger > *:nth-child(3) {
+	animation-delay: 100ms;
+}
+.poke-stagger > *:nth-child(4) {
+	animation-delay: 150ms;
+}
+.poke-stagger > *:nth-child(5) {
+	animation-delay: 200ms;
+}
+.poke-stagger > *:nth-child(6) {
+	animation-delay: 250ms;
+}
+.poke-stagger > *:nth-child(7) {
+	animation-delay: 300ms;
+}
+.poke-stagger > *:nth-child(8) {
+	animation-delay: 350ms;
+}
+.poke-stagger > *:nth-child(9) {
+	animation-delay: 400ms;
+}
+.poke-stagger > *:nth-child(10) {
+	animation-delay: 450ms;
+}
+.poke-stagger > *:nth-child(11) {
+	animation-delay: 480ms;
+}
+.poke-stagger > *:nth-child(12) {
+	animation-delay: 510ms;
+}
+.poke-stagger > *:nth-child(n + 13) {
+	animation-delay: 540ms;
+}
 
 /* === Brand CTA button (Impeccable /colorize + /bolder) === */
 .btn-brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1.5rem;
-  background: var(--brand-red); /* solid, no gradient — better contrast */
-  color: #fff;
-  font-weight: 700;
-  border-radius: var(--radius-md);
-  transition: background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
-  border: 2px solid transparent;
-  cursor: pointer;
-  letter-spacing: 0.01em;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.625rem 1.5rem;
+	background: var(--brand-red); /* solid, no gradient — better contrast */
+	color: #fff;
+	font-weight: 700;
+	border-radius: var(--radius-md);
+	transition:
+		background 0.2s ease,
+		box-shadow 0.2s ease,
+		transform 0.15s ease;
+	border: 2px solid transparent;
+	cursor: pointer;
+	letter-spacing: 0.01em;
 }
 .btn-brand:hover {
-  background: var(--brand-red-hover);
-  box-shadow: var(--shadow-glow-red);
-  transform: translateY(-1px);
+	background: var(--brand-red-hover);
+	box-shadow: var(--shadow-glow-red);
+	transform: translateY(-1px);
 }
-.btn-brand:active { transform: translateY(0); }
+.btn-brand:active {
+	transform: translateY(0);
+}
 
 .btn-secondary {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.625rem 1.5rem;
-  background: var(--bg-tertiary);
-  color: var(--text-main);
-  font-weight: 500;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  transition: background 0.2s ease, border-color 0.2s ease;
-  cursor: pointer;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	padding: 0.625rem 1.5rem;
+	background: var(--bg-tertiary);
+	color: var(--text-main);
+	font-weight: 500;
+	border-radius: var(--radius-md);
+	border: 1px solid var(--border-color);
+	transition:
+		background 0.2s ease,
+		border-color 0.2s ease;
+	cursor: pointer;
 }
 .btn-secondary:hover {
-  background: var(--bg-secondary);
-  border-color: var(--brand-red);
+	background: var(--bg-secondary);
+	border-color: var(--brand-red);
 }
 
 /* Type-glow hover cards */
 .card-hover {
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+	transition:
+		transform 0.25s ease,
+		box-shadow 0.25s ease;
 }
 .card-hover:hover {
-  transform: translateY(-4px) scale(1.01);
-  box-shadow: var(--shadow-hover);
+	transform: translateY(-4px) scale(1.01);
+	box-shadow: var(--shadow-hover);
 }
 
 /* Decorative pokeball shape (CSS only) */
 .pokeball-deco {
-  display: block;
-  border-radius: 50%;
-  background:
+	display: block;
+	border-radius: 50%;
+	background:
     /* Center button */
-    radial-gradient(circle at center, #fff 0%, #fff 18%, transparent 18%),
-    radial-gradient(circle at center, #1f2937 0%, #1f2937 22%, transparent 22%),
-    /* Horizontal divider */
-    linear-gradient(#1f2937 0%, #1f2937 100%) center / 100% 3px no-repeat,
-    /* Top half red, bottom half white */
-    linear-gradient(to bottom, var(--brand-red) 50%, #f9fafb 50%);
-  border: 3px solid #1f2937;
-  opacity: 0.06; /* light mode: subtle but visible */
+		radial-gradient(circle at center, #fff 0%, #fff 18%, transparent 18%),
+		radial-gradient(circle at center, #1f2937 0%, #1f2937 22%, transparent 22%),
+		/* Horizontal divider */ linear-gradient(#1f2937 0%, #1f2937 100%) center / 100% 3px no-repeat,
+		/* Top half red, bottom half white */
+		linear-gradient(to bottom, var(--brand-red) 50%, #f9fafb 50%);
+	border: 3px solid #1f2937;
+	opacity: 0.06; /* light mode: subtle but visible */
 }
 
 .dark .pokeball-deco {
-  opacity: 0.15; /* dark mode: more visible against dark bg */
+	opacity: 0.15; /* dark mode: more visible against dark bg */
 }
 
 /* Accent border variants */
-.accent-top-red    { border-top: 3px solid var(--brand-red); }
-.accent-top-blue   { border-top: 3px solid #3b82f6; }
-.accent-top-green  { border-top: 3px solid #22c55e; }
-.accent-top-yellow { border-top: 3px solid var(--brand-yellow); }
-.accent-left-blue  { border-left: 4px solid #3b82f6; }
+.accent-top-red {
+	border-top: 3px solid var(--brand-red);
+}
+.accent-top-blue {
+	border-top: 3px solid #3b82f6;
+}
+.accent-top-green {
+	border-top: 3px solid #22c55e;
+}
+.accent-top-yellow {
+	border-top: 3px solid var(--brand-yellow);
+}
+.accent-left-blue {
+	border-left: 4px solid #3b82f6;
+}

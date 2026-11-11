@@ -19,16 +19,16 @@
 	);
 
 	const POCKET_COLORS: Record<string, string> = {
-		pokeballs:    '#ef4444',
-		medicine:     '#22c55e',
-		berries:      '#84cc16',
+		pokeballs: '#ef4444',
+		medicine: '#22c55e',
+		berries: '#84cc16',
 		'hold-items': '#8b5cf6',
-		machines:     '#f59e0b',
-		'key-items':  '#3b82f6',
+		machines: '#f59e0b',
+		'key-items': '#3b82f6',
 		collectibles: '#ec4899',
-		evolution:    '#14b8a6',
-		training:     '#f97316',
-		spelunking:   '#78716c'
+		evolution: '#14b8a6',
+		training: '#f97316',
+		spelunking: '#78716c'
 	};
 
 	function getCategoryColor(catName: string): string {
@@ -51,7 +51,7 @@
 
 <button
 	{onclick}
-	class="group relative flex w-full flex-col overflow-hidden rounded-xl text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
+	class="group relative flex w-full flex-col overflow-hidden rounded-xl text-left transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus-visible:ring-2 focus-visible:ring-offset-1 focus-visible:outline-none"
 	style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
 >
 	<!-- Left category color strip -->
@@ -71,7 +71,8 @@
 					src={item.sprites.default}
 					alt=""
 					class="h-8 w-8 object-contain"
-					width="32" height="32"
+					width="32"
+					height="32"
 				/>
 			{:else}
 				<Package size={18} style="color: {catColor};" />
@@ -80,17 +81,14 @@
 
 		<!-- Info -->
 		<div class="min-w-0 flex-1">
-			<p class="mb-1.5 line-clamp-2 text-sm font-semibold leading-snug theme-text">{
-				displayName
-			}</p>
-			<div class="flex items-center gap-2 flex-wrap">
+			<p class="theme-text mb-1.5 line-clamp-2 text-sm leading-snug font-semibold">{displayName}</p>
+			<div class="flex flex-wrap items-center gap-2">
 				<span
 					class="rounded-full px-2 py-0.5 text-xs font-medium capitalize"
-					style="background-color: {catColor}1A; color: {catColor};"
-				>{categoryDisplay}</span>
+					style="background-color: {catColor}1A; color: {catColor};">{categoryDisplay}</span
+				>
 				<span class="text-xs tabular-nums" style="color: var(--text-muted);">{costLabel}</span>
 			</div>
 		</div>
 	</div>
-
 </button>

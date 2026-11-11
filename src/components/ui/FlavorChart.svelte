@@ -4,11 +4,11 @@
 	let { flavors, compact = false }: { flavors: BerryFlavor[]; compact?: boolean } = $props();
 
 	const FLAVOR_DEFS = [
-		{ name: 'spicy',  label: 'Spicy',  color: '#ef4444' },
-		{ name: 'dry',    label: 'Dry',    color: '#38bdf8' },
-		{ name: 'sweet',  label: 'Sweet',  color: '#f472b6' },
+		{ name: 'spicy', label: 'Spicy', color: '#ef4444' },
+		{ name: 'dry', label: 'Dry', color: '#38bdf8' },
+		{ name: 'sweet', label: 'Sweet', color: '#f472b6' },
 		{ name: 'bitter', label: 'Bitter', color: '#84cc16' },
-		{ name: 'sour',   label: 'Sour',   color: '#eab308' }
+		{ name: 'sour', label: 'Sour', color: '#eab308' }
 	] as const;
 
 	function potency(name: string): number {

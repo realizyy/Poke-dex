@@ -19,9 +19,9 @@
 	onMount(() => {
 		teamStore.loadTeams();
 
-		const urlQuery   = $page.url.searchParams.get('q') ?? '';
-		const urlTypes   = $page.url.searchParams.get('types')?.split(',').filter(Boolean) ?? [];
-		const urlGens    = $page.url.searchParams.get('generations')?.split(',').filter(Boolean) ?? [];
+		const urlQuery = $page.url.searchParams.get('q') ?? '';
+		const urlTypes = $page.url.searchParams.get('types')?.split(',').filter(Boolean) ?? [];
+		const urlGens = $page.url.searchParams.get('generations')?.split(',').filter(Boolean) ?? [];
 
 		if (urlQuery || urlTypes.length > 0 || urlGens.length > 0) {
 			const filtersFromUrl = { types: urlTypes, generations: urlGens };
@@ -37,8 +37,7 @@
 			sessionStorage.removeItem('search-scroll');
 			requestAnimationFrame(() => window.scrollTo({ top: y, behavior: 'instant' }));
 		}
-
-		});
+	});
 
 	// Svelte action — runs when the sentinel element is actually inserted into the DOM.
 	function infiniteScroll(node: HTMLElement) {
@@ -51,7 +50,11 @@
 			{ rootMargin: '200px' }
 		);
 		observer.observe(node);
-		return { destroy() { observer.disconnect(); } };
+		return {
+			destroy() {
+				observer.disconnect();
+			}
+		};
 	}
 
 	function handleSearch(event: SearchEvent) {
@@ -91,29 +94,32 @@
 
 <svelte:head>
 	<title>Search Pokémon - Pokédx</title>
-	<meta name="description" content="Search and filter through all Pokémon with advanced filters including type, generation, and stats." />
+	<meta
+		name="description"
+		content="Search and filter through all Pokémon with advanced filters including type, generation, and stats."
+	/>
 </svelte:head>
 
-<div class="min-h-screen theme-bg" style="background-color: var(--bg-main);">
+<div class="theme-bg min-h-screen" style="background-color: var(--bg-main);">
 	<!-- Search Header -->
-	<div class="theme-bg theme-border-b relative z-10" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
-		<div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-3 sm:py-4">
-			<SearchFilter 
-				searchQuery={searchStore.query}
-				onsearch={handleSearch}
-				onclear={handleClear}
-			/>
+	<div
+		class="theme-bg theme-border-b relative z-10"
+		style="background-color: var(--bg-secondary); border-color: var(--border-color);"
+	>
+		<div class="mx-auto max-w-7xl px-3 py-3 sm:px-4 sm:py-4 lg:px-8">
+			<SearchFilter searchQuery={searchStore.query} onsearch={handleSearch} onclear={handleClear} />
 		</div>
 	</div>
 
 	<!-- Main Content -->
-	<div class="max-w-7xl mx-auto px-3 sm:px-4 lg:px-8 py-4 sm:py-6">
+	<div class="mx-auto max-w-7xl px-3 py-4 sm:px-4 sm:py-6 lg:px-8">
 		{#if !searchStore.hasSearched}
 			<!-- Welcome State: Pokeball illustration -->
-			<div class="text-center py-12 sm:py-20 poke-scale-in">
+			<div class="poke-scale-in py-12 text-center sm:py-20">
 				<!-- CSS Pokeball -->
-				<div class="mx-auto mb-8 relative" style="width: 96px; height: 96px;">
-					<div style="
+				<div class="relative mx-auto mb-8" style="width: 96px; height: 96px;">
+					<div
+						style="
 						width: 96px; height: 96px;
 						border-radius: 50%;
 						background:
@@ -124,18 +130,18 @@
 						border: 3px solid #374151;
 						box-shadow: var(--shadow-hover);
 						animation: float 3s ease-in-out infinite;
-					"></div>
+					"
+					></div>
 				</div>
-				<h2 class="text-2xl font-bold theme-text mb-2">Find your Pokémon</h2>
-				<p class="theme-text-secondary text-sm max-w-xs mx-auto mb-8">
+				<h2 class="theme-text mb-2 text-2xl font-bold">Find your Pokémon</h2>
+				<p class="theme-text-secondary mx-auto mb-8 max-w-xs text-sm">
 					Search by name, filter by type, generation, or base stats.
 				</p>
 				<div class="flex flex-wrap justify-center gap-2">
-
 					{#each quickPicks as pick}
 						<button
 							onclick={() => handleQuickSearch(pick.name.toLowerCase())}
-							class="px-4 py-2 rounded-full text-white text-sm font-semibold transition-all hover:scale-105"
+							class="rounded-full px-4 py-2 text-sm font-semibold text-white transition-all hover:scale-105"
 							style="background-color: {pick.color}; box-shadow: 0 4px 12px {pick.color}55;"
 						>
 							{pick.name}
@@ -147,15 +153,19 @@
 			<!-- Search Results -->
 			<div class="space-y-4 sm:space-y-6">
 				<!-- Results Header -->
-				<div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4">
+				<div
+					class="flex flex-col items-start justify-between gap-3 sm:flex-row sm:items-center sm:gap-4"
+				>
 					<div class="flex items-center gap-2 sm:gap-3">
 						<div class="flex items-center gap-1.5 sm:gap-2">
 							<SearchX size={18} />
-							<h2 class="text-base sm:text-lg font-semibold theme-text">Search Results</h2>
+							<h2 class="theme-text text-base font-semibold sm:text-lg">Search Results</h2>
 						</div>
 						{#if searchStore.pokemons.length > 0}
-							<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold"
-								style="background-color: var(--brand-red-muted); color: var(--brand-red);">
+							<span
+								class="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold"
+								style="background-color: var(--brand-red-muted); color: var(--brand-red);"
+							>
 								{searchStore.pokemons.length}
 								{#if searchStore.totalResults > searchStore.pokemons.length}
 									/ {searchStore.totalResults}
@@ -188,7 +198,9 @@
 						>
 							<ArrowUp
 								size={14}
-								class="transition-transform duration-200 {searchStore.sortOrder === 'desc' ? 'rotate-180' : ''}"
+								class="transition-transform duration-200 {searchStore.sortOrder === 'desc'
+									? 'rotate-180'
+									: ''}"
 							/>
 						</button>
 					</div>
@@ -196,99 +208,117 @@
 
 				<!-- Results Grid -->
 				{#if searchStore.loading && searchStore.pokemons.length === 0}
-					<div class="flex justify-center items-center h-32 sm:h-48">
+					<div class="flex h-32 items-center justify-center sm:h-48">
 						<LoadingSpinner size="lg" text="Searching Pokémon..." showText={true} />
 					</div>
 				{:else if searchStore.pokemons.length === 0}
-					<div class="text-center py-8 sm:py-12">
-						<div class="max-w-sm mx-auto">
-							<SearchX size={48} class="mx-auto theme-text-secondary mb-3" />
-							<h3 class="mt-3 text-sm font-medium theme-text">No Pokémon found</h3>
-							<p class="mt-1 text-xs theme-text-secondary mb-4">Try adjusting your search criteria</p>
+					<div class="py-8 text-center sm:py-12">
+						<div class="mx-auto max-w-sm">
+							<SearchX size={48} class="theme-text-secondary mx-auto mb-3" />
+							<h3 class="theme-text mt-3 text-sm font-medium">No Pokémon found</h3>
+							<p class="theme-text-secondary mt-1 mb-4 text-xs">
+								Try adjusting your search criteria
+							</p>
 							<button onclick={handleClear} class="btn btn-primary btn-sm">Clear Search</button>
 						</div>
 					</div>
 				{:else}
 					<!-- Responsive results grid -->
-				<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-					{#each searchStore.sortedPokemons as pokemon (pokemon.id)}
-						<div role="none" onpointerenter={() => preloadData(`/pokemon/${pokemon.name}`)}>
-							<PokemonCard
-								{pokemon}
-								showStats={true}
-								compact={false}
-								onClick={() => navigateToPokemon(pokemon.name)}
-							/>
-						</div>
-					{/each}
-				</div>
-
-				<!-- Infinite scroll sentinel + skeleton loader -->
-				{#if searchStore.hasMore || searchStore.loadingMore}
-					<!-- Progress bar -->
-					{#if searchStore.totalResults > 0}
-						<div class="max-w-sm mx-auto pt-6 pb-2">
-							<div class="flex justify-between text-xs theme-text-secondary mb-1.5">
-								<span>{searchStore.pokemons.length} loaded</span>
-								<span>{searchStore.totalResults} total</span>
+					<div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+						{#each searchStore.sortedPokemons as pokemon (pokemon.id)}
+							<div role="none" onpointerenter={() => preloadData(`/pokemon/${pokemon.name}`)}>
+								<PokemonCard
+									{pokemon}
+									showStats={true}
+									compact={false}
+									onClick={() => navigateToPokemon(pokemon.name)}
+								/>
 							</div>
-							<div class="w-full h-1 rounded-full overflow-hidden" style="background-color: var(--bg-tertiary);">
+						{/each}
+					</div>
+
+					<!-- Infinite scroll sentinel + skeleton loader -->
+					{#if searchStore.hasMore || searchStore.loadingMore}
+						<!-- Progress bar -->
+						{#if searchStore.totalResults > 0}
+							<div class="mx-auto max-w-sm pt-6 pb-2">
+								<div class="theme-text-secondary mb-1.5 flex justify-between text-xs">
+									<span>{searchStore.pokemons.length} loaded</span>
+									<span>{searchStore.totalResults} total</span>
+								</div>
 								<div
-									class="h-full rounded-full transition-all duration-500"
-									style="width: {Math.round(searchStore.pokemons.length / searchStore.totalResults * 100)}%; background-color: var(--brand-red);"
-								></div>
+									class="h-1 w-full overflow-hidden rounded-full"
+									style="background-color: var(--bg-tertiary);"
+								>
+									<div
+										class="h-full rounded-full transition-all duration-500"
+										style="width: {Math.round(
+											(searchStore.pokemons.length / searchStore.totalResults) * 100
+										)}%; background-color: var(--brand-red);"
+									></div>
+								</div>
 							</div>
-						</div>
-					{/if}
+						{/if}
 
-					<!-- Skeleton cards shown while loading more -->
-					{#if searchStore.loadingMore}
-						<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5 pt-5">
-							{#each { length: 4 } as _}
-								<div class="rounded-2xl overflow-hidden animate-pulse" style="background-color: var(--bg-secondary);">
-									<div class="h-36 w-full" style="background-color: var(--bg-tertiary);"></div>
-									<div class="p-4 space-y-3">
-										<div class="h-4 w-2/3 rounded-full" style="background-color: var(--bg-tertiary);"></div>
-										<div class="h-3 w-1/3 rounded-full" style="background-color: var(--bg-tertiary);"></div>
-										<div class="space-y-2 pt-1">
-											{#each { length: 3 } as __}
-												<div class="h-2 w-full rounded-full" style="background-color: var(--bg-tertiary);"></div>
-											{/each}
+						<!-- Skeleton cards shown while loading more -->
+						{#if searchStore.loadingMore}
+							<div class="grid grid-cols-1 gap-5 pt-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+								{#each { length: 4 } as _}
+									<div
+										class="animate-pulse overflow-hidden rounded-2xl"
+										style="background-color: var(--bg-secondary);"
+									>
+										<div class="h-36 w-full" style="background-color: var(--bg-tertiary);"></div>
+										<div class="space-y-3 p-4">
+											<div
+												class="h-4 w-2/3 rounded-full"
+												style="background-color: var(--bg-tertiary);"
+											></div>
+											<div
+												class="h-3 w-1/3 rounded-full"
+												style="background-color: var(--bg-tertiary);"
+											></div>
+											<div class="space-y-2 pt-1">
+												{#each { length: 3 } as __}
+													<div
+														class="h-2 w-full rounded-full"
+														style="background-color: var(--bg-tertiary);"
+													></div>
+												{/each}
+											</div>
 										</div>
 									</div>
-								</div>
-							{/each}
+								{/each}
+							</div>
+						{/if}
+
+						<!-- Loading indicator — always visible so the user knows more are coming -->
+						<div class="flex flex-col items-center gap-3 py-6">
+							<!-- Animated bouncing dots -->
+							<div class="flex items-center gap-1.5">
+								{#each [0, 1, 2] as i}
+									<div
+										class="h-2.5 w-2.5 animate-bounce rounded-full"
+										style="background-color: var(--brand-red); animation-delay: {i * 0.15}s;"
+									></div>
+								{/each}
+							</div>
+							<p class="theme-text-secondary text-xs">
+								{searchStore.loadingMore ? 'Loading more Pokémon...' : 'Scroll down to load more'}
+							</p>
+						</div>
+
+						<!-- Invisible sentinel — mounted/destroyed with the conditional block -->
+						<div use:infiniteScroll class="h-2"></div>
+					{:else if searchStore.pokemons.length > 0}
+						<div class="py-4 text-center">
+							<p class="theme-text-secondary text-xs">
+								All {searchStore.pokemons.length} Pokémon loaded
+							</p>
 						</div>
 					{/if}
-
-					<!-- Loading indicator — always visible so the user knows more are coming -->
-					<div class="flex flex-col items-center gap-3 py-6">
-						<!-- Animated bouncing dots -->
-						<div class="flex items-center gap-1.5">
-							{#each [0, 1, 2] as i}
-								<div
-									class="w-2.5 h-2.5 rounded-full animate-bounce"
-									style="background-color: var(--brand-red); animation-delay: {i * 0.15}s;"
-								></div>
-							{/each}
-						</div>
-						<p class="text-xs theme-text-secondary">
-							{searchStore.loadingMore ? 'Loading more Pokémon...' : 'Scroll down to load more'}
-						</p>
-					</div>
-
-					<!-- Invisible sentinel — mounted/destroyed with the conditional block -->
-					<div use:infiniteScroll class="h-2"></div>
-				{:else if searchStore.pokemons.length > 0}
-					<div class="text-center py-4">
-						<p class="text-xs theme-text-secondary">
-							All {searchStore.pokemons.length} Pokémon loaded
-						</p>
-					</div>
 				{/if}
-			{/if}
 			</div>
 		{/if}
 	</div>
 </div>
-

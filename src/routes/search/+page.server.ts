@@ -6,18 +6,18 @@ export const load: PageServerLoad = async ({ url }) => {
 	const query = searchParams.get('q') || '';
 	const limit = parseInt(searchParams.get('limit') || '50');
 	const offset = parseInt(searchParams.get('offset') || '0');
-	
+
 	// Parse filters from URL
 	const typeFilter = searchParams.get('types')?.split(',').filter(Boolean) || [];
 	const genFilter = searchParams.get('generations')?.split(',').filter(Boolean) || [];
-	
+
 	const filters = {
 		types: typeFilter,
 		generations: genFilter,
 		minStats: {},
 		maxStats: {}
 	};
-	
+
 	try {
 		// Only perform search if there's an explicit query or filters
 		if (query || typeFilter.length > 0 || genFilter.length > 0) {
@@ -31,7 +31,7 @@ export const load: PageServerLoad = async ({ url }) => {
 			} else {
 				result = await PokemonService.fetchPokemonWithFilters(filters, limit, offset);
 			}
-			
+
 			return {
 				pokemons: result.pokemons,
 				hasMore: result.hasMore,
