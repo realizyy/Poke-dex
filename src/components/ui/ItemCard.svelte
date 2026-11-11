@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { getItemCost } from '#lib/utils/item-utils';
 	import type { Item } from '#lib/types';
 	import { Package } from '#lib/icons';
 
@@ -40,13 +41,12 @@
 
 	const catColor = $derived(getCategoryColor(item.category.name));
 
-	const costLabel = $derived(
-		item.cost === 0
-			? 'Free'
-			: item.cost >= 10000
-				? `₽${(item.cost / 1000).toFixed(0)}k`
-				: `₽${item.cost.toLocaleString()}`
-	);
+	const costLabel = $derived.by(() => {
+		const cost = getItemCost(item);
+		if (cost == null) return '—';
+		if (cost === 0) return 'Free';
+		return cost >= 10000 ? `₽${(cost / 1000).toFixed(0)}k` : `₽${cost.toLocaleString()}`;
+	});
 </script>
 
 <button

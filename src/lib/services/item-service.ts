@@ -1,5 +1,6 @@
 import { TtlCache } from '#lib/api/ttl-cache';
 import { fetchJson, batchFetch as sharedBatchFetch } from '#lib/api/http';
+import { isItem } from '#lib/utils/item-utils';
 import type { Berry, Item, ItemCategory, ItemPocket } from '#lib/types';
 
 const API_BASE = 'https://pokeapi.co/api/v2';
@@ -106,7 +107,7 @@ export class ItemService {
 			},
 			TTL.item
 		);
-		return set(key, items, TTL.category);
+		return set(key, items.filter(isItem), TTL.category);
 	}
 
 	// ─── Items ────────────────────────────────────────────────────────────────
@@ -138,7 +139,7 @@ export class ItemService {
 			},
 			TTL.item
 		);
-		const result = { items, total: list.count };
+		const result = { items: items.filter(isItem), total: list.count };
 		return set(key, result, TTL.list);
 	}
 }

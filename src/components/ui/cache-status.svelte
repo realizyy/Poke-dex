@@ -40,9 +40,8 @@
 					<span class="text-blue-600 dark:text-blue-400">{$cacheState.cacheStats.size} items</span>
 				</div>
 				<div class="theme-text-secondary flex justify-between">
-					<span>Memory:</span>
-					<span class="text-purple-600 dark:text-purple-400"
-						>{$cacheState.cacheStats.memoryUsage}</span
+					<span>Capacity:</span>
+					<span class="text-purple-600 dark:text-purple-400">{$cacheState.cacheStats.capacity}</span
 					>
 				</div>
 				<div class="theme-text-secondary flex justify-between">

@@ -1,22 +1,17 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import type { Pokemon } from '#lib/types';
+	import type { PokemonSummary } from '#lib/types';
 	import type { TcgSetBrief } from '#lib/types';
 	import { page } from '$app/state';
 	import { getTypeColor } from '#lib/utils/pokemon-utils';
 
-	let pokemons: Pokemon[] = [];
-	let featuredSets: TcgSetBrief[] = [];
-	let loading = true;
+	const pokemons: PokemonSummary[] = page.data.pokemons ?? [];
+	const featuredSets: TcgSetBrief[] = page.data.featuredSets ?? [];
 	let searchQuery = '';
 
 	onMount(() => {
 		heroMon = HERO_POOL[Math.floor(Math.random() * HERO_POOL.length)];
-		const data = page.data;
-		pokemons = data.pokemons ?? [];
-		featuredSets = data.featuredSets ?? [];
-		loading = false;
 	});
 
 	function handleSearch() {
@@ -313,59 +308,48 @@
 		</div>
 
 		<!-- Uniform 4-col card grid -->
-		{#if loading}
-			<div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
-				{#each Array.from({ length: 8 }) as _}
-					<div
-						class="h-44 animate-pulse rounded-2xl"
-						style="background-color: var(--bg-secondary);"
-					></div>
-				{/each}
-			</div>
-		{:else}
-			<div class="poke-stagger grid grid-cols-2 gap-4 sm:grid-cols-4">
-				{#each pokemons as pokemon}
-					<a
-						href="/pokemon/{pokemon.name}"
-						class="group poke-enter block rounded-2xl p-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-[var(--shadow-hover)]"
-						style="background-color: {getTypeColor(pokemon.types[0].type.name)}cc;"
-					>
-						<!-- ID -->
-						<p class="mb-0.5 text-[10px] font-bold tracking-widest text-white/60 uppercase">
-							#{pokemon.id.toString().padStart(3, '0')}
-						</p>
+		<div class="poke-stagger grid grid-cols-2 gap-4 sm:grid-cols-4">
+			{#each pokemons as pokemon}
+				<a
+					href="/pokemon/{pokemon.name}"
+					class="group poke-enter block rounded-2xl p-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-[var(--shadow-hover)]"
+					style="background-color: {getTypeColor(pokemon.types[0].type.name)}cc;"
+				>
+					<!-- ID -->
+					<p class="mb-0.5 text-[10px] font-bold tracking-widest text-white/60 uppercase">
+						#{pokemon.id.toString().padStart(3, '0')}
+					</p>
 
-						<!-- Name -->
-						<h3 class="mb-2 text-sm leading-tight font-bold text-white capitalize">
-							{pokemon.name}
-						</h3>
+					<!-- Name -->
+					<h3 class="mb-2 text-sm leading-tight font-bold text-white capitalize">
+						{pokemon.name}
+					</h3>
 
-						<!-- Type pills -->
-						<div class="mb-3 flex flex-wrap gap-1">
-							{#each pokemon.types as t}
-								<span
-									class="rounded-full bg-black/20 px-2 py-0.5 text-[10px] font-medium text-white/90 capitalize"
-								>
-									{t.type.name}
-								</span>
-							{/each}
-						</div>
+					<!-- Type pills -->
+					<div class="mb-3 flex flex-wrap gap-1">
+						{#each pokemon.types as t}
+							<span
+								class="rounded-full bg-black/20 px-2 py-0.5 text-[10px] font-medium text-white/90 capitalize"
+							>
+								{t.type.name}
+							</span>
+						{/each}
+					</div>
 
-						<!-- Sprite -->
-						<div class="flex justify-center">
-							<img
-								src={pokemon.sprites?.other?.['official-artwork']?.front_default ??
-									pokemon.sprites?.front_default ??
-									''}
-								alt={pokemon.name}
-								class="h-20 w-20 object-contain drop-shadow-lg transition-transform duration-200 group-hover:scale-110"
-								loading="lazy"
-							/>
-						</div>
-					</a>
-				{/each}
-			</div>
-		{/if}
+					<!-- Sprite -->
+					<div class="flex justify-center">
+						<img
+							src={pokemon.sprites?.other?.['official-artwork']?.front_default ??
+								pokemon.sprites?.front_default ??
+								''}
+							alt={pokemon.name}
+							class="h-20 w-20 object-contain drop-shadow-lg transition-transform duration-200 group-hover:scale-110"
+							loading="lazy"
+						/>
+					</div>
+				</a>
+			{/each}
+		</div>
 	</div>
 </section>
 

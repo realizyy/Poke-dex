@@ -273,7 +273,7 @@ export function calculateTeamCoverage(team: TeamPokemon[]): {
 	return { weaknesses, resistances, coverageScore };
 }
 
-export function getStatTotal(pokemon: Pokemon): number {
+export function getStatTotal(pokemon: Pick<Pokemon, 'stats'>): number {
 	return pokemon.stats.reduce((total, stat) => total + stat.base_stat, 0);
 }
 

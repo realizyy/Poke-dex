@@ -84,10 +84,4 @@ export class TtlCache {
 		this.#entries.clear();
 		this.#inflight.clear();
 	}
-
-	approximateBytes(): number {
-		let total = 0;
-		for (const entry of this.#entries.values()) total += JSON.stringify(entry.value).length;
-		return total;
-	}
 }

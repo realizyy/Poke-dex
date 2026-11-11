@@ -3,62 +3,20 @@ import { PokemonService } from '#lib/services/pokemon-service';
 import { browser } from '$app/env';
 
 interface CacheState {
-	isPreloading: boolean;
-	preloadProgress: number;
 	cacheStats: {
 		size: number;
 		hitRate: number;
-		memoryUsage: string;
+		capacity: string;
 	};
 }
 
-const initialState: CacheState = {
-	isPreloading: false,
-	preloadProgress: 0,
-	cacheStats: {
-		size: 0,
-		hitRate: 0,
-		memoryUsage: '0 KB'
-	}
-};
-
-export const cacheState = writable<CacheState>(initialState);
+export const cacheState = writable<CacheState>({
+	cacheStats: { size: 0, hitRate: 0, capacity: '0 / 0' }
+});
 
 class PokemonCacheManager {
-	private static instance: PokemonCacheManager;
-
-	static getInstance(): PokemonCacheManager {
-		if (!PokemonCacheManager.instance) {
-			PokemonCacheManager.instance = new PokemonCacheManager();
-		}
-		return PokemonCacheManager.instance;
-	}
-
-	async initializeCache(): Promise<void> {
-		if (!browser) return;
-
-		cacheState.update((state) => ({ ...state, isPreloading: true }));
-
-		try {
-			// Only preload featured Pokemon, not initial batch
-			await this.preloadFeaturedPokemon();
-		} finally {
-			cacheState.update((state) => ({
-				...state,
-				isPreloading: false,
-				cacheStats: PokemonService.getCacheStats()
-			}));
-		}
-	}
-
-	private async preloadFeaturedPokemon(): Promise<void> {
-		await PokemonService.preloadFeaturedPokemon();
-		cacheState.update((state) => ({ ...state, preloadProgress: 100 }));
-	}
-
 	updateCacheStats(): void {
-		const stats = PokemonService.getCacheStats();
-		cacheState.update((state) => ({ ...state, cacheStats: stats }));
+		cacheState.set({ cacheStats: PokemonService.getCacheStats() });
 	}
 
 	clearCache(): void {
@@ -72,17 +30,8 @@ class PokemonCacheManager {
 	}
 }
 
-export const pokemonCacheManager = PokemonCacheManager.getInstance();
+export const pokemonCacheManager = new PokemonCacheManager();
 
-// Auto-initialize cache when store is imported (only featured Pokemon)
 if (browser) {
-	pokemonCacheManager.initializeCache();
-
-	// Periodic cache cleanup
-	setInterval(
-		() => {
-			pokemonCacheManager.clearExpiredCache();
-		},
-		3 * 60 * 1000
-	); // Every 3 minutes
+	setInterval(() => pokemonCacheManager.clearExpiredCache(), 3 * 60 * 1000);
 }

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { getItemCost } from '#lib/utils/item-utils';
 	import { goto } from '$app/navigation';
 	import type { PageData } from './$types';
 	import { ChevronLeft } from '#lib/icons';
@@ -6,6 +7,7 @@
 
 	let { data }: { data: PageData } = $props();
 
+	const itemCost = $derived(getItemCost(data.item));
 	const displayName = $derived(
 		data.item.name
 			.split('-')
@@ -105,7 +107,7 @@
 				<h1 class="mb-3 text-4xl leading-tight font-black text-white lg:text-5xl">{displayName}</h1>
 				<div class="flex flex-wrap items-center gap-3">
 					<span class="rounded-full bg-white/20 px-4 py-1 text-sm font-semibold text-white">
-						{#if data.item.cost === 0}Not for sale{:else}₽ {data.item.cost.toLocaleString()}{/if}
+						{#if !itemCost}Not for sale{:else}₽ {itemCost.toLocaleString()}{/if}
 					</span>
 					{#each data.item.attributes as attr}
 						<span class="rounded-full bg-white/10 px-3 py-1 text-xs text-white/80 capitalize">

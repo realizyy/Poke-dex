@@ -1,4 +1,5 @@
 import type { Load } from '@sveltejs/kit';
+import type { Pokemon, PokemonSummary } from '#lib/types';
 import { PokemonService } from '#lib/services/pokemon-service';
 import { TcgService } from '#lib/services/tcg-service';
 
@@ -28,6 +29,23 @@ function pickRandom(pool: number[], count: number): number[] {
 	return [...pool].sort(() => Math.random() - 0.5).slice(0, count);
 }
 
+function toSummary(pokemon: Pokemon): PokemonSummary {
+	return {
+		id: pokemon.id,
+		name: pokemon.name,
+		types: pokemon.types,
+		stats: pokemon.stats,
+		sprites: {
+			front_default: pokemon.sprites.front_default,
+			other: {
+				'official-artwork': {
+					front_default: pokemon.sprites.other['official-artwork'].front_default
+				}
+			}
+		}
+	};
+}
+
 export const load: Load = async () => {
 	try {
 		const ids = pickRandom(SPOTLIGHT_POOL, 8);
@@ -35,10 +53,9 @@ export const load: Load = async () => {
 			PokemonService.fetchPokemonBatch(ids),
 			TcgService.fetchSets().catch(() => [])
 		]);
-		PokemonService.preloadFeaturedPokemon();
 		// Pick 4 recent sets (last in the list tend to be newest)
 		const featuredSets = allSets.slice(-4).reverse();
-		return { pokemons: pokemonDetails, featuredSets };
+		return { pokemons: pokemonDetails.map(toSummary), featuredSets };
 	} catch (error) {
 		console.error('Error loading featured Pokemon:', error);
 		return { pokemons: [], featuredSets: [] };

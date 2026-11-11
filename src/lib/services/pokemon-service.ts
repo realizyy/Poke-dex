@@ -17,12 +17,6 @@ const cache = new TtlCache(800);
 
 const CACHE_TTL = 10 * 60 * 1000;
 
-// Popular/Featured Pokemon IDs that should be preloaded
-const FEATURED_POKEMON_IDS = [
-	1, 4, 7, 25, 39, 52, 54, 74, 104, 113, 133, 143, 150, 151, 251, 384, 493
-];
-const INITIAL_BATCH_SIZE = 50;
-
 // ID ranges per generation — used to limit fetches when a gen filter is active
 const GENERATION_ID_RANGES: Record<number, [number, number]> = {
 	1: [1, 151],
@@ -37,20 +31,6 @@ const GENERATION_ID_RANGES: Record<number, [number, number]> = {
 };
 
 export class PokemonService {
-	static async preloadFeaturedPokemon(): Promise<void> {
-		const uncachedIds = FEATURED_POKEMON_IDS.filter((id) => !cache.has(`pokemon-${id}`));
-
-		if (uncachedIds.length > 0) {
-			this.fetchPokemonBatch(uncachedIds).catch(console.error);
-		}
-	}
-
-	static async preloadInitialBatch(): Promise<Pokemon[]> {
-		return cache.getOrLoad('initial-batch-50', CACHE_TTL * 2, () =>
-			this.fetchPokemonRange(1, INITIAL_BATCH_SIZE)
-		);
-	}
-
 	static async fetchPokemon(id: number): Promise<Pokemon> {
 		return cache.getOrLoad(`pokemon-${id}`, CACHE_TTL, async () => {
 			try {
@@ -232,11 +212,11 @@ export class PokemonService {
 		});
 	}
 
-	static getCacheStats(): { size: number; hitRate: number; memoryUsage: string } {
+	static getCacheStats(): { size: number; hitRate: number; capacity: string } {
 		return {
 			size: cache.size,
-			hitRate: cache.hitRate,
-			memoryUsage: `${Math.round(cache.approximateBytes() / 1024)} KB`
+			hitRate: Math.round(cache.hitRate * 100),
+			capacity: `${cache.size} / ${cache.maxEntries}`
 		};
 	}
 

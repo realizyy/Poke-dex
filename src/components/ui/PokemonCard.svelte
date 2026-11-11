@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { Pokemon } from '#lib/types';
+	import type { PokemonSummary } from '#lib/types';
 	import { getStatTotal } from '#lib/utils/pokemon-utils';
 	import TypeBadge from './TypeBadge.svelte';
 	import StatBar from './StatBar.svelte';
 
-	export let pokemon: Pokemon;
+	export let pokemon: PokemonSummary;
 	export let showStats = false;
 	export let showAddToTeam = false;
 	export let compact = false;

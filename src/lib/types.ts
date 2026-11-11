@@ -30,6 +30,13 @@ export interface Pokemon {
 	weight: number;
 }
 
+export type PokemonSummary = Pick<Pokemon, 'id' | 'name' | 'types' | 'stats'> & {
+	sprites: {
+		front_default: string | null;
+		other: { 'official-artwork': { front_default: string | null } };
+	};
+};
+
 export interface PokemonSpecies {
 	generation: { name: string };
 	color: { name: string };
@@ -181,7 +188,8 @@ export interface ItemEffectEntry {
 export interface Item {
 	id: number;
 	name: string;
-	cost: number;
+	cost?: number;
+	prices?: { purchase_price: number | null; sell_price: number | null }[];
 	fling_power: number | null;
 	fling_effect: { name: string } | null;
 	attributes: { name: string }[];
