@@ -1,4 +1,5 @@
 ﻿<script lang="ts">
+	import CardImage from '../../../components/tcg/CardImage.svelte';
 	import { goto } from '$app/navigation';
 	import {
 		getTypeColor,
@@ -16,7 +17,7 @@
 	import type { EncounterArea } from '#lib/types';
 	import { PokemonService } from '#lib/services/pokemon-service';
 	import { TcgService } from '#lib/services/tcg-service';
-	import { ChevronLeft, Layers } from '#lib/icons';
+	import { ChevronLeft } from '#lib/icons';
 	import {
 		LEARN_METHODS,
 		buildLearnset,
@@ -663,23 +664,11 @@
 									style="background: var(--bg-secondary); border: 1px solid var(--border-color);"
 									title="{card.name} #{card.localId}"
 								>
-									{#if card.image}
-										<img
-											src={TcgService.cardImageUrl(card.image, 'low')}
-											alt="{card.name} #{card.localId}"
-											class="w-full rounded-lg object-contain"
-											loading="lazy"
-											width="200"
-											height="280"
-										/>
-									{:else}
-										<div
-											class="flex aspect-[5/7] w-full items-center justify-center rounded-lg"
-											style="background: var(--bg-main);"
-										>
-											<Layers size={28} class="opacity-20" />
-										</div>
-									{/if}
+									<CardImage
+										image={card.image}
+										alt={card.name}
+										class="w-full rounded-lg object-contain"
+									/>
 									<p class="text-center text-xs font-semibold" style="color: var(--text-main);">
 										{card.name}
 									</p>

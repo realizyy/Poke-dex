@@ -1,7 +1,7 @@
 <script lang="ts">
+	import CardImage from '../../../components/tcg/CardImage.svelte';
 	import { goto } from '$app/navigation';
 	import { Layers, Search, ChevronLeft, ChevronRight } from '#lib/icons';
-	import { TcgService } from '#lib/services/tcg-service';
 	import type { PageData } from './$types';
 	import { supportsValueFilters } from '#lib/utils/tcg-lang';
 	import { CARD_CATEGORIES, CARD_SORT_FIELDS, DEFAULT_PAGE_SIZE } from '#lib/utils/tcg';
@@ -400,26 +400,11 @@
 						style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
 						title="{card.name} #{card.localId}"
 					>
-						{#if card.image}
-							<img
-								src={TcgService.cardImageUrl(card.image, 'low')}
-								alt={card.name}
-								class="w-full rounded-lg object-contain transition-transform duration-200 group-hover:scale-105"
-								loading="lazy"
-								width="200"
-								height="280"
-								onerror={(e) => {
-									(e.currentTarget as HTMLImageElement).style.display = 'none';
-								}}
-							/>
-						{:else}
-							<div
-								class="flex aspect-[5/7] w-full items-center justify-center rounded-lg"
-								style="background: var(--bg-main);"
-							>
-								<Layers size={28} class="opacity-20" />
-							</div>
-						{/if}
+						<CardImage
+							image={card.image}
+							alt={card.name}
+							class="w-full rounded-lg object-contain transition-transform duration-200 group-hover:scale-105"
+						/>
 						<div class="w-full text-center">
 							<p
 								class="truncate text-xs leading-tight font-semibold"

@@ -1,7 +1,7 @@
 <script lang="ts">
+	import CardImage from '../../../../components/tcg/CardImage.svelte';
 	import { Layers, ChevronLeft } from '#lib/icons';
 	import type { TcgSet } from '#lib/types';
-	import { TcgService } from '#lib/services/tcg-service';
 	import { collectionStore } from '#lib/stores/collection.svelte';
 	import { setProgress } from '#lib/utils/collection';
 	import { onMount } from 'svelte';
@@ -190,26 +190,11 @@
 						style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
 						title="{card.name} #{card.localId}"
 					>
-						{#if card.image}
-							<img
-								src={TcgService.cardImageUrl(card.image, 'low')}
-								alt="{card.name} #{card.localId}"
-								class="w-full rounded-lg object-contain transition-transform duration-200 group-hover:scale-105"
-								loading="lazy"
-								width="200"
-								height="280"
-								onerror={(e) => {
-									(e.currentTarget as HTMLImageElement).style.display = 'none';
-								}}
-							/>
-						{:else}
-							<div
-								class="flex aspect-[5/7] w-full items-center justify-center rounded-lg"
-								style="background: var(--bg-main);"
-							>
-								<Layers size={32} class="opacity-20" />
-							</div>
-						{/if}
+						<CardImage
+							image={card.image}
+							alt="{card.name} #{card.localId}"
+							class="w-full rounded-lg object-contain transition-transform duration-200 group-hover:scale-105"
+						/>
 						<div class="w-full text-center">
 							<p
 								class="truncate text-xs leading-tight font-semibold"

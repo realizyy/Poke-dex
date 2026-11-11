@@ -7,6 +7,28 @@
 		const { total = 0, official = 0 } = set.cardCount ?? {};
 		return official > 0 && official !== total ? `${official}/${total}` : `${total}`;
 	});
+
+	/** Artwork to try, in order. The API gives logo and symbol URLs without a file extension. */
+	const sources = $derived(
+		[set.logo ? `${set.logo}.webp` : null, set.symbol ?? null].filter((url): url is string => !!url)
+	);
+	let failedCount = $state(0);
+	let shownSetId = $state('');
+	$effect(() => {
+		if (set.id !== shownSetId) {
+			shownSetId = set.id;
+			failedCount = 0;
+		}
+	});
+	const current = $derived(sources[failedCount]);
+	const initials = $derived(
+		set.name
+			.split(/\s+/)
+			.filter(Boolean)
+			.slice(0, 3)
+			.map((word) => word.charAt(0).toUpperCase())
+			.join('')
+	);
 </script>
 
 <a
@@ -15,32 +37,24 @@
 	style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
 >
 	<div class="flex h-16 items-center justify-center">
-		{#if set.logo}
+		{#if current}
 			<img
-				src="{set.logo}/logo.webp"
+				src={current}
 				alt={set.name}
-				class="max-h-16 max-w-full object-contain"
+				class="max-h-16 max-w-full object-contain {failedCount === 0 && set.logo
+					? ''
+					: 'h-12 w-12'}"
 				loading="lazy"
-				onerror={(e) => {
-					const img = e.currentTarget as HTMLImageElement;
-					img.src = set.symbol ? `${set.symbol}/symbol.webp` : '';
-					img.onerror = () => {
-						img.style.display = 'none';
-					};
-				}}
-			/>
-		{:else if set.symbol}
-			<img
-				src="{set.symbol}/symbol.webp"
-				alt={set.name}
-				class="h-10 w-10 object-contain"
-				loading="lazy"
-				onerror={(e) => {
-					(e.currentTarget as HTMLImageElement).style.display = 'none';
-				}}
+				onerror={() => failedCount++}
 			/>
 		{:else}
-			<div class="h-10 w-10 rounded-full" style="background: var(--border-color);"></div>
+			<div
+				class="flex h-14 w-14 items-center justify-center rounded-full text-sm font-extrabold"
+				style="background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-secondary);"
+				aria-hidden="true"
+			>
+				{initials}
+			</div>
 		{/if}
 	</div>
 

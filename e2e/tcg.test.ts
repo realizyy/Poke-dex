@@ -185,3 +185,33 @@ test('a deck keeps English card names even when browsing in French', async ({ pa
 	await expect(page.getByRole('link', { name: /^Furret/ })).toBeVisible();
 	await expect(page.getByLabel('Card language')).toHaveCount(0);
 });
+
+test('set artwork on the TCG index uses the correct URL format', async ({ page }) => {
+	await page.goto('/tcg');
+	const images = page.locator('a[href^="/tcg/sets/"] img');
+	await expect(images.first()).toBeVisible({ timeout: 30000 });
+	const sources = await images.evaluateAll((nodes) =>
+		nodes.map((node) => node.getAttribute('src') ?? '')
+	);
+	expect(sources.length).toBeGreaterThan(50);
+	expect(sources.filter((src) => src.includes('/logo/logo'))).toEqual([]);
+	const logos = sources.filter((src) => /\/logo(\.webp)?$/.test(src));
+	expect(logos.length).toBeGreaterThan(50);
+	expect(logos.every((src) => src.endsWith('/logo.webp'))).toBe(true);
+});
+
+test('card details open from a set without errors, including cards with repeated energy costs', async ({
+	page
+}) => {
+	const errors: string[] = [];
+	page.on('pageerror', (e) => errors.push(e.message));
+	await page.goto('/tcg/sets/30th');
+	for (const id of ['30th-046', '30th-064', '30th-034']) {
+		await page.locator(`a[href="/tcg/cards/${id}"]`).first().click();
+		await expect(page).toHaveURL(new RegExp(`/tcg/cards/${id}$`));
+		await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+		await expect(page.getByText('500', { exact: true })).toHaveCount(0);
+		await page.goBack();
+	}
+	expect(errors).toEqual([]);
+});

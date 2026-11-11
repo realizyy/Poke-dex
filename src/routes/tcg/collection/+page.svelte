@@ -1,7 +1,7 @@
 <script lang="ts">
+	import CardImage from '../../../components/tcg/CardImage.svelte';
 	import { onMount } from 'svelte';
 	import { Layers } from '#lib/icons';
-	import { TcgService } from '#lib/services/tcg-service';
 	import { collectionStore } from '#lib/stores/collection.svelte';
 	import { toastStore } from '#lib/stores/toast-store.svelte';
 	import { summarize, type CollectionEntry } from '#lib/utils/collection';
@@ -149,23 +149,11 @@
 							style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
 						>
 							<a href="/tcg/cards/{entry.id}" class="w-full" title={entry.name}>
-								{#if entry.image}
-									<img
-										src={TcgService.cardImageUrl(entry.image, 'low')}
-										alt={entry.name}
-										class="w-full rounded-lg object-contain"
-										loading="lazy"
-										width="200"
-										height="280"
-									/>
-								{:else}
-									<div
-										class="flex aspect-[5/7] w-full items-center justify-center rounded-lg"
-										style="background: var(--bg-main);"
-									>
-										<Layers size={32} class="opacity-20" />
-									</div>
-								{/if}
+								<CardImage
+									image={entry.image}
+									alt={entry.name}
+									class="w-full rounded-lg object-contain"
+								/>
 								<p
 									class="mt-2 truncate text-center text-xs font-semibold"
 									style="color: var(--text-main);"

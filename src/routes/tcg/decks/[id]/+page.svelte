@@ -1,4 +1,5 @@
 <script lang="ts">
+	import CardImage from '../../../../components/tcg/CardImage.svelte';
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/state';
@@ -222,16 +223,11 @@
 								class="flex flex-col items-center gap-2 rounded-xl p-2"
 								style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
 							>
-								{#if card.image}
-									<img
-										src={TcgService.cardImageUrl(card.image, 'low')}
-										alt={card.name}
-										class="w-full rounded-lg object-contain"
-										loading="lazy"
-										width="200"
-										height="280"
-									/>
-								{/if}
+								<CardImage
+									image={card.image}
+									alt={card.name}
+									class="w-full rounded-lg object-contain"
+								/>
 								<p
 									class="w-full truncate text-center text-xs font-semibold"
 									style="color: var(--text-main);"

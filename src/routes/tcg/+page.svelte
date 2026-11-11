@@ -70,7 +70,7 @@
 					<div class="mb-5 flex items-center gap-3">
 						{#if serie.logo}
 							<img
-								src="{serie.logo}/logo.webp"
+								src="{serie.logo}.webp"
 								alt={serie.name}
 								class="h-8 object-contain"
 								loading="lazy"

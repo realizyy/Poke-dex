@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Layers } from '#lib/icons';
+	import CardImage from '../../../../components/tcg/CardImage.svelte';
 	import { TcgService } from '#lib/services/tcg-service';
 	import type { PageData } from './$types';
 	import { formatPrice, getCardPrices } from '#lib/utils/tcg';
@@ -113,23 +113,16 @@
 			<div class="flex flex-col gap-6">
 				<!-- Card image -->
 				<div class="relative">
-					{#if card.image}
-						<img
-							src={TcgService.cardImageUrl(card.image, 'high')}
-							alt={card.name}
-							class="mx-auto w-full max-w-xs rounded-2xl shadow-2xl"
-							loading="eager"
-							width="420"
-							height="588"
-						/>
-					{:else}
-						<div
-							class="mx-auto flex aspect-[5/7] max-w-xs items-center justify-center rounded-2xl"
-							style="background: var(--bg-secondary); border: 1px solid var(--border-color);"
-						>
-							<Layers size={64} class="opacity-20" />
-						</div>
-					{/if}
+					<CardImage
+						image={card.image}
+						alt={card.name}
+						quality="high"
+						eager
+						width={420}
+						height={588}
+						iconSize={64}
+						class="mx-auto w-full max-w-xs rounded-2xl shadow-2xl"
+					/>
 				</div>
 
 				<!-- Legality -->
@@ -220,7 +213,7 @@
 				<div>
 					<div class="mb-2 flex flex-wrap items-center gap-2">
 						<!-- Types -->
-						{#each card.types ?? [] as type (type)}
+						{#each card.types ?? [] as type, i (i)}
 							<span
 								class="rounded-full px-3 py-1 text-xs font-bold text-white"
 								style="background: {typeColor(type)};"
@@ -476,13 +469,13 @@
 							Attacks
 						</p>
 						<div class="flex flex-col gap-4">
-							{#each card.attacks as attack (attack.name)}
+							{#each card.attacks as attack, i (i)}
 								<div class="flex flex-col gap-1.5">
 									<!-- Cost + name + damage row -->
 									<div class="flex flex-wrap items-center gap-2">
 										<!-- Energy cost dots -->
 										<div class="flex gap-1">
-											{#each attack.cost as cost (cost)}
+											{#each attack.cost as cost, i (i)}
 												<span
 													class="inline-flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-black text-white"
 													style="background: {energyDot(cost)};"
@@ -525,7 +518,7 @@
 								Weakness
 							</p>
 							{#if card.weaknesses?.length}
-								{#each card.weaknesses as w (w.type)}
+								{#each card.weaknesses as w, i (i)}
 									<div class="flex items-center justify-center gap-1">
 										<span
 											class="inline-flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-black text-white"
@@ -553,7 +546,7 @@
 								Resistance
 							</p>
 							{#if card.resistances?.length}
-								{#each card.resistances as r (r.type)}
+								{#each card.resistances as r, i (i)}
 									<div class="flex items-center justify-center gap-1">
 										<span
 											class="inline-flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-black text-white"
