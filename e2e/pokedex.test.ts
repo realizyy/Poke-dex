@@ -36,12 +36,13 @@ test('compare shows both pokemon from the URL', async ({ page }) => {
 	await expect(page.getByText(/bulbasaur/i).first()).toBeVisible({ timeout: 30000 });
 });
 
-test('an unknown pokemon does not crash the page', async ({ page }) => {
-	const errors: string[] = [];
-	page.on('pageerror', (e) => errors.push(e.message));
-	await page.goto('/pokemon/notapokemon');
-	await expect(page.locator('body')).toBeVisible();
-	expect(errors).toEqual([]);
+test('an unknown pokemon returns 404 with a helpful error page', async ({ page }) => {
+	const response = await page.goto('/pokemon/notapokemon');
+	expect(response?.status()).toBe(404);
+	await expect(page.getByRole('heading', { name: /page not found/i })).toBeVisible();
+	await expect(page.getByText(/notapokemon/i).first()).toBeVisible();
+	await page.getByRole('link', { name: /back to home/i }).click();
+	await expect(page).toHaveURL(/\/$/);
 });
 
 test('following an evolution link updates the pokemon page', async ({ page }) => {
