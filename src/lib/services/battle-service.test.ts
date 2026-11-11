@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { makeTeamPokemon } from '$lib/testing/fixtures';
+import { makeTeamPokemon } from '#lib/testing/fixtures';
 import { BattleService } from './battle-service';
 
 afterEach(() => vi.restoreAllMocks());

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import type { Machine } from '$lib/types';
-	import { MachineService } from '$lib/services/move-service';
-	import { Disc, Search, X } from '$lib/icons';
+	import type { Machine } from '#lib/types';
+	import { MachineService } from '#lib/services/move-service';
+	import { Disc, Search, X } from '#lib/icons';
 
 	let { data }: { data: PageData } = $props();
 

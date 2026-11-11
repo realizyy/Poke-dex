@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { TcgService } from '$lib/services/tcg-service';
+import { TcgService } from '#lib/services/tcg-service';
 
 export const load: PageServerLoad = async () => {
 	try {

@@ -1,4 +1,4 @@
-// place files you want to import through the `$lib` alias in this folder.
+// Barrel for the public surface of src/lib, imported as "#lib".
 
 // Services
 export { SearchService } from './services/search-service';

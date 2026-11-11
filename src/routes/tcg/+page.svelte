@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { Layers } from '$lib/icons';
-	import type { TcgSeries, TcgSetBrief } from '$lib/types';
+	import { Layers } from '#lib/icons';
+	import type { TcgSeries, TcgSetBrief } from '#lib/types';
 
 	let { data }: { data: { series: TcgSeries[] } } = $props();
 

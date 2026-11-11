@@ -1,14 +1,14 @@
 import { browser } from '$app/environment';
-import { HttpError, fetchJson, mapWithConcurrency } from '$lib/api/http';
-import { TtlCache } from '$lib/api/ttl-cache';
+import { HttpError, fetchJson, mapWithConcurrency } from '#lib/api/http';
+import { TtlCache } from '#lib/api/ttl-cache';
 import type {
 	Pokemon,
 	PokemonSpecies,
 	SearchFilters,
 	EncounterArea,
 	EvolutionChain
-} from '$lib/types';
-import { toastStore } from '$lib/stores/toast-store.svelte';
+} from '#lib/types';
+import { toastStore } from '#lib/stores/toast-store.svelte';
 
 const POKEMON_API_BASE = 'https://pokeapi.co/api/v2';
 const FETCH_CONCURRENCY = 20;

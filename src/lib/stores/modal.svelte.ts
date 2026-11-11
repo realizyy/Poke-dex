@@ -1,4 +1,4 @@
-import type { Pokemon } from '$lib/types';
+import type { Pokemon } from '#lib/types';
 
 class ModalStore {
 	addToTeam = $state<{ show: boolean; pokemon: Pokemon | null }>({

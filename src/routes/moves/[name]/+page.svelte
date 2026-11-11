@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import type { PageData } from './$types';
-	import { ChevronLeft } from '$lib/icons';
+	import { ChevronLeft } from '#lib/icons';
 	import TypeBadge from '../../../components/ui/TypeBadge.svelte';
-	import { getTypeColor } from '$lib/utils/pokemon-utils';
+	import { getTypeColor } from '#lib/utils/pokemon-utils';
 
 	let { data }: { data: PageData } = $props();
 

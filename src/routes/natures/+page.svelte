@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import { Leaf } from '$lib/icons';
+	import { Leaf } from '#lib/icons';
 
 	let { data }: { data: PageData } = $props();
 

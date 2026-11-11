@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { ItemService } from '$lib/services/item-service';
+import { ItemService } from '#lib/services/item-service';
 import { error } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ params }) => {

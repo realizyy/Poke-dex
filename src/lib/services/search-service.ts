@@ -1,4 +1,4 @@
-import type { Pokemon, SearchFilters } from '$lib/types';
+import type { Pokemon, SearchFilters } from '#lib/types';
 import { PokemonService } from './pokemon-service';
 
 export interface SearchResult {

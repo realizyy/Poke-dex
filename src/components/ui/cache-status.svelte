@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { cacheState, pokemonCacheManager } from '$lib/stores/pokemon-cache';
+	import { cacheState, pokemonCacheManager } from '#lib/stores/pokemon-cache';
 	import { onMount } from 'svelte';
 
 	let showDetails = $state(false);

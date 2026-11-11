@@ -1,4 +1,4 @@
-import type { TypeEffectiveness, Pokemon, TeamPokemon } from '$lib/types';
+import type { TypeEffectiveness, Pokemon, TeamPokemon } from '#lib/types';
 
 export const TYPE_COLORS: { [key: string]: string } = {
 	normal: '#A8A77A', // Stadium/Switch style

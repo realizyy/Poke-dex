@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { battleStore } from '$lib/stores/battle-store.svelte';
-	import type { Team } from '$lib/types';
+	import { battleStore } from '#lib/stores/battle-store.svelte';
+	import type { Team } from '#lib/types';
 
 	let { eligibleTeams }: { eligibleTeams: Team[] } = $props();
 

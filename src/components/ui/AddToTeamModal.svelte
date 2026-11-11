@@ -1,9 +1,9 @@
 ﻿<script lang="ts">
-	import type { Pokemon, TeamSelectedEvent } from '$lib/types';
-	import { teamStore } from '$lib/stores/team.svelte';
-	import { modalStore } from '$lib/stores/modal.svelte';
-	import { getTypeColor } from '$lib/utils/pokemon-utils';
-	import { X, Plus, ChevronLeft } from '$lib/icons';
+	import type { Pokemon, TeamSelectedEvent } from '#lib/types';
+	import { teamStore } from '#lib/stores/team.svelte';
+	import { modalStore } from '#lib/stores/modal.svelte';
+	import { getTypeColor } from '#lib/utils/pokemon-utils';
+	import { X, Plus, ChevronLeft } from '#lib/icons';
 
 	let {
 		pokemon,

@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { battleStore } from '$lib/stores/battle-store.svelte';
-	import { getTypeColor } from '$lib/utils/pokemon-utils';
-	import type { TeamPokemon } from '$lib/types';
+	import { battleStore } from '#lib/stores/battle-store.svelte';
+	import { getTypeColor } from '#lib/utils/pokemon-utils';
+	import type { TeamPokemon } from '#lib/types';
 
 	let logEl: HTMLDivElement | undefined = $state(undefined);
 

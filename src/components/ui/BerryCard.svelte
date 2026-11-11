@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { Berry } from '$lib/types';
-	import { getTypeColor } from '$lib/utils/pokemon-utils';
+	import type { Berry } from '#lib/types';
+	import { getTypeColor } from '#lib/utils/pokemon-utils';
 
 	let { berry, onclick }: { berry: Berry; onclick?: () => void } = $props();
 

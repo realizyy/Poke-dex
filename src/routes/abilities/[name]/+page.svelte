@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import type { PageData } from './$types';
-	import { ChevronLeft } from '$lib/icons';
+	import { ChevronLeft } from '#lib/icons';
 
 	let { data }: { data: PageData } = $props();
 

@@ -1,10 +1,10 @@
 <script lang="ts">
 	import '../app.css';
-	import '$lib/fonts.css';
+	import '#lib/fonts.css';
 	// Import theme store to ensure it's initialized
-	import '$lib/stores/theme.svelte';
+	import '#lib/stores/theme.svelte';
 	// Import cache store to start preloading
-	import '$lib/stores/pokemon-cache';
+	import '#lib/stores/pokemon-cache';
 	import Header from '../components/header/header.svelte';
 	import CacheStatus from '../components/ui/cache-status.svelte';
 	import ToastContainer from '../components/ui/ToastContainer.svelte';

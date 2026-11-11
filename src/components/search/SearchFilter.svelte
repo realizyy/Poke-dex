@@ -1,8 +1,8 @@
 <script lang="ts">
-	import type { SearchFilters, SearchEvent } from '$lib/types';
-	import { POKEMON_TYPES, GENERATIONS, getTypeColor } from '$lib/utils/pokemon-utils';
-	import { SearchFilterUtils } from '$lib/utils/search-filter-utils';
-	import { Search, Filter, ChevronDown, X } from '$lib/icons';
+	import type { SearchFilters, SearchEvent } from '#lib/types';
+	import { POKEMON_TYPES, GENERATIONS, getTypeColor } from '#lib/utils/pokemon-utils';
+	import { SearchFilterUtils } from '#lib/utils/search-filter-utils';
+	import { Search, Filter, ChevronDown, X } from '#lib/icons';
 
 	interface Props {
 		searchQuery?: string;

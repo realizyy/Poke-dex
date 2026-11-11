@@ -1,10 +1,10 @@
 ﻿<script lang="ts">
 	import { goto } from '$app/navigation';
 	import type { PageData } from './$types';
-	import type { Item } from '$lib/types';
-	import { ItemService } from '$lib/services/item-service';
+	import type { Item } from '#lib/types';
+	import { ItemService } from '#lib/services/item-service';
 	import ItemCard from '../../components/ui/ItemCard.svelte';
-	import { Package, Search, X, SlidersHorizontal } from '$lib/icons';
+	import { Package, Search, X, SlidersHorizontal } from '#lib/icons';
 
 	let { data }: { data: PageData } = $props();
 

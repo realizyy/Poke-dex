@@ -1,5 +1,5 @@
 import { writable } from 'svelte/store';
-import { PokemonService } from '$lib/services/pokemon-service';
+import { PokemonService } from '#lib/services/pokemon-service';
 import { browser } from '$app/environment';
 
 interface CacheState {

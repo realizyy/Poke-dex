@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getStatName, getStatColor } from '$lib/utils/pokemon-utils';
+	import { getStatName, getStatColor } from '#lib/utils/pokemon-utils';
 
 	interface Props {
 		name: string;

@@ -1,4 +1,4 @@
-import type { Pokemon } from '$lib/types';
+import type { Pokemon } from '#lib/types';
 
 export type SortBy = 'id' | 'name' | 'stats';
 export type SortOrder = 'asc' | 'desc';

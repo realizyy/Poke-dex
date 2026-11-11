@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Pokemon } from '$lib/types';
+	import type { Pokemon } from '#lib/types';
 
 	export let pokemon: Pokemon;
 	export let onMovesSelected: (moves: string[]) => void = () => {};

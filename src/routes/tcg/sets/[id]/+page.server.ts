@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { TcgService } from '$lib/services/tcg-service';
+import { TcgService } from '#lib/services/tcg-service';
 import { error } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async ({ params }) => {

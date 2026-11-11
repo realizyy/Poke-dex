@@ -1,5 +1,5 @@
-import type { TeamPokemon, BattleDamageResult, BattleResult, BattlePokemonStats } from '$lib/types';
-import { TYPE_EFFECTIVENESS } from '$lib/utils/pokemon-utils';
+import type { TeamPokemon, BattleDamageResult, BattleResult, BattlePokemonStats } from '#lib/types';
+import { TYPE_EFFECTIVENESS } from '#lib/utils/pokemon-utils';
 
 export class BattleService {
 	/**

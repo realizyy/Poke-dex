@@ -1,6 +1,6 @@
 import { goto } from '$app/navigation';
 import { browser } from '$app/environment';
-import type { SearchFilters } from '$lib/types';
+import type { SearchFilters } from '#lib/types';
 
 export class URLUtils {
 	/**

@@ -1,7 +1,7 @@
-import type { Pokemon, SearchFilters } from '$lib/types';
-import { SearchService } from '$lib/services/search-service';
+import type { Pokemon, SearchFilters } from '#lib/types';
+import { SearchService } from '#lib/services/search-service';
 import { toastStore } from './toast-store.svelte';
-import { URLUtils } from '$lib/utils/url-utils';
+import { URLUtils } from '#lib/utils/url-utils';
 
 export type SortBy = 'id' | 'name' | 'stats';
 export type SortOrder = 'asc' | 'desc';

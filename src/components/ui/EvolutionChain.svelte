@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { PokemonService } from '$lib/services/pokemon-service';
-	import { getTypeColor } from '$lib/utils/pokemon-utils';
+	import { PokemonService } from '#lib/services/pokemon-service';
+	import { getTypeColor } from '#lib/utils/pokemon-utils';
 	import { goto } from '$app/navigation';
-	import type { EvolutionChain, EvolutionChainLink, EvolutionDetail } from '$lib/types';
+	import type { EvolutionChain, EvolutionChainLink, EvolutionDetail } from '#lib/types';
 
 	interface ParsedEvolution {
 		name: string;

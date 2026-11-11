@@ -1,6 +1,6 @@
-import { TtlCache } from '$lib/api/ttl-cache';
-import { fetchJson, batchFetch as sharedBatchFetch } from '$lib/api/http';
-import type { Move, Ability, Nature, Machine } from '$lib/types';
+import { TtlCache } from '#lib/api/ttl-cache';
+import { fetchJson, batchFetch as sharedBatchFetch } from '#lib/api/http';
+import type { Move, Ability, Nature, Machine } from '#lib/types';
 
 const API_BASE = 'https://pokeapi.co/api/v2';
 const cache = new TtlCache(300);

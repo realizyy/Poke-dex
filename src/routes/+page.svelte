@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import type { Pokemon } from '$lib/types';
-	import type { TcgSetBrief } from '$lib/types';
+	import type { Pokemon } from '#lib/types';
+	import type { TcgSetBrief } from '#lib/types';
 	import { page } from '$app/stores';
 	import { get } from 'svelte/store';
-	import { getTypeColor } from '$lib/utils/pokemon-utils';
+	import { getTypeColor } from '#lib/utils/pokemon-utils';
 
 	let pokemons: Pokemon[] = [];
 	let featuredSets: TcgSetBrief[] = [];

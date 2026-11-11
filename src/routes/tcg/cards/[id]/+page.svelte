@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { Layers } from '$lib/icons';
-	import { TcgService } from '$lib/services/tcg-service';
-	import type { TcgCard } from '$lib/types';
+	import { Layers } from '#lib/icons';
+	import { TcgService } from '#lib/services/tcg-service';
+	import type { TcgCard } from '#lib/types';
 
 	let { data }: { data: { card: TcgCard } } = $props();
 	const card = $derived(data.card);

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { BerryFlavor } from '$lib/types';
+	import type { BerryFlavor } from '#lib/types';
 
 	let { flavors, compact = false }: { flavors: BerryFlavor[]; compact?: boolean } = $props();
 

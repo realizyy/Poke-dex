@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { Layers, ChevronLeft } from '$lib/icons';
-	import type { TcgSet } from '$lib/types';
-	import { TcgService } from '$lib/services/tcg-service';
+	import { Layers, ChevronLeft } from '#lib/icons';
+	import type { TcgSet } from '#lib/types';
+	import { TcgService } from '#lib/services/tcg-service';
 
 	let { data }: { data: { set: TcgSet } } = $props();
 	const set = $derived(data.set);

@@ -1,8 +1,8 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { Layers, Search, ChevronLeft, ChevronRight } from '$lib/icons';
-	import { TcgService } from '$lib/services/tcg-service';
-	import type { TcgCardBrief } from '$lib/types';
+	import { Layers, Search, ChevronLeft, ChevronRight } from '#lib/icons';
+	import { TcgService } from '#lib/services/tcg-service';
+	import type { TcgCardBrief } from '#lib/types';
 
 	let {
 		data

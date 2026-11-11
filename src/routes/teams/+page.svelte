@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { teamStore } from '$lib/stores/team.svelte';
-	import type { Team } from '$lib/types';
-	import { Download, Trash2, Users } from '$lib/icons';
+	import { teamStore } from '#lib/stores/team.svelte';
+	import type { Team } from '#lib/types';
+	import { Download, Trash2, Users } from '#lib/icons';
 	import TeamBuilder from '../../components/team/TeamBuilder.svelte';
-	import { getTypeColor } from '$lib/utils/pokemon-utils';
+	import { getTypeColor } from '#lib/utils/pokemon-utils';
 
 	let showCreateModal = $state(false);
 	let newTeamName = $state('');

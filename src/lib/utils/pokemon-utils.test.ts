@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { makePokemon, makeTeamPokemon } from '$lib/testing/fixtures';
+import { makePokemon, makeTeamPokemon } from '#lib/testing/fixtures';
 import {
 	POKEMON_TYPES,
 	TYPE_EFFECTIVENESS,

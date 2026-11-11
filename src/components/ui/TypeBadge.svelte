@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getTypeColor } from '$lib/utils/pokemon-utils';
+	import { getTypeColor } from '#lib/utils/pokemon-utils';
 
 	interface Props {
 		type: string;

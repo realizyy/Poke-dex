@@ -1,5 +1,5 @@
 import type { PageServerLoad } from './$types';
-import { PokemonService } from '$lib/services/pokemon-service';
+import { PokemonService } from '#lib/services/pokemon-service';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const searchParams = url.searchParams;

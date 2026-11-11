@@ -1,10 +1,10 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { teamStore } from '$lib/stores/team.svelte';
-	import { battleStore } from '$lib/stores/battle-store.svelte';
+	import { teamStore } from '#lib/stores/team.svelte';
+	import { battleStore } from '#lib/stores/battle-store.svelte';
 	import BattleArena from '../../components/battle/BattleArena.svelte';
 	import TeamSelector from '../../components/battle/TeamSelector.svelte';
-	import { Users } from '$lib/icons';
+	import { Users } from '#lib/icons';
 
 	const eligibleTeams = $derived(teamStore.teams.filter((team) => team.pokemons.length > 0));
 

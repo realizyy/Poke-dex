@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { Pokemon } from '$lib/types';
-	import { getStatTotal } from '$lib/utils/pokemon-utils';
+	import type { Pokemon } from '#lib/types';
+	import { getStatTotal } from '#lib/utils/pokemon-utils';
 	import TypeBadge from './TypeBadge.svelte';
 	import StatBar from './StatBar.svelte';
 

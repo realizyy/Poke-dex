@@ -1,4 +1,4 @@
-import type { Pokemon, TeamPokemon } from '$lib/types';
+import type { Pokemon, TeamPokemon } from '#lib/types';
 
 const STAT_NAMES = ['hp', 'attack', 'defense', 'special-attack', 'special-defense', 'speed'];
 

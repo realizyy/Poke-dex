@@ -11,7 +11,7 @@
 		X,
 		ArrowLeftRight,
 		Layers
-	} from '$lib/icons';
+	} from '#lib/icons';
 	import ThemeToggle from '../ui/ThemeToggle.svelte';
 
 	const navItems = [

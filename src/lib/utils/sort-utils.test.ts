@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { makePokemon } from '$lib/testing/fixtures';
+import { makePokemon } from '#lib/testing/fixtures';
 import { SortUtils } from './sort-utils';
 
 const bulbasaur = makePokemon({ id: 1, name: 'bulbasaur', stats: { hp: 45 } });

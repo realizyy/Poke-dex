@@ -1,6 +1,6 @@
-import { HttpError, fetchJson } from '$lib/api/http';
-import { TtlCache } from '$lib/api/ttl-cache';
-import type { TcgCard, TcgCardBrief, TcgSet, TcgSetBrief, TcgSeries } from '$lib/types';
+import { HttpError, fetchJson } from '#lib/api/http';
+import { TtlCache } from '#lib/api/ttl-cache';
+import type { TcgCard, TcgCardBrief, TcgSet, TcgSetBrief, TcgSeries } from '#lib/types';
 
 const TCG_API_BASE = 'https://api.tcgdex.net/v2/en';
 

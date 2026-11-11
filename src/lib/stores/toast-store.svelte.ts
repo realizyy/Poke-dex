@@ -1,4 +1,4 @@
-import type { Toast, ToastOptions, ToastType } from '$lib/types';
+import type { Toast, ToastOptions, ToastType } from '#lib/types';
 
 const DEFAULT_DURATION = 5000;
 const MAX_TOASTS = 5;

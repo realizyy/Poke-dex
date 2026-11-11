@@ -1,6 +1,6 @@
 import type { Load } from '@sveltejs/kit';
-import { PokemonService } from '$lib/services/pokemon-service';
-import { TcgService } from '$lib/services/tcg-service';
+import { PokemonService } from '#lib/services/pokemon-service';
+import { TcgService } from '#lib/services/tcg-service';
 
 // ~60 iconic Pokémon across all 9 generations — 8 are picked at random each load
 const SPOTLIGHT_POOL = [

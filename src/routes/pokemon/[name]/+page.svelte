@@ -5,19 +5,19 @@
 		getStatTotal,
 		calculateTypeWeaknesses,
 		getGenerationFromId
-	} from '$lib/utils/pokemon-utils';
-	import { teamStore } from '$lib/stores/team.svelte';
+	} from '#lib/utils/pokemon-utils';
+	import { teamStore } from '#lib/stores/team.svelte';
 	import { onMount } from 'svelte';
 	import EvolutionChain from '../../../components/ui/EvolutionChain.svelte';
 	import TypeBadge from '../../../components/ui/TypeBadge.svelte';
 	import StatBar from '../../../components/ui/StatBar.svelte';
 	import AddToTeamModal from '../../../components/ui/AddToTeamModal.svelte';
 	import type { PageData } from './$types';
-	import type { EncounterArea } from '$lib/types';
-	import { PokemonService } from '$lib/services/pokemon-service';
-	import { TcgService } from '$lib/services/tcg-service';
-	import { ChevronLeft, Layers } from '$lib/icons';
-	import type { TcgCardBrief } from '$lib/types';
+	import type { EncounterArea } from '#lib/types';
+	import { PokemonService } from '#lib/services/pokemon-service';
+	import { TcgService } from '#lib/services/tcg-service';
+	import { ChevronLeft, Layers } from '#lib/icons';
+	import type { TcgCardBrief } from '#lib/types';
 
 	export let data: PageData;
 	$: pokemon = data.pokemon;

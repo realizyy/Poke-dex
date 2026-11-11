@@ -2,18 +2,18 @@
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { PokemonService } from '$lib';
+	import { PokemonService } from '#lib';
 	import {
 		getTypeColor,
 		getStatName,
 		getStatTotal,
 		calculateTypeWeaknesses,
 		getGenerationFromId
-	} from '$lib/utils/pokemon-utils';
+	} from '#lib/utils/pokemon-utils';
 	import TypeBadge from '../../components/ui/TypeBadge.svelte';
 	import LoadingSpinner from '../../components/ui/LoadingSpinner.svelte';
-	import { ArrowLeftRight, X } from '$lib/icons';
-	import type { Pokemon } from '$lib/types';
+	import { ArrowLeftRight, X } from '#lib/icons';
+	import type { Pokemon } from '#lib/types';
 
 	const STAT_KEYS = ['hp', 'attack', 'defense', 'special-attack', 'special-defense', 'speed'];
 

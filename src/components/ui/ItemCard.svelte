@@ -1,6 +1,6 @@
 <script lang="ts">
-	import type { Item } from '$lib/types';
-	import { Package } from '$lib/icons';
+	import type { Item } from '#lib/types';
+	import { Package } from '#lib/icons';
 
 	let { item, onclick }: { item: Item; onclick?: () => void } = $props();
 

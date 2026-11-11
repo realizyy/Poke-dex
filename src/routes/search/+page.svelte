@@ -2,18 +2,18 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { preloadData } from '$app/navigation';
-	import type { SearchEvent, SortBy } from '$lib/types';
+	import type { SearchEvent, SortBy } from '#lib/types';
 
 	// Components
 	import SearchFilter from '../../components/search/SearchFilter.svelte';
 	import PokemonCard from '../../components/ui/PokemonCard.svelte';
 	import LoadingSpinner from '../../components/ui/LoadingSpinner.svelte';
-	import { SearchX, ArrowUp } from '$lib/icons';
+	import { SearchX, ArrowUp } from '#lib/icons';
 
 	// Stores (Svelte 5 class-based)
-	import { searchStore } from '$lib/stores/search.svelte';
-	import { teamStore } from '$lib/stores/team.svelte';
-	import { URLUtils } from '$lib';
+	import { searchStore } from '#lib/stores/search.svelte';
+	import { teamStore } from '#lib/stores/team.svelte';
+	import { URLUtils } from '#lib';
 
 	// Initialise once on mount — picks up URL params that the server already resolved.
 	onMount(() => {

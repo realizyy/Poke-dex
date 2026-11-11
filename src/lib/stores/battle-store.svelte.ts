@@ -1,5 +1,5 @@
-import type { BattleState, Team, TeamPokemon } from '$lib/types';
-import { BattleService } from '$lib/services/battle-service';
+import type { BattleState, Team, TeamPokemon } from '#lib/types';
+import { BattleService } from '#lib/services/battle-service';
 import { toastStore } from './toast-store.svelte';
 
 class BattleStore {

@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { render, screen } from '@testing-library/svelte';
-import { makePokemon } from '$lib/testing/fixtures';
+import { makePokemon } from '#lib/testing/fixtures';
 import PokemonCard from './PokemonCard.svelte';
 import StatBar from './StatBar.svelte';
 import TypeBadge from './TypeBadge.svelte';

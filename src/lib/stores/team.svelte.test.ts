@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { makePokemon } from '$lib/testing/fixtures';
-import type { Team } from '$lib/types';
+import { makePokemon } from '#lib/testing/fixtures';
+import type { Team } from '#lib/types';
 import { teamStore } from './team.svelte';
 import { toastStore } from './toast-store.svelte';
 

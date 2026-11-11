@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { CheckCircle2, XCircle, AlertTriangle, Info, X } from '$lib/icons';
-	import type { Toast } from '$lib/types';
+	import { CheckCircle2, XCircle, AlertTriangle, Info, X } from '#lib/icons';
+	import type { Toast } from '#lib/types';
 
 	interface Props {
 		toast: Toast;

@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { teamStore } from '$lib/stores/team.svelte';
-	import type { Team } from '$lib/types';
-	import { calculateTeamCoverage, getTypeColor } from '$lib/utils/pokemon-utils';
+	import { teamStore } from '#lib/stores/team.svelte';
+	import type { Team } from '#lib/types';
+	import { calculateTeamCoverage, getTypeColor } from '#lib/utils/pokemon-utils';
 	import PokemonCard from '../ui/PokemonCard.svelte';
-	import { X, Plus } from '$lib/icons';
+	import { X, Plus } from '#lib/icons';
 	import type { Snippet } from 'svelte';
 
 	let {

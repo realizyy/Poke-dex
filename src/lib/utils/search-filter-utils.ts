@@ -1,4 +1,4 @@
-import type { SearchFilters } from '$lib/types';
+import type { SearchFilters } from '#lib/types';
 
 export interface StatRange {
 	min: number;

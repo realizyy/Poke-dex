@@ -1,5 +1,5 @@
-import { HttpError } from '$lib/api/http';
-import { PokemonService } from '$lib/services/pokemon-service';
+import { HttpError } from '#lib/api/http';
+import { PokemonService } from '#lib/services/pokemon-service';
 import type { PageServerLoad } from './$types';
 
 const CACHE_CONTROL = 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400';
