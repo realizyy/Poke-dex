@@ -60,12 +60,13 @@
 /* CSS Variables for Theme Colors */
 :root {
 	/* Light theme colors — improved contrast (Phase B) */
+	--accent-text-mix: 60%;
 	--bg-main: #ffffff; /* pure white — clear base layer */
 	--bg-secondary: #f1f5f9; /* slate-100 — visible secondary layer */
 	--bg-tertiary: #e2e8f0; /* slate-200 — visible tertiary layer */
 	--text-main: rgb(17 24 39); /* gray-900 */
 	--text-secondary: rgb(55 65 81); /* gray-700 */
-	--text-muted: rgb(107 114 128); /* gray-500 */
+	--text-muted: rgb(75 85 99); /* gray-600 */
 	--border-color: #cbd5e1; /* slate-300 — stronger border */
 	--shadow-color: rgba(0, 0, 0, 0.1);
 	--surface-raised: #ffffff;
@@ -127,6 +128,7 @@
 
 .dark {
 	/* Dark theme colors */
+	--accent-text-mix: 100%;
 	--bg-main: rgb(17 24 39); /* gray-900 */
 	--bg-secondary: rgb(31 41 55); /* gray-800 */
 	--bg-tertiary: rgb(55 65 81); /* gray-700 */

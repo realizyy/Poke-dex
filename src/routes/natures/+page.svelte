@@ -32,7 +32,7 @@
 </svelte:head>
 
 <!-- Hero -->
-<div class="relative overflow-hidden px-6 py-14 text-white" style="background-color: #d97706;">
+<div class="relative overflow-hidden px-6 py-14 text-white" style="background-color: #b45309;">
 	<!-- Decorative rings — clipped to right/bottom-left corners to prevent arc bleed -->
 	<div class="pointer-events-none absolute inset-y-0 right-0 w-1/2 overflow-hidden">
 		<div
@@ -50,10 +50,10 @@
 	<div class="relative mx-auto max-w-5xl">
 		<div class="mb-3 flex items-center gap-2">
 			<Leaf size={18} />
-			<span class="text-sm font-medium tracking-widest uppercase opacity-80">Nature Chart</span>
+			<span class="text-sm font-medium tracking-widest uppercase opacity-90">Nature Chart</span>
 		</div>
 		<h1 class="text-4xl font-extrabold tracking-tight drop-shadow">Natures</h1>
-		<p class="mt-2 max-w-xl text-sm opacity-80">
+		<p class="mt-2 max-w-xl text-sm opacity-90">
 			Each nature boosts one stat by 10% and lowers another by 10%. Five natures are neutral and
 			have no stat effect.
 		</p>
@@ -93,8 +93,8 @@
 			<thead>
 				<tr style="background: var(--bg-secondary); border-bottom: 1px solid var(--border-color);">
 					<th class="px-4 py-3 text-left font-semibold" style="color: var(--text-main);">Nature</th>
-					<th class="px-4 py-3 text-left font-semibold text-green-500">↑ Increased Stat</th>
-					<th class="px-4 py-3 text-left font-semibold text-red-500">↓ Decreased Stat</th>
+					<th class="px-4 py-3 text-left font-semibold text-green-700">↑ Increased Stat</th>
+					<th class="px-4 py-3 text-left font-semibold text-red-700">↓ Decreased Stat</th>
 					<th class="px-4 py-3 text-left font-semibold" style="color: var(--text-muted);"
 						>Likes Flavor</th
 					>
@@ -116,7 +116,7 @@
 						</td>
 						<td class="px-4 py-3">
 							{#if nature.increased_stat}
-								<span class="font-medium text-green-500">
+								<span class="font-medium text-green-700">
 									{formatStat(nature.increased_stat.name)}
 								</span>
 							{:else}
@@ -125,7 +125,7 @@
 						</td>
 						<td class="px-4 py-3">
 							{#if nature.decreased_stat}
-								<span class="font-medium text-red-500">
+								<span class="font-medium text-red-700">
 									{formatStat(nature.decreased_stat.name)}
 								</span>
 							{:else}
@@ -161,17 +161,17 @@
 				</p>
 				<div class="grid grid-cols-2 gap-2 text-sm">
 					<div>
-						<p class="mb-0.5 text-xs font-medium text-green-500">↑ Increased</p>
+						<p class="mb-0.5 text-xs font-medium text-green-700">↑ Increased</p>
 						{#if nature.increased_stat}
-							<p class="font-medium text-green-500">{formatStat(nature.increased_stat.name)}</p>
+							<p class="font-medium text-green-700">{formatStat(nature.increased_stat.name)}</p>
 						{:else}
 							<p style="color: var(--text-muted);">—</p>
 						{/if}
 					</div>
 					<div>
-						<p class="mb-0.5 text-xs font-medium text-red-500">↓ Decreased</p>
+						<p class="mb-0.5 text-xs font-medium text-red-700">↓ Decreased</p>
 						{#if nature.decreased_stat}
-							<p class="font-medium text-red-500">{formatStat(nature.decreased_stat.name)}</p>
+							<p class="font-medium text-red-700">{formatStat(nature.decreased_stat.name)}</p>
 						{:else}
 							<p style="color: var(--text-muted);">—</p>
 						{/if}

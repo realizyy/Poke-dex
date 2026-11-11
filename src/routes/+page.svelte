@@ -243,7 +243,11 @@
 						((e.currentTarget as HTMLElement).style.backgroundColor = 'var(--bg-main)')}
 				>
 					<!-- Number chip -->
-					<span class="font-mono text-xs font-bold" style="color: {f.color};">{f.num}</span>
+					<span
+						class="font-mono text-xs font-bold"
+						style="color: color-mix(in srgb, {f.color} var(--accent-text-mix), black);"
+						>{f.num}</span
+					>
 
 					<!-- Name + arrow -->
 					<div class="flex items-center gap-2">

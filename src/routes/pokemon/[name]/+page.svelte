@@ -212,7 +212,7 @@
 					class="rounded-2xl p-5"
 					style="background: var(--bg-secondary); border: 1px solid var(--border-color);"
 				>
-					<p class="text-base-content/40 mb-4 text-xs font-semibold tracking-widest uppercase">
+					<p class="text-base-content/75 mb-4 text-xs font-semibold tracking-widest uppercase">
 						Base Stats
 					</p>
 					<div class="space-y-2.5">
@@ -221,7 +221,7 @@
 						{/each}
 					</div>
 					<div class="border-base-300 mt-4 flex items-center justify-between border-t pt-3">
-						<span class="text-base-content/40 text-xs font-semibold tracking-widest uppercase"
+						<span class="text-base-content/75 text-xs font-semibold tracking-widest uppercase"
 							>Total</span
 						>
 						<span class="text-2xl font-black" style="color: {typeColor};">{statTotal}</span>
@@ -234,7 +234,7 @@
 						class="rounded-2xl p-5"
 						style="background: var(--bg-secondary); border: 1px solid var(--border-color);"
 					>
-						<p class="text-base-content/40 mb-3 text-xs font-semibold tracking-widest uppercase">
+						<p class="text-base-content/75 mb-3 text-xs font-semibold tracking-widest uppercase">
 							Weak Against
 						</p>
 						<div class="flex flex-wrap gap-1.5">
@@ -272,55 +272,55 @@
 					class="rounded-2xl p-5"
 					style="background: var(--bg-secondary); border: 1px solid var(--border-color);"
 				>
-					<p class="text-base-content/40 mb-4 text-xs font-semibold tracking-widest uppercase">
+					<p class="text-base-content/75 mb-4 text-xs font-semibold tracking-widest uppercase">
 						About
 					</p>
 					<div class="grid grid-cols-2 gap-x-6 gap-y-4 text-sm sm:grid-cols-3">
 						<div>
-							<p class="text-base-content/50 text-xs">Height</p>
+							<p class="text-base-content/75 text-xs">Height</p>
 							<p class="text-base-content mt-0.5 font-semibold">
 								{(pokemon.height / 10).toFixed(1)} m
 							</p>
 						</div>
 						<div>
-							<p class="text-base-content/50 text-xs">Weight</p>
+							<p class="text-base-content/75 text-xs">Weight</p>
 							<p class="text-base-content mt-0.5 font-semibold">
 								{(pokemon.weight / 10).toFixed(1)} kg
 							</p>
 						</div>
 						{#if pokemon.base_experience}
 							<div>
-								<p class="text-base-content/50 text-xs">Base Exp</p>
+								<p class="text-base-content/75 text-xs">Base Exp</p>
 								<p class="text-base-content mt-0.5 font-semibold">{pokemon.base_experience}</p>
 							</div>
 						{/if}
 						<div>
-							<p class="text-base-content/50 text-xs">Generation</p>
+							<p class="text-base-content/75 text-xs">Generation</p>
 							<p class="text-base-content mt-0.5 font-semibold">Gen {toRoman(generation)}</p>
 						</div>
 						{#if species}
 							<div>
-								<p class="text-base-content/50 text-xs">Capture Rate</p>
+								<p class="text-base-content/75 text-xs">Capture Rate</p>
 								<p class="text-base-content mt-0.5 font-semibold">
 									{species.capture_rate}
-									<span class="text-base-content/50 text-xs font-normal">
+									<span class="text-base-content/75 text-xs font-normal">
 										({Math.round((species.capture_rate / 255) * 100)}%)
 									</span>
 								</p>
 							</div>
 							<div>
-								<p class="text-base-content/50 text-xs">Happiness</p>
+								<p class="text-base-content/75 text-xs">Happiness</p>
 								<p class="text-base-content mt-0.5 font-semibold">{species.base_happiness}</p>
 							</div>
 							<div>
-								<p class="text-base-content/50 text-xs">Color</p>
+								<p class="text-base-content/75 text-xs">Color</p>
 								<p class="text-base-content mt-0.5 font-semibold capitalize">
 									{species.color.name}
 								</p>
 							</div>
 							{#if species.habitat}
 								<div>
-									<p class="text-base-content/50 text-xs">Habitat</p>
+									<p class="text-base-content/75 text-xs">Habitat</p>
 									<p class="text-base-content mt-0.5 font-semibold capitalize">
 										{species.habitat.name.replace(/-/g, ' ')}
 									</p>
@@ -331,7 +331,7 @@
 
 					{#if pokemon.abilities.length > 0}
 						<div class="border-base-300 mt-5 border-t pt-4">
-							<p class="text-base-content/50 mb-2.5 text-xs">Abilities</p>
+							<p class="text-base-content/75 mb-2.5 text-xs">Abilities</p>
 							<div class="flex flex-wrap gap-2">
 								{#each pokemon.abilities as a}
 									<button
@@ -355,7 +355,7 @@
 					>
 						<p class="text-2xl">&#x2694;&#xFE0F;</p>
 						<p class="text-base-content mt-2 text-sm font-bold">Moves</p>
-						<p class="text-base-content/50 text-xs">{pokemon.moves.length} learnable</p>
+						<p class="text-base-content/75 text-xs">{pokemon.moves.length} learnable</p>
 					</button>
 					<button
 						onclick={() => (openModal = 'evolution')}
@@ -364,7 +364,7 @@
 					>
 						<p class="text-2xl">&#x1F504;</p>
 						<p class="text-base-content mt-2 text-sm font-bold">Evolution</p>
-						<p class="text-base-content/50 text-xs">Chain</p>
+						<p class="text-base-content/75 text-xs">Chain</p>
 					</button>
 					{#if species}
 						<button
@@ -374,7 +374,7 @@
 						>
 							<p class="text-2xl">&#x1F95A;</p>
 							<p class="text-base-content mt-2 text-sm font-bold">Breeding</p>
-							<p class="text-base-content/50 text-xs">Eggs &amp; hatching</p>
+							<p class="text-base-content/75 text-xs">Eggs &amp; hatching</p>
 						</button>
 					{/if}
 					<button
@@ -384,7 +384,7 @@
 					>
 						<p class="text-2xl">&#x1F5BC;&#xFE0F;</p>
 						<p class="text-base-content mt-2 text-sm font-bold">Sprites</p>
-						<p class="text-base-content/50 text-xs">Gallery</p>
+						<p class="text-base-content/75 text-xs">Gallery</p>
 					</button>
 					<button
 						onclick={openLocationsModal}
@@ -393,7 +393,7 @@
 					>
 						<p class="text-2xl">&#x1F4CD;</p>
 						<p class="text-base-content mt-2 text-sm font-bold">Locations</p>
-						<p class="text-base-content/50 text-xs">Where to find</p>
+						<p class="text-base-content/75 text-xs">Where to find</p>
 					</button>
 					<button
 						onclick={openTcgModal}
@@ -402,7 +402,7 @@
 					>
 						<p class="text-2xl">&#x1F0CF;</p>
 						<p class="text-base-content mt-2 text-sm font-bold">TCG Cards</p>
-						<p class="text-base-content/50 text-xs">Trading cards</p>
+						<p class="text-base-content/75 text-xs">Trading cards</p>
 					</button>
 				</div>
 			</div>
@@ -440,7 +440,7 @@
 					</h2>
 					<button
 						onclick={() => (openModal = null)}
-						class="text-base-content/40 hover:bg-base-200 hover:text-base-content rounded-full p-2 transition-colors"
+						class="text-base-content/75 hover:bg-base-200 hover:text-base-content rounded-full p-2 transition-colors"
 						aria-label="Close"
 					>
 						<svg
@@ -461,7 +461,7 @@
 
 				<!-- Moves -->
 				{#if openModal === 'moves'}
-					<p class="text-base-content/50 mb-5 text-sm">
+					<p class="text-base-content/75 mb-5 text-sm">
 						{pokemonName} can learn
 						<strong class="text-base-content">{pokemon.moves.length}</strong> moves.
 					</p>
@@ -491,7 +491,7 @@
 								class="rounded-xl p-4"
 								style="background: var(--bg-secondary); border: 1px solid var(--border-color);"
 							>
-								<p class="text-base-content/50 text-xs">Egg Groups</p>
+								<p class="text-base-content/75 text-xs">Egg Groups</p>
 								<p class="text-base-content mt-1 font-semibold capitalize">
 									{species.egg_groups.map((g) => g.name.replace(/-/g, ' ')).join(', ') || '-'}
 								</p>
@@ -500,7 +500,7 @@
 								class="rounded-xl p-4"
 								style="background: var(--bg-secondary); border: 1px solid var(--border-color);"
 							>
-								<p class="text-base-content/50 text-xs">Gender Ratio</p>
+								<p class="text-base-content/75 text-xs">Gender Ratio</p>
 								<p class="text-base-content mt-1 font-semibold">
 									{formatGenderRate(species.gender_rate)}
 								</p>
@@ -509,7 +509,7 @@
 								class="rounded-xl p-4"
 								style="background: var(--bg-secondary); border: 1px solid var(--border-color);"
 							>
-								<p class="text-base-content/50 text-xs">Hatch Steps</p>
+								<p class="text-base-content/75 text-xs">Hatch Steps</p>
 								<p class="text-base-content mt-1 font-semibold">
 									{formatHatchSteps(species.hatch_counter)}
 								</p>
@@ -518,7 +518,7 @@
 								class="rounded-xl p-4"
 								style="background: var(--bg-secondary); border: 1px solid var(--border-color);"
 							>
-								<p class="text-base-content/50 text-xs">Growth Rate</p>
+								<p class="text-base-content/75 text-xs">Growth Rate</p>
 								<p class="text-base-content mt-1 font-semibold capitalize">
 									{species.growth_rate.name.replace(/-/g, ' ')}
 								</p>
@@ -529,7 +529,7 @@
 								class="mt-3 rounded-xl p-4"
 								style="background: var(--bg-secondary); border: 1px solid var(--border-color);"
 							>
-								<p class="text-base-content/50 text-xs">Baby Trigger Item</p>
+								<p class="text-base-content/75 text-xs">Baby Trigger Item</p>
 								<p class="text-base-content mt-1 font-semibold capitalize">
 									{species.baby_trigger_item.name.replace(/-/g, ' ')}
 								</p>
@@ -555,7 +555,7 @@
 								style="background: var(--bg-secondary); border: 1px solid var(--border-color);"
 							>
 								<img src={s.src} alt={s.label} class="h-20 w-20 object-contain" loading="lazy" />
-								<p class="text-base-content/50 mt-1.5 text-center text-xs font-medium">
+								<p class="text-base-content/75 mt-1.5 text-center text-xs font-medium">
 									{s.label}
 								</p>
 							</div>
@@ -570,10 +570,10 @@
 								class="border-base-300 mb-3 h-8 w-8 animate-spin rounded-full border-2"
 								style="border-top-color: {typeColor};"
 							></div>
-							<p class="text-base-content/50 text-sm">Loading TCG cards…</p>
+							<p class="text-base-content/75 text-sm">Loading TCG cards…</p>
 						</div>
 					{:else if tcgCards && tcgCards.length > 0}
-						<p class="text-base-content/50 mb-4 text-sm">
+						<p class="text-base-content/75 mb-4 text-sm">
 							<strong class="text-base-content">{tcgCards.length}</strong>
 							card{tcgCards.length !== 1 ? 's' : ''} found for {pokemonName}.
 						</p>
@@ -615,7 +615,7 @@
 						<div class="flex flex-col items-center justify-center py-16 text-center">
 							<p class="mb-2 text-4xl">&#x1F0CF;</p>
 							<p class="text-base-content font-semibold">No TCG cards found</p>
-							<p class="text-base-content/50 mt-1 text-sm">
+							<p class="text-base-content/75 mt-1 text-sm">
 								No cards found for {pokemonName} in the TCGDex database.
 							</p>
 							<a
@@ -635,7 +635,7 @@
 								class="border-base-300 mb-3 h-8 w-8 animate-spin rounded-full border-2"
 								style="border-top-color: {typeColor};"
 							></div>
-							<p class="text-base-content/50 text-sm">Loading encounters…</p>
+							<p class="text-base-content/75 text-sm">Loading encounters…</p>
 						</div>
 					{:else if encounterAreas && encounterAreas.length > 0}
 						{@const byVersion = encounterAreas.reduce<
@@ -675,7 +675,7 @@
 												style="background: var(--bg-secondary); border: 1px solid var(--border-color);"
 											>
 												<span class="text-base-content font-medium capitalize">{loc.location}</span>
-												<span class="text-base-content/50 text-right text-xs">
+												<span class="text-base-content/75 text-right text-xs">
 													{loc.method} · Lv {loc.min}–{loc.max} ({loc.chance}%)
 												</span>
 											</div>
@@ -688,7 +688,7 @@
 						<div class="flex flex-col items-center justify-center py-16 text-center">
 							<p class="mb-2 text-4xl">&#x1F33F;</p>
 							<p class="text-base-content font-semibold">Not found in the wild</p>
-							<p class="text-base-content/50 mt-1 text-sm">
+							<p class="text-base-content/75 mt-1 text-sm">
 								{pokemonName} cannot be encountered in any location.
 							</p>
 						</div>

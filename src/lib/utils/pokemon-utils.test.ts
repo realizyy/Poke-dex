@@ -7,7 +7,8 @@ import {
 	calculateTypeWeaknesses,
 	getGenerationFromId,
 	getStatTotal,
-	getTypeColor
+	getTypeColor,
+	readableTextColor
 } from './pokemon-utils';
 
 describe('type chart', () => {
@@ -87,5 +88,30 @@ describe('small helpers', () => {
 
 	it('falls back to a default color for an unknown type', () => {
 		expect(getTypeColor('not-a-type')).toBe('#68A090');
+	});
+});
+
+describe('readableTextColor', () => {
+	function contrast(a: string, b: string): number {
+		const lum = (hex: string) => {
+			const [r, g, bl] = [1, 3, 5]
+				.map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
+				.map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+			return 0.2126 * r + 0.7152 * g + 0.0722 * bl;
+		};
+		const [hi, lo] = [lum(a), lum(b)].sort((x, y) => y - x);
+		return (hi + 0.05) / (lo + 0.05);
+	}
+
+	it('picks dark text on light backgrounds and white on dark ones', () => {
+		expect(readableTextColor('#F7D02C')).toBe('#111827');
+		expect(readableTextColor('#1f2937')).toBe('#ffffff');
+	});
+
+	it('gives every type color at least 3:1 contrast with its text', () => {
+		for (const type of POKEMON_TYPES) {
+			const bg = getTypeColor(type);
+			expect(contrast(bg, readableTextColor(bg)), type).toBeGreaterThanOrEqual(3);
+		}
 	});
 });

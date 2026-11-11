@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getTypeColor } from '#lib/utils/pokemon-utils';
+	import { getTypeColor, readableTextColor } from '#lib/utils/pokemon-utils';
 
 	interface Props {
 		type: string;
@@ -18,8 +18,8 @@
 </script>
 
 <span
-	class="rounded-full font-semibold text-white capitalize {cls}"
-	style="background-color: {getTypeColor(type)};"
+	class="rounded-full font-semibold capitalize {cls}"
+	style="background-color: {getTypeColor(type)}; color: {readableTextColor(getTypeColor(type))};"
 >
 	{type}
 </span>

@@ -1,6 +1,11 @@
 <script lang="ts">
 	import type { SearchFilters, SearchEvent } from '#lib/types';
-	import { POKEMON_TYPES, GENERATIONS, getTypeColor } from '#lib/utils/pokemon-utils';
+	import {
+		POKEMON_TYPES,
+		GENERATIONS,
+		getTypeColor,
+		readableTextColor
+	} from '#lib/utils/pokemon-utils';
 	import { SearchFilterUtils } from '#lib/utils/search-filter-utils';
 	import { Search, Filter, ChevronDown, X } from '#lib/icons';
 
@@ -95,10 +100,12 @@
 				{#each POKEMON_TYPES as type}
 					<button
 						onclick={() => toggleType(type)}
-						class="rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap text-white transition-all"
-						style="background-color: {getTypeColor(type)}; opacity: {filters.types.includes(type)
+						class="rounded-full px-3 py-1 text-xs font-semibold whitespace-nowrap transition-all"
+						style="background-color: {getTypeColor(type)}; color: {readableTextColor(
+							getTypeColor(type)
+						)}; opacity: {filters.types.includes(type)
 							? '1'
-							: '0.5'}; outline: {filters.types.includes(type)
+							: '0.8'}; outline: {filters.types.includes(type)
 							? '2px solid white'
 							: 'none'}; outline-offset: 1px; transform: {filters.types.includes(type)
 							? 'scale(1.08)'

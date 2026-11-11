@@ -14,6 +14,7 @@
 	import { searchStore } from '#lib/stores/search.svelte';
 	import { teamStore } from '#lib/stores/team.svelte';
 	import { URLUtils } from '#lib';
+	import { readableTextColor } from '#lib/utils/pokemon-utils';
 
 	// Initialise once on mount — picks up URL params that the server already resolved.
 	onMount(() => {
@@ -141,8 +142,10 @@
 					{#each quickPicks as pick}
 						<button
 							onclick={() => handleQuickSearch(pick.name.toLowerCase())}
-							class="rounded-full px-4 py-2 text-sm font-semibold text-white transition-all hover:scale-105"
-							style="background-color: {pick.color}; box-shadow: 0 4px 12px {pick.color}55;"
+							class="rounded-full px-4 py-2 text-sm font-semibold transition-all hover:scale-105"
+							style="background-color: {pick.color}; color: {readableTextColor(
+								pick.color
+							)}; box-shadow: 0 4px 12px {pick.color}55;"
 						>
 							{pick.name}
 						</button>

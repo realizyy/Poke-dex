@@ -8,6 +8,7 @@
 <!-- Toast Container — desktop (top-right) -->
 <div
 	class="pointer-events-none fixed top-4 right-4 z-50 hidden w-full max-w-sm flex-col gap-2 md:flex"
+	role="region"
 	aria-live="polite"
 	aria-label="Notifications"
 >
@@ -26,6 +27,7 @@
 <!-- Toast Container — mobile (below header) -->
 <div
 	class="pointer-events-none fixed top-16 right-4 left-4 z-50 flex flex-col gap-2 md:hidden"
+	role="region"
 	aria-live="polite"
 	aria-label="Mobile notifications"
 >
