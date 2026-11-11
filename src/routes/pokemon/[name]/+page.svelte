@@ -115,6 +115,9 @@
 		return `♂ ${(100 - femalePct).toFixed(1)}% · ♀ ${femalePct.toFixed(1)}%`;
 	}
 
+	$: artwork = pokemon.sprites.other['official-artwork'].front_default;
+	$: pageDescription = `${pokemonName} (#${pokemon.id}), ${pokemon.types.map((t) => t.type.name).join('/')} type. Base stats, abilities, moves, and evolution.`;
+
 	function formatHatchSteps(counter: number): string {
 		return ((counter + 1) * 256).toLocaleString();
 	}
@@ -123,13 +126,15 @@
 <svelte:window onkeydown={handleKeydown} />
 
 <svelte:head>
-	<title>{pokemonName ? `${pokemonName} – Pokédex` : 'Pokédex'}</title>
-	<meta
-		name="description"
-		content={pokemon
-			? `${pokemonName} — stats, moves, abilities, and evolution.`
-			: 'Pokémon detail'}
-	/>
+	<title>{pokemonName} – Pokédex</title>
+	<meta name="description" content={pageDescription} />
+	<meta property="og:type" content="website" />
+	<meta property="og:title" content="{pokemonName} – Pokédex" />
+	<meta property="og:description" content={pageDescription} />
+	{#if artwork}
+		<meta property="og:image" content={artwork} />
+		<meta name="twitter:image" content={artwork} />
+	{/if}
 </svelte:head>
 
 <div class="bg-base-100 min-h-screen">

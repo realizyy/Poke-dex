@@ -15,6 +15,9 @@
 <svelte:head>
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
 	<link rel="icon" type="image/png" href="/favicon.ico" />
+	<meta name="theme-color" content="#3b82f6" />
+	<meta property="og:site_name" content="Pokédex" />
+	<meta name="twitter:card" content="summary_large_image" />
 </svelte:head>
 
 <div
