@@ -4,12 +4,32 @@
 	import type { TcgCard } from '#lib/types';
 	import { formatPrice, getCardPrices } from '#lib/utils/tcg';
 	import { collectionStore } from '#lib/stores/collection.svelte';
+	import { deckStore } from '#lib/stores/decks.svelte';
+	import { toastStore } from '#lib/stores/toast-store.svelte';
+	import { atCopyLimit, toDeckCard } from '#lib/utils/deck';
 	import type { CardRef } from '#lib/utils/collection';
 	import { onMount } from 'svelte';
 
 	let { data }: { data: { card: TcgCard } } = $props();
 	const card = $derived(data.card);
-	onMount(() => collectionStore.load());
+	onMount(() => {
+		collectionStore.load();
+		deckStore.load();
+	});
+
+	let chosenDeckId = $state('');
+	const targetDeck = $derived(deckStore.get(chosenDeckId) ?? deckStore.list[0]);
+
+	function addToDeck() {
+		if (!targetDeck) return;
+		const deckCard = toDeckCard(card);
+		if (atCopyLimit(targetDeck, deckCard)) {
+			toastStore.warning('Copy limit', `${targetDeck.name} already has 4 copies of ${card.name}.`);
+			return;
+		}
+		deckStore.adjust(targetDeck.id, deckCard, 1);
+		toastStore.success('Added to deck', `${card.name} is in ${targetDeck.name}.`);
+	}
 
 	const cardRef = $derived<CardRef>({
 		id: card.id,
@@ -284,6 +304,47 @@
 					>
 						{wishlisted ? 'On wishlist' : 'Add to wishlist'}
 					</button>
+				</div>
+
+				<!-- Add to deck -->
+				<div
+					class="flex flex-wrap items-center gap-3 rounded-2xl p-4"
+					style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
+				>
+					{#if deckStore.list.length === 0}
+						<p class="text-sm" style="color: var(--text-secondary);">
+							You have no decks yet.
+							<a
+								href="/tcg/decks"
+								class="font-semibold hover:underline"
+								style="color: var(--brand-red);"
+							>
+								Create one
+							</a>
+						</p>
+					{:else}
+						<label
+							for="deck-target"
+							class="text-xs font-bold tracking-widest uppercase"
+							style="color: var(--text-muted);">Deck</label
+						>
+						<select
+							id="deck-target"
+							bind:value={chosenDeckId}
+							class="rounded-xl px-3 py-1.5 text-sm"
+							style="background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main);"
+						>
+							{#each deckStore.list as d (d.id)}
+								<option value={d.id} selected={d.id === targetDeck?.id}>{d.name}</option>
+							{/each}
+						</select>
+						<button
+							onclick={addToDeck}
+							class="btn-brand rounded-full px-4 py-1.5 text-sm font-semibold"
+						>
+							Add to deck
+						</button>
+					{/if}
 				</div>
 
 				<!-- Evolves from -->

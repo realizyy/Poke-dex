@@ -53,7 +53,7 @@
 			browse its cards.
 		</p>
 		<nav class="mt-6 flex flex-wrap gap-3" aria-label="TCG tools">
-			{#each [{ href: '/tcg/cards', label: 'Search cards' }, { href: '/tcg/collection', label: 'My collection' }] as link (link.href)}
+			{#each [{ href: '/tcg/cards', label: 'Search cards' }, { href: '/tcg/collection', label: 'My collection' }, { href: '/tcg/decks', label: 'Deck builder' }] as link (link.href)}
 				<a
 					href={link.href}
 					class="rounded-full px-4 py-2 text-sm font-semibold transition-opacity hover:opacity-80"

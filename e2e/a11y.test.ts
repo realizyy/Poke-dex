@@ -14,6 +14,7 @@ const CONTRAST_BUDGET: Record<string, number> = {
 	'/tcg': 0,
 	'/tcg/cards': 0,
 	'/tcg/collection': 0,
+	'/tcg/decks': 0,
 	'/tcg/sets/swsh3': 1,
 	'/tcg/cards/swsh3-136': 4
 };
