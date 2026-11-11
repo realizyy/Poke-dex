@@ -1,4 +1,5 @@
 import { describe, test, expect, vi } from 'vitest';
+import '@testing-library/jest-dom/vitest';
 import { readable } from 'svelte/store';
 import { render, screen } from '@testing-library/svelte';
 
