@@ -410,6 +410,12 @@ export interface TcgLegal {
 	expanded: boolean;
 }
 
+/** Prices are optional and loosely shaped upstream, so they are parsed in utils/tcg.ts. */
+export interface TcgPricing {
+	cardmarket?: Record<string, unknown>;
+	tcgplayer?: Record<string, unknown>;
+}
+
 /** Full card object returned by /cards/{id} */
 export interface TcgCard {
 	category: 'Pokemon' | 'Trainer' | 'Energy';
@@ -423,6 +429,11 @@ export interface TcgCard {
 	types?: string[];
 	evolveFrom?: string;
 	description?: string;
+	dexId?: number[];
+	effect?: string;
+	trainerType?: string;
+	energyType?: string;
+	pricing?: TcgPricing;
 	stage?: string; // "Basic" | "Stage1" | "Stage2" | "VMAX" | etc.
 	attacks?: TcgAttack[];
 	weaknesses?: TcgWeakness[];

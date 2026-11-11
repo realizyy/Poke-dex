@@ -1,5 +1,6 @@
 import { HttpError, fetchJson } from '#lib/api/http';
 import { TtlCache } from '#lib/api/ttl-cache';
+import { DEFAULT_PAGE_SIZE, buildCardSearchParams, type CardSearchFilters } from '#lib/utils/tcg';
 import type { TcgCard, TcgCardBrief, TcgSet, TcgSetBrief, TcgSeries } from '#lib/types';
 
 const TCG_API_BASE = 'https://api.tcgdex.net/v2/en';
@@ -8,17 +9,6 @@ const cache = new TtlCache(300);
 
 const TTL_LONG = 30 * 60 * 1000;
 const TTL_SHORT = 10 * 60 * 1000;
-
-export interface CardSearchFilters {
-	name?: string;
-	types?: string;
-	rarity?: string;
-	hpMin?: number;
-	hpMax?: number;
-	setId?: string;
-	page?: number;
-	itemsPerPage?: number;
-}
 
 export class TcgService {
 	/** All TCG series (each containing their sets) */
@@ -49,32 +39,22 @@ export class TcgService {
 		);
 	}
 
-	/** Search cards with optional filters, sort, and pagination */
-	static async searchCards(filters: CardSearchFilters = {}): Promise<TcgCardBrief[]> {
-		const params = new URLSearchParams();
-
-		if (filters.name) params.set('name', filters.name);
-		if (filters.types) params.set('types', filters.types);
-		if (filters.rarity) params.set('rarity', filters.rarity);
-		if (filters.hpMin != null) params.set('hp', `gte:${filters.hpMin}`);
-		if (filters.hpMax != null) {
-			// If both min & max, we can only add one hp param — append separately
-			const existing = params.get('hp');
-			if (existing) {
-				// Use two separate params (API supports duplicates)
-				params.append('hp', `lte:${filters.hpMax}`);
-			} else {
-				params.set('hp', `lte:${filters.hpMax}`);
-			}
-		}
-		if (filters.setId) params.set('set.id', `eq:${filters.setId}`);
-
+	/** One page of cards plus whether a next page exists. The next page is fetched into the cache. */
+	static async searchCards(
+		filters: CardSearchFilters = {}
+	): Promise<{ cards: TcgCardBrief[]; hasMore: boolean }> {
+		const size = filters.itemsPerPage ?? DEFAULT_PAGE_SIZE;
 		const page = filters.page ?? 1;
-		const itemsPerPage = filters.itemsPerPage ?? 24;
-		params.set('pagination:page', String(page));
-		params.set('pagination:itemsPerPage', String(itemsPerPage));
+		const cards = await this.fetchCardPage({ ...filters, page, itemsPerPage: size });
+		if (cards.length < size) return { cards, hasMore: false };
+		const next = await this.fetchCardPage({ ...filters, page: page + 1, itemsPerPage: size }).catch(
+			() => []
+		);
+		return { cards, hasMore: next.length > 0 };
+	}
 
-		const qs = params.toString();
+	private static fetchCardPage(filters: CardSearchFilters): Promise<TcgCardBrief[]> {
+		const qs = buildCardSearchParams(filters).toString();
 		return cache.getOrLoad(`cards:search:${qs}`, TTL_SHORT, () =>
 			fetchJson<TcgCardBrief[]>(`${TCG_API_BASE}/cards?${qs}`)
 		);

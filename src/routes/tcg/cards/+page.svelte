@@ -2,24 +2,10 @@
 	import { goto } from '$app/navigation';
 	import { Layers, Search, ChevronLeft, ChevronRight } from '#lib/icons';
 	import { TcgService } from '#lib/services/tcg-service';
-	import type { TcgCardBrief } from '#lib/types';
+	import type { PageData } from './$types';
+	import { CARD_CATEGORIES, CARD_SORT_FIELDS, DEFAULT_PAGE_SIZE } from '#lib/utils/tcg';
 
-	let {
-		data
-	}: {
-		data: {
-			cards: TcgCardBrief[];
-			query: {
-				name: string;
-				types: string;
-				rarity: string;
-				hpMin?: number;
-				hpMax?: number;
-				setId: string;
-				page: number;
-			};
-		};
-	} = $props();
+	let { data }: { data: PageData } = $props();
 
 	const cards = $derived(data.cards ?? []);
 	const query = $derived(data.query);
@@ -30,6 +16,10 @@
 	let nameInput = $state('');
 	let typesInput = $state('');
 	let rarityInput = $state('');
+	let categoryInput = $state('');
+	let stageInput = $state('');
+	let sortInput = $state('');
+	let orderInput = $state('ASC');
 	let hpMinInput = $state('');
 	let hpMaxInput = $state('');
 
@@ -37,12 +27,17 @@
 		nameInput = query?.name ?? '';
 		typesInput = query?.types ?? '';
 		rarityInput = query?.rarity ?? '';
+		categoryInput = query?.category ?? '';
+		stageInput = query?.stage ?? '';
+		sortInput = query?.sort ?? '';
+		orderInput = query?.order ?? 'ASC';
 		hpMinInput = query?.hpMin != null ? String(query.hpMin) : '';
 		hpMaxInput = query?.hpMax != null ? String(query.hpMax) : '';
 	});
 
 	const currentPage = $derived(query.page ?? 1);
-	const hasNextPage = $derived(cards.length === 24);
+	const hasNextPage = $derived(data.hasMore);
+	const firstShown = $derived((currentPage - 1) * DEFAULT_PAGE_SIZE + 1);
 	const hasPrevPage = $derived(currentPage > 1);
 
 	const TCG_TYPES = [
@@ -58,6 +53,7 @@
 		'Fairy',
 		'Colorless'
 	];
+	const STAGES = ['Basic', 'Stage1', 'Stage2', 'VMAX', 'VSTAR', 'V', 'MEGA', 'BREAK', 'Restored'];
 	const RARITIES = [
 		'Common',
 		'Uncommon',
@@ -78,6 +74,10 @@
 			q: nameInput || undefined,
 			types: typesInput || undefined,
 			rarity: rarityInput || undefined,
+			category: categoryInput || undefined,
+			stage: stageInput || undefined,
+			sort: sortInput || undefined,
+			order: sortInput && orderInput === 'DESC' ? 'DESC' : undefined,
 			hpMin: hpMinInput || undefined,
 			hpMax: hpMaxInput || undefined,
 			page: '1',
@@ -98,6 +98,10 @@
 		nameInput = '';
 		typesInput = '';
 		rarityInput = '';
+		categoryInput = '';
+		stageInput = '';
+		sortInput = '';
+		orderInput = 'ASC';
 		hpMinInput = '';
 		hpMaxInput = '';
 		goto('/tcg/cards');
@@ -200,6 +204,78 @@
 				</select>
 			</div>
 
+			<!-- Category -->
+			<div class="flex flex-col gap-1">
+				<label
+					class="text-xs font-bold tracking-wider uppercase"
+					style="color: var(--text-muted);"
+					for="tcg-category">Category</label
+				>
+				<select
+					id="tcg-category"
+					bind:value={categoryInput}
+					class="rounded-xl px-4 py-2.5 text-sm focus:outline-none"
+					style="background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main);"
+				>
+					<option value="">Any category</option>
+					{#each CARD_CATEGORIES as c (c)}
+						<option value={c}>{c}</option>
+					{/each}
+				</select>
+			</div>
+
+			<!-- Stage -->
+			<div class="flex flex-col gap-1">
+				<label
+					class="text-xs font-bold tracking-wider uppercase"
+					style="color: var(--text-muted);"
+					for="tcg-stage">Stage</label
+				>
+				<select
+					id="tcg-stage"
+					bind:value={stageInput}
+					class="rounded-xl px-4 py-2.5 text-sm focus:outline-none"
+					style="background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main);"
+				>
+					<option value="">Any stage</option>
+					{#each STAGES as st (st)}
+						<option value={st}>{st}</option>
+					{/each}
+				</select>
+			</div>
+
+			<!-- Sort -->
+			<div class="flex flex-col gap-1">
+				<label
+					class="text-xs font-bold tracking-wider uppercase"
+					style="color: var(--text-muted);"
+					for="tcg-sort">Sort by</label
+				>
+				<div class="flex gap-2">
+					<select
+						id="tcg-sort"
+						bind:value={sortInput}
+						class="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none"
+						style="background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main);"
+					>
+						<option value="">Default</option>
+						{#each CARD_SORT_FIELDS as f (f.id)}
+							<option value={f.id}>{f.label}</option>
+						{/each}
+					</select>
+					<select
+						aria-label="Sort order"
+						bind:value={orderInput}
+						disabled={!sortInput}
+						class="rounded-xl px-3 py-2.5 text-sm focus:outline-none disabled:opacity-50"
+						style="background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main);"
+					>
+						<option value="ASC">Asc</option>
+						<option value="DESC">Desc</option>
+					</select>
+				</div>
+			</div>
+
 			<!-- HP range -->
 			<fieldset class="m-0 flex flex-col gap-1 border-none p-0">
 				<legend class="text-xs font-bold tracking-wider uppercase" style="color: var(--text-muted);"
@@ -261,21 +337,25 @@
 				style="color: var(--text-muted);"
 			>
 				<Layers size={48} class="mb-4 opacity-30" />
-				<p class="text-lg font-semibold">No cards found.</p>
-				<p class="mt-1 text-sm">Try adjusting your search filters.</p>
+				{#if data.failed}
+					<p class="text-lg font-semibold">The card database is not responding.</p>
+					<p class="mt-1 text-sm">Please try again in a moment.</p>
+				{:else}
+					<p class="text-lg font-semibold">No cards found.</p>
+					<p class="mt-1 text-sm">Try adjusting your search filters.</p>
+				{/if}
 			</div>
 		{:else}
 			<div class="mb-5 flex items-center justify-between">
 				<p class="text-sm" style="color: var(--text-muted);">
-					{cards.length === 24
-						? `${(currentPage - 1) * 24 + 1}–${currentPage * 24}+`
-						: `${(currentPage - 1) * 24 + 1}–${(currentPage - 1) * 24 + cards.length}`} cards
+					{firstShown}–{firstShown + cards.length - 1} cards
 				</p>
 				<!-- Pagination top -->
 				<div class="flex items-center gap-2">
 					<button
 						onclick={() => goToPage(currentPage - 1)}
 						disabled={!hasPrevPage}
+						aria-label="Previous page"
 						class="rounded-lg px-3 py-1.5 text-sm font-semibold transition-opacity hover:opacity-70 disabled:opacity-30"
 						style="background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-main);"
 					>
@@ -287,6 +367,7 @@
 					<button
 						onclick={() => goToPage(currentPage + 1)}
 						disabled={!hasNextPage}
+						aria-label="Next page"
 						class="rounded-lg px-3 py-1.5 text-sm font-semibold transition-opacity hover:opacity-70 disabled:opacity-30"
 						style="background: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-main);"
 					>

@@ -2,9 +2,17 @@
 	import { Layers } from '#lib/icons';
 	import { TcgService } from '#lib/services/tcg-service';
 	import type { TcgCard } from '#lib/types';
+	import { formatPrice, getCardPrices } from '#lib/utils/tcg';
 
 	let { data }: { data: { card: TcgCard } } = $props();
 	const card = $derived(data.card);
+	const subtype = $derived(card.trainerType ?? card.energyType);
+	const priceGroups = $derived.by(() => {
+		const rows = getCardPrices(card.pricing);
+		return (['Cardmarket', 'TCGplayer'] as const)
+			.map((source) => ({ source, rows: rows.filter((r) => r.source === source) }))
+			.filter((group) => group.rows.length > 0);
+	});
 
 	// Energy type → colour mapping (unofficial but widely recognised)
 	const typeColors: Record<string, string> = {
@@ -183,7 +191,7 @@
 							class="rounded-full px-3 py-1 text-xs font-bold"
 							style="background: var(--bg-secondary); color: var(--text-muted); border: 1px solid var(--border-color);"
 						>
-							{card.category}
+							{card.category}{subtype ? ` · ${subtype}` : ''}
 						</span>
 					</div>
 
@@ -235,6 +243,82 @@
 						>
 							{card.evolveFrom}
 						</a>
+					</div>
+				{/if}
+
+				<!-- Pokédex link -->
+				{#if card.dexId?.length}
+					<div
+						class="rounded-2xl p-4"
+						style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
+					>
+						<p
+							class="mb-1 text-xs font-bold tracking-widest uppercase"
+							style="color: var(--text-muted);"
+						>
+							Pokédex
+						</p>
+						<div class="flex flex-wrap gap-x-4 gap-y-1">
+							{#each card.dexId as dexId (dexId)}
+								<a
+									href="/pokemon/{dexId}"
+									class="text-base font-semibold hover:underline"
+									style="color: var(--brand-red);"
+								>
+									View #{dexId} in the Pokédex
+								</a>
+							{/each}
+						</div>
+					</div>
+				{/if}
+
+				<!-- Trainer and Energy effect -->
+				{#if card.effect}
+					<div
+						class="rounded-2xl p-5"
+						style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
+					>
+						<p
+							class="mb-2 text-xs font-bold tracking-widest uppercase"
+							style="color: var(--text-muted);"
+						>
+							Effect
+						</p>
+						<p class="text-sm leading-relaxed" style="color: var(--text-main);">{card.effect}</p>
+					</div>
+				{/if}
+
+				<!-- Market prices -->
+				{#if priceGroups.length > 0}
+					<div
+						class="rounded-2xl p-5"
+						style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
+					>
+						<p
+							class="mb-4 text-xs font-bold tracking-widest uppercase"
+							style="color: var(--text-muted);"
+						>
+							Market prices
+						</p>
+						<div class="grid gap-5 sm:grid-cols-2">
+							{#each priceGroups as group (group.source)}
+								<div>
+									<p class="mb-2 text-sm font-bold" style="color: var(--text-main);">
+										{group.source}
+									</p>
+									<dl class="space-y-1 text-sm">
+										{#each group.rows as row (row.label)}
+											<div class="flex justify-between gap-3">
+												<dt style="color: var(--text-secondary);">{row.label}</dt>
+												<dd class="font-semibold tabular-nums" style="color: var(--text-main);">
+													{formatPrice(row.amount, row.currency)}
+												</dd>
+											</div>
+										{/each}
+									</dl>
+								</div>
+							{/each}
+						</div>
 					</div>
 				{/if}
 
