@@ -60,3 +60,31 @@ test('following an evolution link updates the pokemon page', async ({ page }) =>
 	await expect(page.getByRole('heading', { name: /raichu/i }).first()).toBeVisible();
 	await expect(page.getByRole('heading', { name: /^pikachu$/i })).toHaveCount(0);
 });
+
+test('the moves modal lists a learnset per game and method', async ({ page }) => {
+	await page.goto('/pokemon/pikachu');
+	await page.getByRole('button', { name: /moves/i }).first().click();
+	const game = page.getByLabel('Game');
+	await expect(game).toBeVisible();
+	await expect(page.getByRole('tab', { name: /level up/i })).toBeVisible();
+	await expect(
+		page
+			.getByRole('tabpanel')
+			.getByText(/thunder shock/i)
+			.first()
+	).toBeVisible();
+	await expect(
+		page
+			.getByRole('tabpanel')
+			.getByText(/^Lv\. \d+$/)
+			.first()
+	).toBeVisible();
+
+	await page.getByRole('tab', { name: /tm \/ hm/i }).click();
+	await expect(page.getByRole('tabpanel').getByText(/Lv\./)).toHaveCount(0);
+
+	const options = await game.locator('option').allTextContents();
+	expect(options.length).toBeGreaterThan(3);
+	await game.selectOption({ index: options.length - 1 });
+	await expect(page.getByRole('tab').first()).toBeVisible();
+});

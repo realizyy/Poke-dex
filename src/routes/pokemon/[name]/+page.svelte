@@ -17,6 +17,14 @@
 	import { PokemonService } from '#lib/services/pokemon-service';
 	import { TcgService } from '#lib/services/tcg-service';
 	import { ChevronLeft, Layers } from '#lib/icons';
+	import {
+		LEARN_METHODS,
+		buildLearnset,
+		formatVersionGroup,
+		getDefaultVersionGroup,
+		getVersionGroups,
+		type LearnMethod
+	} from '#lib/utils/learnset';
 	import type { TcgCardBrief } from '#lib/types';
 
 	export let data: PageData;
@@ -68,6 +76,17 @@
 	let loadingTcg = false;
 	let tcgLoaded = false;
 
+	let selectedVersionGroup = '';
+	let selectedMethod: LearnMethod = 'level-up';
+	$: versionGroups = getVersionGroups(pokemon.moves);
+	$: if (!versionGroups.includes(selectedVersionGroup))
+		selectedVersionGroup = getDefaultVersionGroup(pokemon.moves);
+	$: learnset = buildLearnset(pokemon.moves, selectedVersionGroup);
+	$: methodTabs = LEARN_METHODS.filter((m) => learnset[m.id].length > 0);
+	$: if (methodTabs.length > 0 && !methodTabs.some((m) => m.id === selectedMethod)) {
+		selectedMethod = methodTabs[0].id;
+	}
+
 	let shownPokemonName: string | undefined;
 	function resetForPokemon(name: string | undefined) {
 		if (name === shownPokemonName) return;
@@ -78,6 +97,8 @@
 		encountersLoaded = false;
 		tcgCards = null;
 		tcgLoaded = false;
+		selectedVersionGroup = '';
+		selectedMethod = 'level-up';
 	}
 	$: resetForPokemon(pokemon?.name);
 
@@ -430,7 +451,64 @@
 				<!-- Modal header -->
 				<div class="mb-6 flex items-center justify-between">
 					<h2 class="text-base-content text-xl font-black">
-						{#if openModal === 'moves'}Moves
+						{#if openModal === 'moves'}
+							{#if versionGroups.length === 0}
+								<p class="text-base-content/75 text-sm">
+									No move data is available for {pokemonName}.
+								</p>
+							{:else}
+								<div class="mb-4 flex flex-wrap items-center gap-3">
+									<label for="learnset-game" class="text-base-content/75 text-sm">Game</label>
+									<select
+										id="learnset-game"
+										bind:value={selectedVersionGroup}
+										class="select select-bordered select-sm"
+									>
+										{#each versionGroups as group (group)}
+											<option value={group}>{formatVersionGroup(group)}</option>
+										{/each}
+									</select>
+								</div>
+
+								<div class="mb-4 flex flex-wrap gap-2" role="tablist" aria-label="Learn method">
+									{#each methodTabs as tab (tab.id)}
+										<button
+											role="tab"
+											aria-selected={selectedMethod === tab.id}
+											onclick={() => (selectedMethod = tab.id)}
+											class="rounded-full px-3 py-1 text-sm font-semibold transition-colors {selectedMethod ===
+											tab.id
+												? 'bg-primary text-primary-content'
+												: 'bg-base-200 text-base-content hover:bg-base-300'}"
+										>
+											{tab.label} ({learnset[tab.id].length})
+										</button>
+									{/each}
+								</div>
+
+								<div role="tabpanel">
+									<ul class="grid grid-cols-1 gap-2 sm:grid-cols-2">
+										{#each learnset[selectedMethod] as entry (entry.move + entry.level)}
+											<li>
+												<button
+													onclick={() => {
+														openModal = null;
+														goto(`/moves/${entry.move}`);
+													}}
+													class="bg-base-200 text-base-content hover:bg-base-300 flex w-full cursor-pointer items-center justify-between rounded-lg px-3 py-2 text-sm capitalize transition-colors"
+												>
+													<span>{entry.move.replace(/-/g, ' ')}</span>
+													{#if selectedMethod === 'level-up'}
+														<span class="text-base-content/75 text-xs font-semibold normal-case">
+															{entry.level === 0 ? 'Evolve' : `Lv. ${entry.level}`}
+														</span>
+													{/if}
+												</button>
+											</li>
+										{/each}
+									</ul>
+								</div>
+							{/if}
 						{:else if openModal === 'evolution'}Evolution Chain
 						{:else if openModal === 'breeding'}Breeding
 						{:else if openModal === 'sprites'}Sprites Gallery

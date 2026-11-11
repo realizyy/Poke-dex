@@ -23,7 +23,14 @@ export interface Pokemon {
 	};
 	stats: { base_stat: number; stat: { name: string } }[];
 	abilities: { ability: { name: string }; is_hidden: boolean }[];
-	moves: { move: { name: string } }[];
+	moves: {
+		move: { name: string };
+		version_group_details: {
+			level_learned_at: number;
+			version_group: { name: string };
+			move_learn_method: { name: string };
+		}[];
+	}[];
 	species: { url: string };
 	base_experience: number;
 	height: number;
