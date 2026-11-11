@@ -3,9 +3,23 @@
 	import { TcgService } from '#lib/services/tcg-service';
 	import type { TcgCard } from '#lib/types';
 	import { formatPrice, getCardPrices } from '#lib/utils/tcg';
+	import { collectionStore } from '#lib/stores/collection.svelte';
+	import type { CardRef } from '#lib/utils/collection';
+	import { onMount } from 'svelte';
 
 	let { data }: { data: { card: TcgCard } } = $props();
 	const card = $derived(data.card);
+	onMount(() => collectionStore.load());
+
+	const cardRef = $derived<CardRef>({
+		id: card.id,
+		setId: card.set.id,
+		name: card.name,
+		image: card.image
+	});
+	const entry = $derived(collectionStore.get(card.id));
+	const owned = $derived(entry?.owned ?? 0);
+	const wishlisted = $derived(entry?.wishlisted ?? false);
 	const subtype = $derived(card.trainerType ?? card.energyType);
 	const priceGroups = $derived.by(() => {
 		const rows = getCardPrices(card.pricing);
@@ -222,6 +236,54 @@
 							>
 						{/if}
 					</div>
+				</div>
+
+				<!-- My collection -->
+				<div
+					class="flex flex-wrap items-center justify-between gap-4 rounded-2xl p-4"
+					style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
+				>
+					<div class="flex items-center gap-3">
+						<span
+							class="text-xs font-bold tracking-widest uppercase"
+							style="color: var(--text-muted);"
+							id="owned-label">Owned</span
+						>
+						<div class="flex items-center gap-2" role="group" aria-labelledby="owned-label">
+							<button
+								onclick={() => collectionStore.adjustOwned(cardRef, -1)}
+								disabled={owned === 0}
+								aria-label="Remove one copy"
+								class="h-8 w-8 rounded-full text-lg font-bold disabled:opacity-30"
+								style="background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main);"
+							>
+								−
+							</button>
+							<span
+								class="w-8 text-center text-lg font-extrabold tabular-nums"
+								style="color: var(--text-main);"
+								aria-live="polite">{owned}</span
+							>
+							<button
+								onclick={() => collectionStore.adjustOwned(cardRef, 1)}
+								aria-label="Add one copy"
+								class="h-8 w-8 rounded-full text-lg font-bold"
+								style="background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main);"
+							>
+								+
+							</button>
+						</div>
+					</div>
+					<button
+						onclick={() => collectionStore.toggleWishlist(cardRef)}
+						aria-pressed={wishlisted}
+						class="rounded-full px-4 py-1.5 text-sm font-semibold"
+						style={wishlisted
+							? 'background: var(--brand-red); color: white;'
+							: 'background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main);'}
+					>
+						{wishlisted ? 'On wishlist' : 'Add to wishlist'}
+					</button>
 				</div>
 
 				<!-- Evolves from -->

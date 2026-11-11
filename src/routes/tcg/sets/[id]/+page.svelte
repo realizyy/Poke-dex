@@ -2,6 +2,9 @@
 	import { Layers, ChevronLeft } from '#lib/icons';
 	import type { TcgSet } from '#lib/types';
 	import { TcgService } from '#lib/services/tcg-service';
+	import { collectionStore } from '#lib/stores/collection.svelte';
+	import { setProgress } from '#lib/utils/collection';
+	import { onMount } from 'svelte';
 
 	let { data }: { data: { set: TcgSet } } = $props();
 	const set = $derived(data.set);
@@ -11,6 +14,30 @@
 			const aNum = parseInt(a.localId ?? '0') || 0;
 			const bNum = parseInt(b.localId ?? '0') || 0;
 			return aNum - bNum;
+		})
+	);
+
+	onMount(() => collectionStore.load());
+
+	type Filter = 'all' | 'owned' | 'missing' | 'wishlist';
+	const FILTERS: { id: Filter; label: string }[] = [
+		{ id: 'all', label: 'All' },
+		{ id: 'owned', label: 'Owned' },
+		{ id: 'missing', label: 'Missing' },
+		{ id: 'wishlist', label: 'Wishlist' }
+	];
+	let filter = $state<Filter>('all');
+
+	const progress = $derived(
+		setProgress(collectionStore.entries, set.id, set.cardCount?.total ?? cards.length)
+	);
+	const visibleCards = $derived(
+		cards.filter((card) => {
+			const entry = collectionStore.get(card.id);
+			if (filter === 'owned') return (entry?.owned ?? 0) > 0;
+			if (filter === 'missing') return (entry?.owned ?? 0) === 0;
+			if (filter === 'wishlist') return !!entry?.wishlisted;
+			return true;
 		})
 	);
 
@@ -107,11 +134,56 @@
 				<p class="text-lg font-semibold">No cards found in this set.</p>
 			</div>
 		{:else}
-			<p class="mb-6 text-sm" style="color: var(--text-muted);">
-				{cards.length} card{cards.length !== 1 ? 's' : ''}
-			</p>
+			<div
+				class="mb-6 rounded-2xl p-4"
+				style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
+			>
+				<div class="mb-2 flex items-center justify-between text-sm">
+					<span class="font-semibold" style="color: var(--text-main);">
+						Collection: {progress.owned} / {progress.total} cards ({progress.percent}%)
+					</span>
+					<a href="/tcg/collection" class="hover:underline" style="color: var(--brand-red);">
+						My collection
+					</a>
+				</div>
+				<div
+					class="h-2 w-full overflow-hidden rounded-full"
+					style="background-color: var(--bg-tertiary);"
+					role="progressbar"
+					aria-label="Set completion"
+					aria-valuemin="0"
+					aria-valuemax="100"
+					aria-valuenow={progress.percent}
+				>
+					<div
+						class="h-2 rounded-full transition-all duration-500"
+						style="width: {progress.percent}%; background-color: var(--brand-red);"
+					></div>
+				</div>
+			</div>
+
+			<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+				<p class="text-sm" style="color: var(--text-muted);">
+					{visibleCards.length} of {cards.length} card{cards.length !== 1 ? 's' : ''}
+				</p>
+				<div class="flex gap-2" role="group" aria-label="Filter cards by collection status">
+					{#each FILTERS as f (f.id)}
+						<button
+							onclick={() => (filter = f.id)}
+							aria-pressed={filter === f.id}
+							class="rounded-full px-3 py-1 text-sm font-semibold transition-colors"
+							style={filter === f.id
+								? 'background: var(--brand-red); color: white;'
+								: 'background: var(--bg-secondary); color: var(--text-main); border: 1px solid var(--border-color);'}
+						>
+							{f.label}
+						</button>
+					{/each}
+				</div>
+			</div>
 			<div class="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6">
-				{#each cards as card (card.id)}
+				{#each visibleCards as card (card.id)}
+					{@const entry = collectionStore.get(card.id)}
 					<a
 						href="/tcg/cards/{card.id}"
 						class="card-hover group flex flex-col items-center gap-2 rounded-xl p-2"
@@ -145,7 +217,11 @@
 							>
 								{card.name}
 							</p>
-							<p class="text-[10px]" style="color: var(--text-muted);">#{card.localId}</p>
+							<p class="text-[10px]" style="color: var(--text-muted);">
+								#{card.localId}{#if entry?.owned}
+									· Owned ×{entry.owned}{/if}{#if entry?.wishlisted}
+									· Wishlist{/if}
+							</p>
 						</div>
 					</a>
 				{/each}

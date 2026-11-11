@@ -52,6 +52,17 @@
 			Explore every Trading Card Game set — from Base Set to the latest releases. Click any set to
 			browse its cards.
 		</p>
+		<nav class="mt-6 flex flex-wrap gap-3" aria-label="TCG tools">
+			{#each [{ href: '/tcg/cards', label: 'Search cards' }, { href: '/tcg/collection', label: 'My collection' }] as link (link.href)}
+				<a
+					href={link.href}
+					class="rounded-full px-4 py-2 text-sm font-semibold transition-opacity hover:opacity-80"
+					style="background: var(--bg-secondary); color: var(--text-main); border: 1px solid var(--border-color);"
+				>
+					{link.label}
+				</a>
+			{/each}
+		</nav>
 	</div>
 </section>
 
