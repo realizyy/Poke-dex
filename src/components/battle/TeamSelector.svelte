@@ -1,25 +1,28 @@
 <script lang="ts">
-	import { battleStore } from '$lib/stores/battle-store.svelte';
-	import type { Team } from '$lib/types';
+	import { battleStore } from '#lib/stores/battle-store.svelte';
+	import type { Team } from '#lib/types';
 
 	let { eligibleTeams }: { eligibleTeams: Team[] } = $props();
 
 	function handleTeam1Change(event: Event) {
 		const target = event.target as HTMLSelectElement;
-		const team = target.value ? eligibleTeams.find(t => t.id === target.value) ?? null : null;
+		const team = target.value ? (eligibleTeams.find((t) => t.id === target.value) ?? null) : null;
 		battleStore.selectTeam1(team);
 	}
 
 	function handleTeam2Change(event: Event) {
 		const target = event.target as HTMLSelectElement;
-		const team = target.value ? eligibleTeams.find(t => t.id === target.value) ?? null : null;
+		const team = target.value ? (eligibleTeams.find((t) => t.id === target.value) ?? null) : null;
 		battleStore.selectTeam2(team);
 	}
 </script>
 
-<div class="theme-bg-secondary rounded-xl shadow-lg p-6 theme-border mb-8" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
-	<div class="flex items-center justify-between mb-4">
-		<h2 class="text-xl font-semibold theme-text">Select Teams to Battle</h2>
+<div
+	class="theme-bg-secondary theme-border mb-8 rounded-xl p-6 shadow-lg"
+	style="background-color: var(--bg-secondary); border-color: var(--border-color);"
+>
+	<div class="mb-4 flex items-center justify-between">
+		<h2 class="theme-text text-xl font-semibold">Select Teams to Battle</h2>
 		{#if battleStore.selectedTeam1 || battleStore.selectedTeam2}
 			<button onclick={() => battleStore.resetAll()} class="btn btn-neutral btn-sm">
 				Reset All
@@ -28,10 +31,10 @@
 	</div>
 
 	<!-- Three-column layout: Team1 | VS | Team2 -->
-	<div class="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-4 items-start">
+	<div class="grid grid-cols-1 items-start gap-4 md:grid-cols-[1fr_auto_1fr]">
 		<!-- Team 1 -->
 		<div>
-			<label for="team1-select" class="block text-sm font-medium theme-text-secondary mb-2">
+			<label for="team1-select" class="theme-text-secondary mb-2 block text-sm font-medium">
 				🔵 Team 1
 			</label>
 			<select
@@ -53,11 +56,12 @@
 				<div class="mt-3 flex flex-wrap gap-2">
 					{#each battleStore.selectedTeam1.pokemons as tp}
 						<img
-						src={tp.pokemon.sprites.other['official-artwork'].front_default || '/favicon.png'}
+							src={tp.pokemon.sprites.other['official-artwork'].front_default || '/favicon.png'}
 							alt={tp.pokemon.name}
-							class="w-10 h-10 object-contain"
+							class="h-10 w-10 object-contain"
 							title={tp.nickname || tp.pokemon.name}
-							width="40" height="40"
+							width="40"
+							height="40"
 						/>
 					{/each}
 				</div>
@@ -65,13 +69,13 @@
 		</div>
 
 		<!-- VS badge -->
-		<div class="hidden md:flex items-center justify-center px-2 pt-8">
-			<span class="text-2xl font-black theme-text-muted select-none">VS</span>
+		<div class="hidden items-center justify-center px-2 pt-8 md:flex">
+			<span class="theme-text-muted text-2xl font-black select-none">VS</span>
 		</div>
 
 		<!-- Team 2 -->
 		<div>
-			<label for="team2-select" class="block text-sm font-medium theme-text-secondary mb-2">
+			<label for="team2-select" class="theme-text-secondary mb-2 block text-sm font-medium">
 				🔴 Team 2
 			</label>
 			<select
@@ -93,11 +97,12 @@
 				<div class="mt-3 flex flex-wrap gap-2">
 					{#each battleStore.selectedTeam2.pokemons as tp}
 						<img
-						src={tp.pokemon.sprites.other['official-artwork'].front_default || '/favicon.png'}
+							src={tp.pokemon.sprites.other['official-artwork'].front_default || '/favicon.png'}
 							alt={tp.pokemon.name}
-							class="w-10 h-10 object-contain"
+							class="h-10 w-10 object-contain"
 							title={tp.nickname || tp.pokemon.name}
-							width="40" height="40"
+							width="40"
+							height="40"
 						/>
 					{/each}
 				</div>

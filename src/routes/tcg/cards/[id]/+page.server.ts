@@ -1,12 +1,12 @@
 import type { PageServerLoad } from './$types';
-import { TcgService } from '$lib/services/tcg-service';
-import { error } from '@sveltejs/kit';
+import { failLoad } from '#lib/api/load-error';
+import { TcgService } from '#lib/services/tcg-service';
 
-export const load: PageServerLoad = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, parent }) => {
+	const { lang } = await parent();
 	try {
-		const card = await TcgService.fetchCard(params.id);
-		return { card };
-	} catch {
-		error(404, `TCG card '${params.id}' not found`);
+		return { card: await TcgService.fetchCard(params.id, lang) };
+	} catch (cause) {
+		failLoad(cause, `TCG card '${params.id}' was not found`);
 	}
 };

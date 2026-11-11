@@ -42,7 +42,7 @@
 	const virtualizer = createWindowVirtualizer({
 		count: 0,
 		estimateSize: () => rowHeight,
-		overscan: 3,
+		overscan: 3
 	});
 
 	// Sync reactive row count and estimated size into the virtualizer without
@@ -52,7 +52,7 @@
 		const size = rowHeight;
 		get(virtualizer).setOptions({
 			count,
-			estimateSize: () => size,
+			estimateSize: () => size
 		});
 	});
 </script>

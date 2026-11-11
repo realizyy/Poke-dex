@@ -1,4 +1,4 @@
-import { browser } from '$app/environment';
+import { browser } from '$app/env';
 
 type Theme = 'light' | 'dark' | 'system';
 
@@ -47,7 +47,7 @@ class ThemeStore {
 		}
 		// Force repaint to ensure CSS vars take effect
 		root.style.display = 'none';
-		root.offsetHeight;
+		void root.offsetHeight;
 		root.style.display = '';
 	}
 

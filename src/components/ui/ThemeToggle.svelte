@@ -1,37 +1,39 @@
 <script lang="ts">
-	import { themeStore } from '$lib/stores/theme.svelte';
-	import { browser } from '$app/environment';
+	import { themeStore } from '#lib/stores/theme.svelte';
+	import { browser } from '$app/env';
 
 	const isDark = $derived(
 		themeStore.theme === 'dark' ||
-		(themeStore.theme === 'system' && browser && window?.matchMedia?.('(prefers-color-scheme: dark)').matches)
+			(themeStore.theme === 'system' &&
+				browser &&
+				window?.matchMedia?.('(prefers-color-scheme: dark)').matches)
 	);
 </script>
 
 <div class="theme-switcher-container">
-	<input 
-		type="checkbox" 
-		id="switcher-input" 
-		class="switcher-input" 
+	<input
+		type="checkbox"
+		id="switcher-input"
+		class="switcher-input"
 		checked={isDark}
 		onchange={() => themeStore.toggle()}
 	/>
 	<label for="switcher-input" class="switcher-label">
 		<div class="icon-container">
 			<svg class="moon-icon" width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
-				<path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z"/>
+				<path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
 			</svg>
 			<svg class="sun-icon" width="10" height="10" viewBox="0 0 24 24" fill="currentColor">
-				<circle cx="12" cy="12" r="4"/>
+				<circle cx="12" cy="12" r="4" />
 				<g stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
-					<line x1="12" y1="1" x2="12" y2="3"/>
-					<line x1="12" y1="21" x2="12" y2="23"/>
-					<line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-					<line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-					<line x1="1" y1="12" x2="3" y2="12"/>
-					<line x1="21" y1="12" x2="23" y2="12"/>
-					<line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-					<line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+					<line x1="12" y1="1" x2="12" y2="3" />
+					<line x1="12" y1="21" x2="12" y2="23" />
+					<line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+					<line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+					<line x1="1" y1="12" x2="3" y2="12" />
+					<line x1="21" y1="12" x2="23" y2="12" />
+					<line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+					<line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
 				</g>
 			</svg>
 		</div>

@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { teamStore } from '$lib/stores/team.svelte';
-	import type { Team } from '$lib/types';
-	import { calculateTeamCoverage, getTypeColor } from '$lib/utils/pokemon-utils';
+	import { teamStore } from '#lib/stores/team.svelte';
+	import type { Team } from '#lib/types';
+	import { calculateTeamCoverage, getTypeColor } from '#lib/utils/pokemon-utils';
 	import PokemonCard from '../ui/PokemonCard.svelte';
-	import { X, Plus } from '$lib/icons';
+	import { X, Plus } from '#lib/icons';
 	import type { Snippet } from 'svelte';
 
 	let {
@@ -43,24 +43,33 @@
 		let grade = 'F';
 		let color = 'text-red-600';
 
-		if (score >= 90) { grade = 'A'; color = 'text-green-600'; }
-		else if (score >= 80) { grade = 'B'; color = 'text-blue-600'; }
-		else if (score >= 70) { grade = 'C'; color = 'text-yellow-600'; }
-		else if (score >= 60) { grade = 'D'; color = 'text-orange-600'; }
+		if (score >= 90) {
+			grade = 'A';
+			color = 'text-green-600';
+		} else if (score >= 80) {
+			grade = 'B';
+			color = 'text-blue-600';
+		} else if (score >= 70) {
+			grade = 'C';
+			color = 'text-yellow-600';
+		} else if (score >= 60) {
+			grade = 'D';
+			color = 'text-orange-600';
+		}
 
 		return { score: Math.round(score), grade, color };
 	}
 </script>
 
 <div
-	class="rounded-xl theme-border theme-bg-secondary p-6 shadow-lg"
+	class="theme-border theme-bg-secondary rounded-xl p-6 shadow-lg"
 	style="border-color: var(--border-color); background-color: var(--bg-secondary);"
 >
 	<!-- Team Header -->
 	<div class="mb-6 flex items-center justify-between">
 		<div>
-			<h2 class="text-2xl font-bold theme-text">{team.name}</h2>
-			<p class="text-sm theme-text-secondary">
+			<h2 class="theme-text text-2xl font-bold">{team.name}</h2>
+			<p class="theme-text-secondary text-sm">
 				{team.pokemons.length}/6 Pokémon
 			</p>
 		</div>
@@ -72,7 +81,7 @@
 					<div class="text-2xl font-bold {teamScore.color}">
 						{teamScore.grade}
 					</div>
-					<div class="text-sm theme-text-secondary">
+					<div class="theme-text-secondary text-sm">
 						Team Score: {teamScore.score}/100
 					</div>
 				{/snippet}
@@ -90,17 +99,20 @@
 					<PokemonCard pokemon={teamPokemon.pokemon} compact={true} />
 
 					<!-- Pokemon Details with Remove Button -->
-					<div class="mt-2 rounded-lg theme-bg-tertiary p-2 relative" style="background-color: var(--bg-tertiary);">
+					<div
+						class="theme-bg-tertiary relative mt-2 rounded-lg p-2"
+						style="background-color: var(--bg-tertiary);"
+					>
 						<div class="flex items-start justify-between gap-2">
-							<div class="flex-1 min-w-0">
+							<div class="min-w-0 flex-1">
 								{#if teamPokemon.nickname}
-									<div class="text-sm font-semibold theme-text truncate">
+									<div class="theme-text truncate text-sm font-semibold">
 										{teamPokemon.nickname}
 									</div>
 								{/if}
 
 								{#if teamPokemon.moves.length > 0}
-									<div class="text-xs theme-text-secondary">
+									<div class="theme-text-secondary text-xs">
 										Moves: {teamPokemon.moves.slice(0, 2).join(', ')}
 										{#if teamPokemon.moves.length > 2}
 											<span class="text-blue-600">+{teamPokemon.moves.length - 2} more</span>
@@ -113,7 +125,7 @@
 							{#if allowEditing}
 								<button
 									onclick={() => removePokemon(index)}
-									class="btn btn-circle btn-xs bg-error/80 text-white hover:bg-error border-none flex-shrink-0"
+									class="btn btn-circle btn-xs bg-error/80 hover:bg-error flex-shrink-0 border-none text-white"
 									title="Remove from team"
 									aria-label="Remove {teamPokemon.pokemon.name} from team"
 								>
@@ -126,12 +138,12 @@
 			{:else}
 				<!-- Empty Slot -->
 				<div
-					class="flex min-h-[200px] flex-col items-center justify-center rounded-xl border-2 border-dashed theme-border p-8 theme-text-muted"
+					class="theme-border theme-text-muted flex min-h-[200px] flex-col items-center justify-center rounded-xl border-2 border-dashed p-8"
 					style="border-color: var(--border-color);"
 				>
 					{#if allowEditing}
 						<button
-							onclick={() => showAddPokemon = true}
+							onclick={() => (showAddPokemon = true)}
 							class="flex flex-col items-center gap-2 transition-colors hover:text-blue-500"
 						>
 							<Plus size={32} />
@@ -155,13 +167,13 @@
 
 	<!-- Team Analysis -->
 	{#if showAnalysis && teamCoverage && team.pokemons.length > 0}
-		<div class="border-t theme-border pt-6" style="border-color: var(--border-color);">
-			<h3 class="mb-4 text-lg font-semibold theme-text">Team Analysis</h3>
+		<div class="theme-border border-t pt-6" style="border-color: var(--border-color);">
+			<h3 class="theme-text mb-4 text-lg font-semibold">Team Analysis</h3>
 
 			<div class="grid grid-cols-1 gap-6 md:grid-cols-2">
 				<!-- Weaknesses -->
 				<div>
-					<h4 class="text-md mb-3 font-medium theme-text-secondary">Team Weaknesses</h4>
+					<h4 class="text-md theme-text-secondary mb-3 font-medium">Team Weaknesses</h4>
 					{#if Object.keys(teamCoverage.weaknesses).length > 0}
 						<div class="flex flex-wrap gap-2">
 							{#each Object.entries(teamCoverage.weaknesses) as [type, count]}
@@ -171,7 +183,9 @@
 								>
 									{type}
 									<span
-										class="bg-white bg-opacity-90 rounded-full px-1.5 py-0.5 text-xs font-bold {getCoverageColor(count)}"
+										class="bg-opacity-90 rounded-full bg-white px-1.5 py-0.5 text-xs font-bold {getCoverageColor(
+											count
+										)}"
 									>
 										{count}
 									</span>
@@ -187,9 +201,7 @@
 
 				<!-- Resistances -->
 				<div>
-					<h4 class="text-md mb-3 font-medium theme-text-secondary">
-						Team Resistances
-					</h4>
+					<h4 class="text-md theme-text-secondary mb-3 font-medium">Team Resistances</h4>
 					{#if Object.keys(teamCoverage.resistances).length > 0}
 						<div class="flex flex-wrap gap-2">
 							{#each Object.entries(teamCoverage.resistances) as [type, count]}
@@ -198,14 +210,16 @@
 									style="background-color: {getTypeColor(type)}"
 								>
 									{type}
-									<span class="bg-white bg-opacity-90 rounded-full px-1.5 py-0.5 text-xs font-bold text-green-700">
+									<span
+										class="bg-opacity-90 rounded-full bg-white px-1.5 py-0.5 text-xs font-bold text-green-700"
+									>
 										{count}
 									</span>
 								</span>
 							{/each}
 						</div>
 					{:else}
-						<p class="text-sm theme-text-secondary">No resistances detected.</p>
+						<p class="theme-text-secondary text-sm">No resistances detected.</p>
 					{/if}
 				</div>
 			</div>
@@ -235,12 +249,15 @@
 <!-- Pokemon Selector Modal -->
 {#if showAddPokemon}
 	<div class="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
-		<div class="max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-xl theme-bg-secondary theme-border" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
+		<div
+			class="theme-bg-secondary theme-border max-h-[90vh] w-full max-w-4xl overflow-hidden rounded-xl"
+			style="background-color: var(--bg-secondary); border-color: var(--border-color);"
+		>
 			<div
-				class="flex items-center justify-between border-b theme-border p-4"
+				class="theme-border flex items-center justify-between border-b p-4"
 				style="border-color: var(--border-color);"
 			>
-				<h3 class="text-lg font-semibold theme-text">
+				<h3 class="theme-text text-lg font-semibold">
 					Add Pokémon to {team.name}
 				</h3>
 				<button

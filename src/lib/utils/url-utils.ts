@@ -1,6 +1,6 @@
 import { goto } from '$app/navigation';
-import { browser } from '$app/environment';
-import type { SearchFilters } from '$lib/types';
+import { browser } from '$app/env';
+import type { SearchFilters } from '#lib/types';
 
 export class URLUtils {
 	/**
@@ -10,25 +10,25 @@ export class URLUtils {
 	 */
 	static updateSearchUrl(query: string, filters: SearchFilters, offset: number = 0): void {
 		if (!browser) return;
-		
+
 		const params = new URLSearchParams();
-		
+
 		if (query.trim()) {
 			params.set('q', query);
 		}
-		
+
 		if (filters.types && filters.types.length > 0) {
 			params.set('types', filters.types.join(','));
 		}
-		
+
 		if (filters.generations && filters.generations.length > 0) {
 			params.set('generations', filters.generations.join(','));
 		}
-		
+
 		if (offset > 0) {
 			params.set('offset', offset.toString());
 		}
-		
+
 		const url = `/search${params.toString() ? '?' + params.toString() : ''}`;
 		history.replaceState(history.state, '', url);
 	}

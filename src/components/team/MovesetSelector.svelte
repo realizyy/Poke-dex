@@ -1,6 +1,5 @@
 <script lang="ts">
-	import type { Pokemon } from '$lib/types';
-	import { getTypeColor } from '$lib/utils/pokemon-utils';
+	import type { Pokemon } from '#lib/types';
 
 	export let pokemon: Pokemon;
 	export let onMovesSelected: (moves: string[]) => void = () => {};
@@ -87,11 +86,11 @@
 </script>
 
 <div
-	class="rounded-xl theme-border theme-bg-secondary p-6 shadow-lg"
+	class="theme-border theme-bg-secondary rounded-xl p-6 shadow-lg"
 	style="border-color: var(--border-color); background-color: var(--bg-secondary);"
 >
 	<div class="mb-4 flex items-center justify-between">
-		<h3 class="text-lg font-semibold theme-text">
+		<h3 class="theme-text text-lg font-semibold">
 			Select Moves for {pokemon.name}
 		</h3>
 		<button
@@ -103,7 +102,7 @@
 	</div>
 
 	<div class="mb-4">
-		<p class="text-sm theme-text-secondary">
+		<p class="theme-text-secondary text-sm">
 			Selected: {selectedMoves.length}/4 moves
 		</p>
 		{#if selectedMoves.length > 0}
@@ -127,7 +126,9 @@
 				)
 					? 'border-blue-500 bg-blue-50 text-blue-900 dark:bg-blue-900/20 dark:text-blue-300'
 					: 'theme-border theme-text-secondary hover:border-blue-300 disabled:cursor-not-allowed disabled:opacity-50'}"
-				style="{!selectedMoves.includes(move) ? 'border-color: var(--border-color); color: var(--text-secondary);' : ''}"
+				style={!selectedMoves.includes(move)
+					? 'border-color: var(--border-color); color: var(--text-secondary);'
+					: ''}
 			>
 				{formatMoveName(move)}
 			</button>

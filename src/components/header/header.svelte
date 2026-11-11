@@ -1,20 +1,30 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
-	import { Home, Search, Users, Swords, Package, Menu, X, ArrowLeftRight, Layers } from '$lib/icons';
+	import { page } from '$app/state';
+	import {
+		Home,
+		Search,
+		Users,
+		Swords,
+		Package,
+		Menu,
+		X,
+		ArrowLeftRight,
+		Layers
+	} from '#lib/icons';
 	import ThemeToggle from '../ui/ThemeToggle.svelte';
 
 	const navItems = [
-		{ href: '/',        label: 'Home',    Icon: Home },
-		{ href: '/search',  label: 'Search',  Icon: Search },
-		{ href: '/teams',   label: 'Teams',   Icon: Users },
-		{ href: '/battle',  label: 'Battle',  Icon: Swords },
-		{ href: '/items',   label: 'Items',   Icon: Package },
+		{ href: '/', label: 'Home', Icon: Home },
+		{ href: '/search', label: 'Search', Icon: Search },
+		{ href: '/teams', label: 'Teams', Icon: Users },
+		{ href: '/battle', label: 'Battle', Icon: Swords },
+		{ href: '/items', label: 'Items', Icon: Package },
 		{ href: '/compare', label: 'Compare', Icon: ArrowLeftRight },
-		{ href: '/tcg',     label: 'TCG',     Icon: Layers }
+		{ href: '/tcg', label: 'TCG', Icon: Layers }
 	];
 
-	const currentPath = $derived($page.url.pathname);
+	const currentPath = $derived(page.url.pathname);
 
 	let isMobileMenuOpen = $state(false);
 
@@ -49,20 +59,25 @@
 				aria-label="Go to home page"
 			>
 				<!-- Circular avatar container -->
-				<span class="relative flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full shadow-md transition-all duration-200"
-					style="background: radial-gradient(circle at 35% 35%, #ef4444, #991b1b); outline: 2px solid color-mix(in oklch, var(--color-primary) 40%, transparent); outline-offset: 1px; group-hover:outline-4;">
+				<span
+					class="relative flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full shadow-md transition-all duration-200"
+					style="background: radial-gradient(circle at 35% 35%, #ef4444, #991b1b); outline: 2px solid color-mix(in oklch, var(--color-primary) 40%, transparent); outline-offset: 1px; group-hover:outline-4;"
+				>
 					<img
 						src="/poke_1.png"
 						alt="Pokédex logo"
 						class="h-6 w-6 rounded-full object-contain drop-shadow-sm"
-						width="40" height="40"
+						width="40"
+						height="40"
 						loading="eager"
 						fetchpriority="high"
 					/>
 				</span>
 				<!-- Brand name -->
-				<span class="hidden text-base font-bold tracking-tight sm:block"
-					style="color: var(--text-main);">
+				<span
+					class="hidden text-base font-bold tracking-tight sm:block"
+					style="color: var(--text-main);"
+				>
 					Pokédex
 				</span>
 			</button>
@@ -113,8 +128,8 @@
 
 		<!-- Mobile Navigation -->
 		{#if isMobileMenuOpen}
-			<div 
-				class="theme-border mt-2 pt-4 pb-4 md:hidden overflow-hidden transition-all duration-300 ease-in-out"
+			<div
+				class="theme-border mt-2 overflow-hidden pt-4 pb-4 transition-all duration-300 ease-in-out md:hidden"
 				style="border-color: var(--border-color);"
 				role="navigation"
 				aria-label="Mobile navigation menu"

@@ -1,7 +1,7 @@
-import type { Pokemon, SearchFilters } from '$lib/types';
-import { SearchService } from '$lib/services/search-service';
+import type { Pokemon, SearchFilters } from '#lib/types';
+import { SearchService } from '#lib/services/search-service';
 import { toastStore } from './toast-store.svelte';
-import { URLUtils } from '$lib/utils/url-utils';
+import { URLUtils } from '#lib/utils/url-utils';
 
 export type SortBy = 'id' | 'name' | 'stats';
 export type SortOrder = 'asc' | 'desc';
@@ -67,9 +67,15 @@ class SearchStore {
 			if (result.pokemons.length === 0) {
 				toastStore.warning('No Results', 'No Pokémon found matching your search criteria');
 			} else if (query.trim()) {
-				toastStore.success('Search Complete', `Found ${result.totalResults} Pokémon matching "${query}"`);
+				toastStore.success(
+					'Search Complete',
+					`Found ${result.totalResults} Pokémon matching "${query}"`
+				);
 			} else {
-				toastStore.info('Filter Applied', `Found ${result.totalResults} Pokémon matching your filters`);
+				toastStore.info(
+					'Filter Applied',
+					`Found ${result.totalResults} Pokémon matching your filters`
+				);
 			}
 
 			URLUtils.updateSearchUrl(query, filters, 0);
@@ -128,9 +134,11 @@ class SearchStore {
 	isCurrentSearch(query: string, filters: SearchFilters): boolean {
 		if (!this.hasSearched || this.loading) return false;
 		if (this.query !== query) return false;
-		const sameTypes = [...(this.filters.types ?? [])].sort().join(',') ===
+		const sameTypes =
+			[...(this.filters.types ?? [])].sort().join(',') ===
 			[...(filters.types ?? [])].sort().join(',');
-		const sameGens  = [...(this.filters.generations ?? [])].sort().join(',') ===
+		const sameGens =
+			[...(this.filters.generations ?? [])].sort().join(',') ===
 			[...(filters.generations ?? [])].sort().join(',');
 		return sameTypes && sameGens;
 	}

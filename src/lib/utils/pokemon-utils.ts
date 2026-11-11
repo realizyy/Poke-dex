@@ -1,4 +1,4 @@
-import type { TypeEffectiveness, Pokemon, TeamPokemon } from '$lib/types';
+import type { TypeEffectiveness, Pokemon, TeamPokemon } from '#lib/types';
 
 export const TYPE_COLORS: { [key: string]: string } = {
 	normal: '#A8A77A', // Stadium/Switch style
@@ -191,14 +191,28 @@ export function getTypeColor(type: string): string {
 	return TYPE_COLORS[type] || '#68A090';
 }
 
+const DARK_TEXT = '#111827';
+const LIGHT_TEXT = '#ffffff';
+
+function relativeLuminance(hex: string): number {
+	const [r, g, b] = [1, 3, 5]
+		.map((i) => parseInt(hex.slice(i, i + 2), 16) / 255)
+		.map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+	return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+}
+
+export function readableTextColor(backgroundHex: string): string {
+	return relativeLuminance(backgroundHex) > 0.2 ? DARK_TEXT : LIGHT_TEXT;
+}
+
 export function getStatName(statName: string): string {
 	const names: Record<string, string> = {
-		'hp': 'HP',
-		'attack': 'Attack',
-		'defense': 'Defense',
+		hp: 'HP',
+		attack: 'Attack',
+		defense: 'Defense',
 		'special-attack': 'Sp. Attack',
 		'special-defense': 'Sp. Defense',
-		'speed': 'Speed'
+		speed: 'Speed'
 	};
 	return names[statName] || statName;
 }
@@ -259,7 +273,7 @@ export function calculateTeamCoverage(team: TeamPokemon[]): {
 	return { weaknesses, resistances, coverageScore };
 }
 
-export function getStatTotal(pokemon: Pokemon): number {
+export function getStatTotal(pokemon: Pick<Pokemon, 'stats'>): number {
 	return pokemon.stats.reduce((total, stat) => total + stat.base_stat, 0);
 }
 

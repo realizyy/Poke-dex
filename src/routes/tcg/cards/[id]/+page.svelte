@@ -1,24 +1,74 @@
 <script lang="ts">
-	import { ChevronLeft, Layers } from '$lib/icons';
-	import { TcgService } from '$lib/services/tcg-service';
-	import type { TcgCard } from '$lib/types';
+	import CardImage from '../../../../components/tcg/CardImage.svelte';
+	import { TcgService } from '#lib/services/tcg-service';
+	import type { PageData } from './$types';
+	import { formatPrice, getCardPrices } from '#lib/utils/tcg';
+	import { collectionStore } from '#lib/stores/collection.svelte';
+	import { deckStore } from '#lib/stores/decks.svelte';
+	import { toastStore } from '#lib/stores/toast-store.svelte';
+	import { atCopyLimit, toDeckCard } from '#lib/utils/deck';
+	import type { CardRef } from '#lib/utils/collection';
+	import { onMount } from 'svelte';
 
-	let { data } = $props<{ data: { card: TcgCard } }>();
+	let { data }: { data: PageData } = $props();
 	const card = $derived(data.card);
+	onMount(() => {
+		collectionStore.load();
+		deckStore.load();
+	});
+
+	let chosenDeckId = $state('');
+	const targetDeck = $derived(deckStore.get(chosenDeckId) ?? deckStore.list[0]);
+
+	async function addToDeck() {
+		if (!targetDeck) return;
+		try {
+			const english = data.lang === 'en' ? card : await TcgService.fetchCard(card.id, 'en');
+			const deckCard = toDeckCard(english);
+			if (atCopyLimit(targetDeck, deckCard)) {
+				toastStore.warning(
+					'Copy limit',
+					`${targetDeck.name} already has 4 copies of ${english.name}.`
+				);
+				return;
+			}
+			deckStore.adjust(targetDeck.id, deckCard, 1);
+			toastStore.success('Added to deck', `${english.name} is in ${targetDeck.name}.`);
+		} catch {
+			toastStore.error('Could not add card', 'The card database is not responding.');
+		}
+	}
+
+	const cardRef = $derived<CardRef>({
+		id: card.id,
+		setId: card.set.id,
+		name: card.name,
+		image: card.image
+	});
+	const entry = $derived(collectionStore.get(card.id));
+	const owned = $derived(entry?.owned ?? 0);
+	const wishlisted = $derived(entry?.wishlisted ?? false);
+	const subtype = $derived(card.trainerType ?? card.energyType);
+	const priceGroups = $derived.by(() => {
+		const rows = getCardPrices(card.pricing);
+		return (['Cardmarket', 'TCGplayer'] as const)
+			.map((source) => ({ source, rows: rows.filter((r) => r.source === source) }))
+			.filter((group) => group.rows.length > 0);
+	});
 
 	// Energy type → colour mapping (unofficial but widely recognised)
 	const typeColors: Record<string, string> = {
-		Fire:       '#ef4444',
-		Water:      '#3b82f6',
-		Grass:      '#22c55e',
-		Lightning:  '#eab308',
-		Psychic:    '#a855f7',
-		Fighting:   '#f97316',
-		Darkness:   '#6b7280',
-		Metal:      '#9ca3af',
-		Dragon:     '#8b5cf6',
-		Fairy:      '#ec4899',
-		Colorless:  '#d1d5db',
+		Fire: '#ef4444',
+		Water: '#3b82f6',
+		Grass: '#22c55e',
+		Lightning: '#eab308',
+		Psychic: '#a855f7',
+		Fighting: '#f97316',
+		Darkness: '#6b7280',
+		Metal: '#9ca3af',
+		Dragon: '#8b5cf6',
+		Fairy: '#ec4899',
+		Colorless: '#d1d5db'
 	};
 
 	function typeColor(type: string) {
@@ -29,21 +79,21 @@
 	function energyDot(type: string) {
 		return typeColors[type] ?? '#64748b';
 	}
-
-	const pokemonSearchName = $derived(
-		card.evolveFrom
-			? card.evolveFrom.toLowerCase()
-			: card.name.toLowerCase().split(' ')[0]
-	);
 </script>
 
 <svelte:head>
 	<title>{card.name} – TCG – Pokédex</title>
-	<meta name="description" content="{card.name} — {card.rarity ?? 'TCG card'} from {card.set.name}." />
+	<meta
+		name="description"
+		content="{card.name} — {card.rarity ?? 'TCG card'} from {card.set.name}."
+	/>
 </svelte:head>
 
 <!-- ─── Back breadcrumb ─────────────────────────────────────────────────────── -->
-<section class="border-b" style="border-color: var(--border-color); background-color: var(--bg-main);">
+<section
+	class="border-b"
+	style="border-color: var(--border-color); background-color: var(--bg-main);"
+>
 	<div class="mx-auto max-w-5xl px-6 py-4">
 		<nav class="flex items-center gap-2 text-sm" style="color: var(--text-muted);">
 			<a href="/tcg" class="hover:underline">TCG</a>
@@ -59,37 +109,47 @@
 <section style="background-color: var(--bg-main);">
 	<div class="mx-auto max-w-5xl px-6 py-10">
 		<div class="grid grid-cols-1 gap-10 md:grid-cols-[320px_1fr]">
-
 			<!-- Left: Card image + legality + variants -->
 			<div class="flex flex-col gap-6">
 				<!-- Card image -->
 				<div class="relative">
-					{#if card.image}
-						<img
-							src="{TcgService.cardImageUrl(card.image, 'high')}"
-							alt="{card.name}"
-							class="w-full max-w-xs mx-auto rounded-2xl shadow-2xl"
-							loading="eager"
-							width="420" height="588"
-						/>
-					{:else}
-						<div class="aspect-[5/7] max-w-xs mx-auto rounded-2xl flex items-center justify-center" style="background: var(--bg-secondary); border: 1px solid var(--border-color);">
-							<Layers size={64} class="opacity-20" />
-						</div>
-					{/if}
+					<CardImage
+						image={card.image}
+						alt={card.name}
+						quality="high"
+						eager
+						width={420}
+						height={588}
+						iconSize={64}
+						class="mx-auto w-full max-w-xs rounded-2xl shadow-2xl"
+					/>
 				</div>
 
 				<!-- Legality -->
 				{#if card.legal}
-					<div class="rounded-2xl p-4" style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);">
-						<p class="text-xs font-bold uppercase tracking-widest mb-3" style="color: var(--text-muted);">Format Legality</p>
+					<div
+						class="rounded-2xl p-4"
+						style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
+					>
+						<p
+							class="mb-3 text-xs font-bold tracking-widest uppercase"
+							style="color: var(--text-muted);"
+						>
+							Format Legality
+						</p>
 						<div class="flex gap-3">
 							<div class="flex items-center gap-2">
-								<div class="h-2.5 w-2.5 rounded-full" style="background: {card.legal.standard ? '#22c55e' : '#ef4444'};"></div>
+								<div
+									class="h-2.5 w-2.5 rounded-full"
+									style="background: {card.legal.standard ? '#22c55e' : '#ef4444'};"
+								></div>
 								<span class="text-sm" style="color: var(--text-main);">Standard</span>
 							</div>
 							<div class="flex items-center gap-2">
-								<div class="h-2.5 w-2.5 rounded-full" style="background: {card.legal.expanded ? '#22c55e' : '#ef4444'};"></div>
+								<div
+									class="h-2.5 w-2.5 rounded-full"
+									style="background: {card.legal.expanded ? '#22c55e' : '#ef4444'};"
+								></div>
 								<span class="text-sm" style="color: var(--text-main);">Expanded</span>
 							</div>
 						</div>
@@ -98,23 +158,49 @@
 
 				<!-- Variants -->
 				{#if card.variants}
-					<div class="rounded-2xl p-4" style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);">
-						<p class="text-xs font-bold uppercase tracking-widest mb-3" style="color: var(--text-muted);">Variants</p>
+					<div
+						class="rounded-2xl p-4"
+						style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
+					>
+						<p
+							class="mb-3 text-xs font-bold tracking-widest uppercase"
+							style="color: var(--text-muted);"
+						>
+							Variants
+						</p>
 						<div class="flex flex-wrap gap-2">
 							{#if card.variants.normal}
-								<span class="rounded-full px-3 py-1 text-xs font-bold" style="background: var(--bg-main); color: var(--text-secondary); border: 1px solid var(--border-color);">Normal</span>
+								<span
+									class="rounded-full px-3 py-1 text-xs font-bold"
+									style="background: var(--bg-main); color: var(--text-secondary); border: 1px solid var(--border-color);"
+									>Normal</span
+								>
 							{/if}
 							{#if card.variants.holo}
-								<span class="rounded-full px-3 py-1 text-xs font-bold" style="background: linear-gradient(135deg, #f0abfc, #818cf8); color: #fff;">Holo</span>
+								<span
+									class="rounded-full px-3 py-1 text-xs font-bold"
+									style="background: linear-gradient(135deg, #f0abfc, #818cf8); color: #fff;"
+									>Holo</span
+								>
 							{/if}
 							{#if card.variants.reverse}
-								<span class="rounded-full px-3 py-1 text-xs font-bold" style="background: linear-gradient(135deg, #67e8f9, #a78bfa); color: #fff;">Reverse Holo</span>
+								<span
+									class="rounded-full px-3 py-1 text-xs font-bold"
+									style="background: linear-gradient(135deg, #67e8f9, #a78bfa); color: #fff;"
+									>Reverse Holo</span
+								>
 							{/if}
 							{#if card.variants.firstEdition}
-								<span class="rounded-full px-3 py-1 text-xs font-bold" style="background: #f59e0b; color: #fff;">1st Edition</span>
+								<span
+									class="rounded-full px-3 py-1 text-xs font-bold"
+									style="background: #f59e0b; color: #fff;">1st Edition</span
+								>
 							{/if}
 							{#if card.variants.wPromo}
-								<span class="rounded-full px-3 py-1 text-xs font-bold" style="background: var(--brand-red); color: #fff;">Promo</span>
+								<span
+									class="rounded-full px-3 py-1 text-xs font-bold"
+									style="background: var(--brand-red); color: #fff;">Promo</span
+								>
 							{/if}
 						</div>
 					</div>
@@ -123,27 +209,38 @@
 
 			<!-- Right: Info -->
 			<div class="flex flex-col gap-6">
-
 				<!-- Name + meta -->
 				<div>
-					<div class="flex flex-wrap items-center gap-2 mb-2">
+					<div class="mb-2 flex flex-wrap items-center gap-2">
 						<!-- Types -->
-						{#each (card.types ?? []) as type (type)}
-							<span class="rounded-full px-3 py-1 text-xs font-bold text-white" style="background: {typeColor(type)};">
+						{#each card.types ?? [] as type, i (i)}
+							<span
+								class="rounded-full px-3 py-1 text-xs font-bold text-white"
+								style="background: {typeColor(type)};"
+							>
 								{type}
 							</span>
 						{/each}
 						<!-- Category badge -->
-						<span class="rounded-full px-3 py-1 text-xs font-bold" style="background: var(--bg-secondary); color: var(--text-muted); border: 1px solid var(--border-color);">
-							{card.category}
+						<span
+							class="rounded-full px-3 py-1 text-xs font-bold"
+							style="background: var(--bg-secondary); color: var(--text-muted); border: 1px solid var(--border-color);"
+						>
+							{card.category}{subtype ? ` · ${subtype}` : ''}
 						</span>
 					</div>
 
-					<h1 class="font-extrabold tracking-tight leading-none" style="font-size: var(--text-3xl); color: var(--text-main);">
+					<h1
+						class="leading-none font-extrabold tracking-tight"
+						style="font-size: var(--text-3xl); color: var(--text-main);"
+					>
 						{card.name}
 					</h1>
 
-					<div class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm" style="color: var(--text-secondary);">
+					<div
+						class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm"
+						style="color: var(--text-secondary);"
+					>
 						{#if card.hp}
 							<span><strong style="color: var(--text-main);">{card.hp} HP</strong></span>
 						{/if}
@@ -154,15 +251,115 @@
 							<span>Rarity: <strong style="color: var(--text-main);">{card.rarity}</strong></span>
 						{/if}
 						{#if card.regulationMark}
-							<span>Regulation: <strong style="color: var(--text-main);">{card.regulationMark}</strong></span>
+							<span
+								>Regulation: <strong style="color: var(--text-main);">{card.regulationMark}</strong
+								></span
+							>
 						{/if}
 					</div>
 				</div>
 
+				<!-- My collection -->
+				<div
+					class="flex flex-wrap items-center justify-between gap-4 rounded-2xl p-4"
+					style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
+				>
+					<div class="flex items-center gap-3">
+						<span
+							class="text-xs font-bold tracking-widest uppercase"
+							style="color: var(--text-muted);"
+							id="owned-label">Owned</span
+						>
+						<div class="flex items-center gap-2" role="group" aria-labelledby="owned-label">
+							<button
+								onclick={() => collectionStore.adjustOwned(cardRef, -1)}
+								disabled={owned === 0}
+								aria-label="Remove one copy"
+								class="h-8 w-8 rounded-full text-lg font-bold disabled:opacity-30"
+								style="background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main);"
+							>
+								−
+							</button>
+							<span
+								class="w-8 text-center text-lg font-extrabold tabular-nums"
+								style="color: var(--text-main);"
+								aria-live="polite">{owned}</span
+							>
+							<button
+								onclick={() => collectionStore.adjustOwned(cardRef, 1)}
+								aria-label="Add one copy"
+								class="h-8 w-8 rounded-full text-lg font-bold"
+								style="background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main);"
+							>
+								+
+							</button>
+						</div>
+					</div>
+					<button
+						onclick={() => collectionStore.toggleWishlist(cardRef)}
+						aria-pressed={wishlisted}
+						class="rounded-full px-4 py-1.5 text-sm font-semibold"
+						style={wishlisted
+							? 'background: var(--brand-red); color: white;'
+							: 'background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main);'}
+					>
+						{wishlisted ? 'On wishlist' : 'Add to wishlist'}
+					</button>
+				</div>
+
+				<!-- Add to deck -->
+				<div
+					class="flex flex-wrap items-center gap-3 rounded-2xl p-4"
+					style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
+				>
+					{#if deckStore.list.length === 0}
+						<p class="text-sm" style="color: var(--text-secondary);">
+							You have no decks yet.
+							<a
+								href="/tcg/decks"
+								class="font-semibold hover:underline"
+								style="color: var(--brand-red);"
+							>
+								Create one
+							</a>
+						</p>
+					{:else}
+						<label
+							for="deck-target"
+							class="text-xs font-bold tracking-widest uppercase"
+							style="color: var(--text-muted);">Deck</label
+						>
+						<select
+							id="deck-target"
+							bind:value={chosenDeckId}
+							class="rounded-xl px-3 py-1.5 text-sm"
+							style="background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main);"
+						>
+							{#each deckStore.list as d (d.id)}
+								<option value={d.id} selected={d.id === targetDeck?.id}>{d.name}</option>
+							{/each}
+						</select>
+						<button
+							onclick={addToDeck}
+							class="btn-brand rounded-full px-4 py-1.5 text-sm font-semibold"
+						>
+							Add to deck
+						</button>
+					{/if}
+				</div>
+
 				<!-- Evolves from -->
 				{#if card.evolveFrom}
-					<div class="rounded-2xl p-4" style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);">
-						<p class="text-xs font-bold uppercase tracking-widest mb-1" style="color: var(--text-muted);">Evolves From</p>
+					<div
+						class="rounded-2xl p-4"
+						style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
+					>
+						<p
+							class="mb-1 text-xs font-bold tracking-widest uppercase"
+							style="color: var(--text-muted);"
+						>
+							Evolves From
+						</p>
 						<a
 							href="/pokemon/{card.evolveFrom.toLowerCase()}"
 							class="text-base font-semibold hover:underline"
@@ -173,25 +370,112 @@
 					</div>
 				{/if}
 
+				<!-- Pokédex link -->
+				{#if card.dexId?.length}
+					<div
+						class="rounded-2xl p-4"
+						style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
+					>
+						<p
+							class="mb-1 text-xs font-bold tracking-widest uppercase"
+							style="color: var(--text-muted);"
+						>
+							Pokédex
+						</p>
+						<div class="flex flex-wrap gap-x-4 gap-y-1">
+							{#each card.dexId as dexId (dexId)}
+								<a
+									href="/pokemon/{dexId}"
+									class="text-base font-semibold hover:underline"
+									style="color: var(--brand-red);"
+								>
+									View #{dexId} in the Pokédex
+								</a>
+							{/each}
+						</div>
+					</div>
+				{/if}
+
+				<!-- Trainer and Energy effect -->
+				{#if card.effect}
+					<div
+						class="rounded-2xl p-5"
+						style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
+					>
+						<p
+							class="mb-2 text-xs font-bold tracking-widest uppercase"
+							style="color: var(--text-muted);"
+						>
+							Effect
+						</p>
+						<p class="text-sm leading-relaxed" style="color: var(--text-main);">{card.effect}</p>
+					</div>
+				{/if}
+
+				<!-- Market prices -->
+				{#if priceGroups.length > 0}
+					<div
+						class="rounded-2xl p-5"
+						style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
+					>
+						<p
+							class="mb-4 text-xs font-bold tracking-widest uppercase"
+							style="color: var(--text-muted);"
+						>
+							Market prices
+						</p>
+						<div class="grid gap-5 sm:grid-cols-2">
+							{#each priceGroups as group (group.source)}
+								<div>
+									<p class="mb-2 text-sm font-bold" style="color: var(--text-main);">
+										{group.source}
+									</p>
+									<dl class="space-y-1 text-sm">
+										{#each group.rows as row (row.label)}
+											<div class="flex justify-between gap-3">
+												<dt style="color: var(--text-secondary);">{row.label}</dt>
+												<dd class="font-semibold tabular-nums" style="color: var(--text-main);">
+													{formatPrice(row.amount, row.currency)}
+												</dd>
+											</div>
+										{/each}
+									</dl>
+								</div>
+							{/each}
+						</div>
+					</div>
+				{/if}
+
 				<!-- Pokédex description -->
 				{#if card.description}
-					<blockquote class="rounded-2xl p-4 italic" style="background-color: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-secondary);">
+					<blockquote
+						class="rounded-2xl p-4 italic"
+						style="background-color: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-secondary);"
+					>
 						"{card.description}"
 					</blockquote>
 				{/if}
 
 				<!-- Attacks -->
 				{#if card.attacks && card.attacks.length > 0}
-					<div class="rounded-2xl p-5" style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);">
-						<p class="text-xs font-bold uppercase tracking-widest mb-4" style="color: var(--text-muted);">Attacks</p>
+					<div
+						class="rounded-2xl p-5"
+						style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
+					>
+						<p
+							class="mb-4 text-xs font-bold tracking-widest uppercase"
+							style="color: var(--text-muted);"
+						>
+							Attacks
+						</p>
 						<div class="flex flex-col gap-4">
-							{#each card.attacks as attack (attack.name)}
+							{#each card.attacks as attack, i (i)}
 								<div class="flex flex-col gap-1.5">
 									<!-- Cost + name + damage row -->
-									<div class="flex items-center gap-2 flex-wrap">
+									<div class="flex flex-wrap items-center gap-2">
 										<!-- Energy cost dots -->
 										<div class="flex gap-1">
-											{#each attack.cost as cost (cost)}
+											{#each attack.cost as cost, i (i)}
 												<span
 													class="inline-flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-black text-white"
 													style="background: {energyDot(cost)};"
@@ -203,11 +487,15 @@
 										</div>
 										<span class="font-bold" style="color: var(--text-main);">{attack.name}</span>
 										{#if attack.damage}
-											<span class="ml-auto font-extrabold text-lg" style="color: var(--text-main);">{attack.damage}</span>
+											<span class="ml-auto text-lg font-extrabold" style="color: var(--text-main);"
+												>{attack.damage}</span
+											>
 										{/if}
 									</div>
 									{#if attack.effect}
-										<p class="text-sm leading-relaxed" style="color: var(--text-secondary);">{attack.effect}</p>
+										<p class="text-sm leading-relaxed" style="color: var(--text-secondary);">
+											{attack.effect}
+										</p>
 									{/if}
 								</div>
 							{/each}
@@ -216,16 +504,29 @@
 				{/if}
 
 				<!-- Weaknesses / Resistances / Retreat -->
-				{#if (card.weaknesses?.length || card.resistances?.length || card.retreat != null)}
+				{#if card.weaknesses?.length || card.resistances?.length || card.retreat != null}
 					<div class="grid grid-cols-3 gap-3">
 						<!-- Weaknesses -->
-						<div class="rounded-xl p-3 text-center" style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);">
-							<p class="text-[10px] font-bold uppercase tracking-widest mb-2" style="color: var(--text-muted);">Weakness</p>
+						<div
+							class="rounded-xl p-3 text-center"
+							style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
+						>
+							<p
+								class="mb-2 text-[10px] font-bold tracking-widest uppercase"
+								style="color: var(--text-muted);"
+							>
+								Weakness
+							</p>
 							{#if card.weaknesses?.length}
-								{#each card.weaknesses as w (w.type)}
+								{#each card.weaknesses as w, i (i)}
 									<div class="flex items-center justify-center gap-1">
-										<span class="inline-flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-black text-white" style="background: {energyDot(w.type)};" title={w.type}>{w.type[0]}</span>
-										<span class="text-sm font-bold" style="color: var(--text-main);">{w.value}</span>
+										<span
+											class="inline-flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-black text-white"
+											style="background: {energyDot(w.type)};"
+											title={w.type}>{w.type[0]}</span
+										>
+										<span class="text-sm font-bold" style="color: var(--text-main);">{w.value}</span
+										>
 									</div>
 								{/each}
 							{:else}
@@ -234,13 +535,26 @@
 						</div>
 
 						<!-- Resistances -->
-						<div class="rounded-xl p-3 text-center" style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);">
-							<p class="text-[10px] font-bold uppercase tracking-widest mb-2" style="color: var(--text-muted);">Resistance</p>
+						<div
+							class="rounded-xl p-3 text-center"
+							style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
+						>
+							<p
+								class="mb-2 text-[10px] font-bold tracking-widest uppercase"
+								style="color: var(--text-muted);"
+							>
+								Resistance
+							</p>
 							{#if card.resistances?.length}
-								{#each card.resistances as r (r.type)}
+								{#each card.resistances as r, i (i)}
 									<div class="flex items-center justify-center gap-1">
-										<span class="inline-flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-black text-white" style="background: {energyDot(r.type)};" title={r.type}>{r.type[0]}</span>
-										<span class="text-sm font-bold" style="color: var(--text-main);">{r.value}</span>
+										<span
+											class="inline-flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-black text-white"
+											style="background: {energyDot(r.type)};"
+											title={r.type}>{r.type[0]}</span
+										>
+										<span class="text-sm font-bold" style="color: var(--text-main);">{r.value}</span
+										>
 									</div>
 								{/each}
 							{:else}
@@ -249,12 +563,23 @@
 						</div>
 
 						<!-- Retreat cost -->
-						<div class="rounded-xl p-3 text-center" style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);">
-							<p class="text-[10px] font-bold uppercase tracking-widest mb-2" style="color: var(--text-muted);">Retreat</p>
+						<div
+							class="rounded-xl p-3 text-center"
+							style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
+						>
+							<p
+								class="mb-2 text-[10px] font-bold tracking-widest uppercase"
+								style="color: var(--text-muted);"
+							>
+								Retreat
+							</p>
 							{#if card.retreat != null}
-								<div class="flex items-center justify-center gap-0.5 flex-wrap">
+								<div class="flex flex-wrap items-center justify-center gap-0.5">
 									{#each { length: card.retreat } as _, i (i)}
-										<span class="inline-flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-black text-white" style="background: {energyDot('Colorless')};">C</span>
+										<span
+											class="inline-flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-black text-white"
+											style="background: {energyDot('Colorless')};">C</span
+										>
 									{/each}
 									{#if card.retreat === 0}
 										<span class="text-sm font-bold" style="color: var(--text-main);">Free</span>
@@ -268,12 +593,24 @@
 				{/if}
 
 				<!-- Set info + illustrator -->
-				<div class="rounded-2xl p-4" style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);">
-					<p class="text-xs font-bold uppercase tracking-widest mb-3" style="color: var(--text-muted);">Card Info</p>
+				<div
+					class="rounded-2xl p-4"
+					style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
+				>
+					<p
+						class="mb-3 text-xs font-bold tracking-widest uppercase"
+						style="color: var(--text-muted);"
+					>
+						Card Info
+					</p>
 					<dl class="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
 						<dt style="color: var(--text-muted);">Set</dt>
 						<dd>
-							<a href="/tcg/sets/{card.set.id}" class="font-semibold hover:underline" style="color: var(--brand-red);">
+							<a
+								href="/tcg/sets/{card.set.id}"
+								class="font-semibold hover:underline"
+								style="color: var(--brand-red);"
+							>
 								{card.set.name}
 							</a>
 						</dd>
@@ -294,10 +631,14 @@
 						style="background-color: var(--bg-secondary); border: 1px solid var(--border-color); color: var(--text-main);"
 					>
 						<img
-							src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{card.name.toLowerCase().split(' ')[0]}.png"
+							src="https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{card.name
+								.toLowerCase()
+								.split(' ')[0]}.png"
 							alt={card.name}
 							class="h-8 w-8 object-contain"
-							onerror={(e) => { (e.currentTarget as HTMLImageElement).style.display='none'; }}
+							onerror={(e) => {
+								(e.currentTarget as HTMLImageElement).style.display = 'none';
+							}}
 						/>
 						View {card.name.split(' ')[0]} in Pokédex →
 					</a>

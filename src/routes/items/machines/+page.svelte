@@ -1,8 +1,8 @@
 <script lang="ts">
 	import type { PageData } from './$types';
-	import type { Machine } from '$lib/types';
-	import { MachineService } from '$lib/services/move-service';
-	import { Disc, Search, X } from '$lib/icons';
+	import type { Machine } from '#lib/types';
+	import { MachineService } from '#lib/services/move-service';
+	import { Disc, Search, X } from '#lib/icons';
 
 	let { data }: { data: PageData } = $props();
 
@@ -14,9 +14,7 @@
 	const total = $derived(data.total);
 	const machines = $derived([...data.machines, ...extraMachines]);
 
-	const uniqueVersions = $derived(
-		[...new Set(machines.map((m) => m.version_group.name))].sort()
-	);
+	const uniqueVersions = $derived([...new Set(machines.map((m) => m.version_group.name))].sort());
 
 	const filtered = $derived(
 		machines.filter((m) => {
@@ -24,8 +22,7 @@
 			const moveName = m.move.name.replace(/-/g, ' ').toLowerCase();
 			const machineName = m.item.name.toLowerCase();
 			const query = searchQuery.trim().toLowerCase();
-			const matchesQuery =
-				!query || moveName.includes(query) || machineName.includes(query);
+			const matchesQuery = !query || moveName.includes(query) || machineName.includes(query);
 			return matchesVersion && matchesQuery;
 		})
 	);
@@ -48,24 +45,39 @@
 
 <svelte:head>
 	<title>TM / HM Browser — Pokédex</title>
-	<meta name="description" content="Browse all Technical Machines, Hidden Machines, and Technical Records across every Pokémon game." />
+	<meta
+		name="description"
+		content="Browse all Technical Machines, Hidden Machines, and Technical Records across every Pokémon game."
+	/>
 </svelte:head>
 
 <!-- Hero -->
-<div class="relative overflow-hidden border-b" style="background-color: var(--bg-secondary); border-color: var(--border-color);">
+<div
+	class="relative overflow-hidden border-b"
+	style="background-color: var(--bg-secondary); border-color: var(--border-color);"
+>
 	<!-- Pokéball decorative rings — clipped to right half to prevent arc bleeding onto left -->
 	<div class="pointer-events-none absolute inset-y-0 right-0 w-1/2 overflow-hidden">
-		<div class="absolute -right-16 -top-16 h-80 w-80 rounded-full border-[30px]" style="border-color: #f59e0b1A;"></div>
-		<div class="absolute -right-2 top-12 h-48 w-48 rounded-full border-[18px]" style="border-color: #f59e0b0D;"></div>
+		<div
+			class="absolute -top-16 -right-16 h-80 w-80 rounded-full border-[30px]"
+			style="border-color: #f59e0b1A;"
+		></div>
+		<div
+			class="absolute top-12 -right-2 h-48 w-48 rounded-full border-[18px]"
+			style="border-color: #f59e0b0D;"
+		></div>
 	</div>
 
 	<div class="relative mx-auto max-w-7xl px-5 py-8 sm:px-8 lg:px-12">
 		<div class="flex items-center gap-3">
-			<div class="flex h-12 w-12 items-center justify-center rounded-2xl" style="background-color: #f59e0b20;">
+			<div
+				class="flex h-12 w-12 items-center justify-center rounded-2xl"
+				style="background-color: #f59e0b20;"
+			>
 				<Disc size={24} style="color: #f59e0b;" />
 			</div>
 			<div>
-				<h1 class="text-2xl font-bold leading-tight theme-text sm:text-3xl">TM / HM Browser</h1>
+				<h1 class="theme-text text-2xl leading-tight font-bold sm:text-3xl">TM / HM Browser</h1>
 				<p class="mt-0.5 text-sm" style="color: var(--text-secondary);">
 					{total.toLocaleString()} machines across all generations
 				</p>
@@ -75,23 +87,30 @@
 </div>
 
 <!-- Filters -->
-<div class="sticky top-0 z-20 border-b" style="background-color: var(--bg-main); border-color: var(--border-color);">
+<div
+	class="sticky top-0 z-20 border-b"
+	style="background-color: var(--bg-main); border-color: var(--border-color);"
+>
 	<div class="mx-auto max-w-7xl px-5 py-3 sm:px-8 lg:px-12">
 		<div class="flex flex-wrap gap-2">
 			<!-- Search -->
 			<div class="relative min-w-[200px] flex-1">
-				<Search size={15} class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2" style="color: var(--text-muted);" />
+				<Search
+					size={15}
+					class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2"
+					style="color: var(--text-muted);"
+				/>
 				<input
 					type="search"
 					placeholder="Search move or machine…"
 					bind:value={searchQuery}
-					class="w-full rounded-xl border py-2 pl-9 pr-4 text-sm outline-none transition-shadow focus:ring-2"
+					class="w-full rounded-xl border py-2 pr-4 pl-9 text-sm transition-shadow outline-none focus:ring-2"
 					style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-main);"
 				/>
 				{#if searchQuery}
 					<button
 						onclick={() => (searchQuery = '')}
-						class="absolute right-3 top-1/2 -translate-y-1/2"
+						class="absolute top-1/2 right-3 -translate-y-1/2"
 						style="color: var(--text-muted);"
 					>
 						<X size={13} />
@@ -117,22 +136,31 @@
 <!-- Table -->
 <div class="mx-auto max-w-7xl px-5 py-6 sm:px-8 lg:px-12">
 	<p class="mb-4 text-xs" style="color: var(--text-muted);">
-		Showing {filtered.length.toLocaleString()} of {machines.length.toLocaleString()} loaded · {total.toLocaleString()} total
+		Showing {filtered.length.toLocaleString()} of {machines.length.toLocaleString()} loaded · {total.toLocaleString()}
+		total
 	</p>
 
 	{#if filtered.length === 0}
 		<div class="flex flex-col items-center justify-center py-24 text-center">
-			<div class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl" style="background-color: var(--bg-secondary);">
+			<div
+				class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl"
+				style="background-color: var(--bg-secondary);"
+			>
 				<Disc size={32} style="color: var(--text-muted);" />
 			</div>
-			<p class="font-semibold theme-text">No machines found</p>
-			<p class="mt-1 text-sm" style="color: var(--text-secondary);">Try adjusting your search or version filter</p>
+			<p class="theme-text font-semibold">No machines found</p>
+			<p class="mt-1 text-sm" style="color: var(--text-secondary);">
+				Try adjusting your search or version filter
+			</p>
 		</div>
 	{:else}
 		<div class="overflow-x-auto rounded-2xl border" style="border-color: var(--border-color);">
 			<table class="w-full border-collapse text-sm">
 				<thead>
-					<tr class="border-b text-left text-xs font-semibold uppercase tracking-wider" style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-muted);">
+					<tr
+						class="border-b text-left text-xs font-semibold tracking-wider uppercase"
+						style="background-color: var(--bg-secondary); border-color: var(--border-color); color: var(--text-muted);"
+					>
 						<th class="px-4 py-3">Machine</th>
 						<th class="px-4 py-3">Move</th>
 						<th class="px-4 py-3">Version Group</th>
@@ -180,7 +208,9 @@
 				class="rounded-xl px-8 py-3 text-sm font-semibold text-white transition-opacity disabled:opacity-50"
 				style="background-color: #f59e0b;"
 			>
-				{loadingMore ? 'Loading…' : `Load more · ${(total - machines.length).toLocaleString()} remaining`}
+				{loadingMore
+					? 'Loading…'
+					: `Load more · ${(total - machines.length).toLocaleString()} remaining`}
 			</button>
 		</div>
 	{/if}

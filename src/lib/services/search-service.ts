@@ -1,4 +1,4 @@
-import type { Pokemon, SearchFilters } from '$lib/types';
+import type { Pokemon, SearchFilters } from '#lib/types';
 import { PokemonService } from './pokemon-service';
 
 export interface SearchResult {
@@ -23,11 +23,12 @@ function genFromId(id: number): number {
 // Apply type/generation filters on an already-fetched array (used after name search)
 function applyClientFilters(pokemons: Pokemon[], filters: SearchFilters): Pokemon[] {
 	const hasType = filters.types.length > 0;
-	const hasGen  = filters.generations && filters.generations.length > 0;
+	const hasGen = filters.generations && filters.generations.length > 0;
 	if (!hasType && !hasGen) return pokemons;
-	return pokemons.filter(p => {
-		if (hasType && !p.types.some(t => filters.types.includes(t.type.name))) return false;
-		if (hasGen  && !filters.generations!.some(g => parseInt(g.toString()) === genFromId(p.id))) return false;
+	return pokemons.filter((p) => {
+		if (hasType && !p.types.some((t) => filters.types.includes(t.type.name))) return false;
+		if (hasGen && !filters.generations!.some((g) => parseInt(g.toString()) === genFromId(p.id)))
+			return false;
 		return true;
 	});
 }

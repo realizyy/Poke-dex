@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import type { PageData } from './$types';
-	import { ChevronLeft } from '$lib/icons';
+	import { ChevronLeft } from '#lib/icons';
 
 	let { data }: { data: PageData } = $props();
 
@@ -14,33 +14,21 @@
 			.join(' ')
 	);
 
-	const englishEffect = $derived(
-		ability.effect_entries.find((e) => e.language.name === 'en')
-	);
+	const englishEffect = $derived(ability.effect_entries.find((e) => e.language.name === 'en'));
 
 	const latestFlavorText = $derived(
-		ability.flavor_text_entries
-			.filter((ft) => ft.language.name === 'en')
-			.at(-1)?.flavor_text ?? ''
+		ability.flavor_text_entries.filter((ft) => ft.language.name === 'en').at(-1)?.flavor_text ?? ''
 	);
 
 	// Split into normal and hidden-ability Pokémon
-	const normalPokemon = $derived(
-		ability.pokemon.filter((p) => !p.is_hidden)
-	);
-	const hiddenPokemon = $derived(
-		ability.pokemon.filter((p) => p.is_hidden)
-	);
+	const normalPokemon = $derived(ability.pokemon.filter((p) => !p.is_hidden));
+	const hiddenPokemon = $derived(ability.pokemon.filter((p) => p.is_hidden));
 
 	let showAllNormal = $state(false);
 	let showAllHidden = $state(false);
 
-	const normalVisible = $derived(
-		showAllNormal ? normalPokemon : normalPokemon.slice(0, 20)
-	);
-	const hiddenVisible = $derived(
-		showAllHidden ? hiddenPokemon : hiddenPokemon.slice(0, 20)
-	);
+	const normalVisible = $derived(showAllNormal ? normalPokemon : normalPokemon.slice(0, 20));
+	const hiddenVisible = $derived(showAllHidden ? hiddenPokemon : hiddenPokemon.slice(0, 20));
 
 	function handleBack() {
 		if (window.history.length > 1) history.back();
@@ -60,8 +48,14 @@
 <div class="relative overflow-hidden" style="background-color: #7c3aed;">
 	<!-- Pokéball decorative rings — clipped to right half to prevent arc bleeding onto left -->
 	<div class="pointer-events-none absolute inset-y-0 right-0 w-1/2 overflow-hidden">
-		<div class="absolute -right-16 -top-16 h-80 w-80 rounded-full border-[30px]" style="border-color: rgba(255,255,255,0.1);"></div>
-		<div class="absolute -right-2 top-12 h-48 w-48 rounded-full border-[18px]" style="border-color: rgba(255,255,255,0.05);"></div>
+		<div
+			class="absolute -top-16 -right-16 h-80 w-80 rounded-full border-[30px]"
+			style="border-color: rgba(255,255,255,0.1);"
+		></div>
+		<div
+			class="absolute top-12 -right-2 h-48 w-48 rounded-full border-[18px]"
+			style="border-color: rgba(255,255,255,0.05);"
+		></div>
 	</div>
 
 	<div class="relative mx-auto max-w-4xl px-5 pt-6 pb-10 sm:px-8 lg:px-12">
@@ -74,33 +68,42 @@
 		</button>
 
 		<div class="mb-2 flex items-center gap-2">
-			<span class="rounded-full px-3 py-1 text-xs font-semibold" style="background-color: rgba(255,255,255,0.2); color: white;">
+			<span
+				class="rounded-full px-3 py-1 text-xs font-semibold"
+				style="background-color: rgba(255,255,255,0.2); color: white;"
+			>
 				Ability
 			</span>
 			{#if !ability.is_main_series}
-				<span class="rounded-full px-3 py-1 text-xs font-semibold" style="background-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.8);">
+				<span
+					class="rounded-full px-3 py-1 text-xs font-semibold"
+					style="background-color: rgba(255,255,255,0.15); color: rgba(255,255,255,0.8);"
+				>
 					Non-main series
 				</span>
 			{/if}
 		</div>
 		<h1 class="text-3xl font-black text-white sm:text-4xl">{displayName}</h1>
 		{#if englishEffect}
-			<p class="mt-2 max-w-xl text-sm leading-relaxed text-white/80">{englishEffect.short_effect}</p>
+			<p class="mt-2 max-w-xl text-sm leading-relaxed text-white/80">
+				{englishEffect.short_effect}
+			</p>
 		{/if}
 	</div>
 </div>
 
 <!-- Body -->
 <div class="mx-auto max-w-4xl px-5 py-8 sm:px-8 lg:px-12">
-
 	<!-- Full effect -->
 	{#if englishEffect?.effect}
 		<div
 			class="mb-6 rounded-2xl p-5"
 			style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
 		>
-			<p class="mb-2 text-xs font-bold uppercase tracking-wider" style="color: var(--text-muted);">In-Battle Effect</p>
-			<p class="text-sm leading-relaxed theme-text">{englishEffect.effect}</p>
+			<p class="mb-2 text-xs font-bold tracking-wider uppercase" style="color: var(--text-muted);">
+				In-Battle Effect
+			</p>
+			<p class="theme-text text-sm leading-relaxed">{englishEffect.effect}</p>
 		</div>
 	{/if}
 
@@ -110,15 +113,19 @@
 			class="mb-8 rounded-2xl p-5"
 			style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
 		>
-			<p class="mb-2 text-xs font-bold uppercase tracking-wider" style="color: var(--text-muted);">Game Description</p>
-			<p class="text-sm italic leading-relaxed" style="color: var(--text-secondary);">{latestFlavorText}</p>
+			<p class="mb-2 text-xs font-bold tracking-wider uppercase" style="color: var(--text-muted);">
+				Game Description
+			</p>
+			<p class="text-sm leading-relaxed italic" style="color: var(--text-secondary);">
+				{latestFlavorText}
+			</p>
 		</div>
 	{/if}
 
 	<!-- Normal ability Pokémon -->
 	{#if normalPokemon.length > 0}
 		<div class="mb-8">
-			<p class="mb-4 text-xs font-bold uppercase tracking-wider" style="color: var(--text-muted);">
+			<p class="mb-4 text-xs font-bold tracking-wider uppercase" style="color: var(--text-muted);">
 				Normal Ability — {normalPokemon.length} Pokémon
 			</p>
 			<div class="flex flex-wrap gap-2">
@@ -147,7 +154,7 @@
 	<!-- Hidden ability Pokémon -->
 	{#if hiddenPokemon.length > 0}
 		<div>
-			<p class="mb-4 text-xs font-bold uppercase tracking-wider" style="color: var(--text-muted);">
+			<p class="mb-4 text-xs font-bold tracking-wider uppercase" style="color: var(--text-muted);">
 				Hidden Ability — {hiddenPokemon.length} Pokémon
 			</p>
 			<div class="flex flex-wrap gap-2">
@@ -172,5 +179,4 @@
 			{/if}
 		</div>
 	{/if}
-
 </div>

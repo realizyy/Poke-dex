@@ -1,4 +1,4 @@
-import type { Pokemon } from '$lib/types';
+import type { Pokemon } from '#lib/types';
 
 export type SortBy = 'id' | 'name' | 'stats';
 export type SortOrder = 'asc' | 'desc';
@@ -11,8 +11,8 @@ export class SortUtils {
 		if (!pokemons || pokemons.length === 0) return [];
 
 		return [...pokemons].sort((a, b) => {
-			let comparison = 0;
-			
+			let comparison: number;
+
 			switch (sortBy) {
 				case 'id':
 					comparison = a.id - b.id;
@@ -21,14 +21,12 @@ export class SortUtils {
 					comparison = a.name.localeCompare(b.name);
 					break;
 				case 'stats':
-					const aTotal = this.calculateTotalStats(a);
-					const bTotal = this.calculateTotalStats(b);
-					comparison = aTotal - bTotal;
+					comparison = this.calculateTotalStats(a) - this.calculateTotalStats(b);
 					break;
 				default:
 					comparison = a.id - b.id;
 			}
-			
+
 			return sortOrder === 'desc' ? -comparison : comparison;
 		});
 	}

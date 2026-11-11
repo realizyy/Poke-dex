@@ -1,6 +1,7 @@
 import type { Load } from '@sveltejs/kit';
-import { PokemonService } from '$lib/services/pokemon-service';
-import { TcgService } from '$lib/services/tcg-service';
+import type { Pokemon, PokemonSummary } from '#lib/types';
+import { PokemonService } from '#lib/services/pokemon-service';
+import { TcgService } from '#lib/services/tcg-service';
 
 // ~60 iconic Pokémon across all 9 generations — 8 are picked at random each load
 const SPOTLIGHT_POOL = [
@@ -21,11 +22,28 @@ const SPOTLIGHT_POOL = [
 	// Gen 8
 	813, 818, 884, 888, 890,
 	// Gen 9
-	906, 909, 1008,
+	906, 909, 1008
 ];
 
 function pickRandom(pool: number[], count: number): number[] {
 	return [...pool].sort(() => Math.random() - 0.5).slice(0, count);
+}
+
+function toSummary(pokemon: Pokemon): PokemonSummary {
+	return {
+		id: pokemon.id,
+		name: pokemon.name,
+		types: pokemon.types,
+		stats: pokemon.stats,
+		sprites: {
+			front_default: pokemon.sprites.front_default,
+			other: {
+				'official-artwork': {
+					front_default: pokemon.sprites.other['official-artwork'].front_default
+				}
+			}
+		}
+	};
 }
 
 export const load: Load = async () => {
@@ -33,12 +51,11 @@ export const load: Load = async () => {
 		const ids = pickRandom(SPOTLIGHT_POOL, 8);
 		const [pokemonDetails, allSets] = await Promise.all([
 			PokemonService.fetchPokemonBatch(ids),
-			TcgService.fetchSets().catch(() => []),
+			TcgService.fetchSets().catch(() => [])
 		]);
-		PokemonService.preloadFeaturedPokemon();
 		// Pick 4 recent sets (last in the list tend to be newest)
 		const featuredSets = allSets.slice(-4).reverse();
-		return { pokemons: pokemonDetails, featuredSets };
+		return { pokemons: pokemonDetails.map(toSummary), featuredSets };
 	} catch (error) {
 		console.error('Error loading featured Pokemon:', error);
 		return { pokemons: [], featuredSets: [] };
