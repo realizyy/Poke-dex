@@ -60,7 +60,8 @@ export class BattleService {
 			}
 		});
 
-		const finalDamage = Math.max(1, Math.floor(baseDamage * effectiveness));
+		const finalDamage =
+			effectiveness === 0 ? 0 : Math.max(1, Math.floor(baseDamage * effectiveness));
 
 		// Generate effectiveness message
 		let message = '';

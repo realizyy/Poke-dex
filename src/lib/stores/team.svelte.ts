@@ -27,6 +27,12 @@ class TeamStore {
 		}
 	}
 
+	private syncCurrentTeam() {
+		if (!this.currentTeam) return;
+		const id = this.currentTeam.id;
+		this.currentTeam = this.teams.find((t) => t.id === id) ?? null;
+	}
+
 	createTeam(name: string): Team {
 		const newTeam: Team = {
 			id: Date.now().toString(),
@@ -110,6 +116,7 @@ class TeamStore {
 			return { ...team, pokemons };
 		});
 		this.save(this.teams);
+		this.syncCurrentTeam();
 	}
 
 	updatePokemonNickname(teamId: string, pokemonIndex: number, nickname: string) {
@@ -120,11 +127,13 @@ class TeamStore {
 			return { ...team, pokemons };
 		});
 		this.save(this.teams);
+		this.syncCurrentTeam();
 	}
 
 	updateTeamName(teamId: string, newName: string) {
 		this.teams = this.teams.map((team) => (team.id === teamId ? { ...team, name: newName } : team));
 		this.save(this.teams);
+		this.syncCurrentTeam();
 	}
 
 	selectTeam(team: Team | null) {
