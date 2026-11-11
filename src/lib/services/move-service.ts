@@ -1,8 +1,9 @@
+import { TtlCache } from '$lib/api/ttl-cache';
+import { fetchJson, batchFetch as sharedBatchFetch } from '$lib/api/http';
 import type { Move, Ability, Nature, Machine } from '$lib/types';
 
 const API_BASE = 'https://pokeapi.co/api/v2';
-const CACHE = new Map<string, unknown>();
-const CACHE_META = new Map<string, { expiry: number }>();
+const cache = new TtlCache(300);
 
 const TTL = {
 	move: 20 * 60 * 1000,
@@ -11,64 +12,17 @@ const TTL = {
 	machine: 30 * 60 * 1000
 };
 
-function isValid(key: string): boolean {
-	const meta = CACHE_META.get(key);
-	if (!meta) return false;
-	if (Date.now() > meta.expiry) {
-		CACHE.delete(key);
-		CACHE_META.delete(key);
-		return false;
-	}
-	return true;
-}
-
-function set<T>(key: string, data: T, ttl: number): T {
-	CACHE.set(key, data);
-	CACHE_META.set(key, { expiry: Date.now() + ttl });
-	return data;
-}
-
-function get<T>(key: string): T | null {
-	return isValid(key) ? (CACHE.get(key) as T) : null;
-}
-
-async function fetchJSON<T>(url: string): Promise<T> {
-	const res = await fetch(url);
-	if (!res.ok) throw new Error(`PokeAPI error ${res.status}: ${url}`);
-	return res.json() as Promise<T>;
-}
-
-async function batchFetch<T>(
-	urls: string[],
-	cacheKeyFn: (url: string) => string,
-	ttl: number,
-	batchSize = 10
-): Promise<T[]> {
-	const results: T[] = [];
-	for (let i = 0; i < urls.length; i += batchSize) {
-		const chunk = urls.slice(i, i + batchSize);
-		const fetched = await Promise.all(
-			chunk.map(async (url) => {
-				const key = cacheKeyFn(url);
-				const cached = get<T>(key);
-				if (cached) return cached;
-				const data = await fetchJSON<T>(url);
-				return set(key, data, ttl);
-			})
-		);
-		results.push(...fetched);
-	}
-	return results;
-}
-
-// ─── Move Service ─────────────────────────────────────────────────────────────
+const get = <T>(key: string): T | null => cache.get<T>(key) ?? null;
+const set = <T>(key: string, data: T, ttl: number): T => cache.set(key, data, ttl);
+const batchFetch = <T>(urls: string[], cacheKeyFn: (url: string) => string, ttl: number) =>
+	sharedBatchFetch<T>(cache, urls, cacheKeyFn, ttl);
 
 export class MoveService {
 	static async fetchMove(nameOrId: string | number): Promise<Move> {
 		const key = `move-${nameOrId}`;
 		const cached = get<Move>(key);
 		if (cached) return cached;
-		const data = await fetchJSON<Move>(`${API_BASE}/move/${nameOrId}`);
+		const data = await fetchJson<Move>(`${API_BASE}/move/${nameOrId}`);
 		return set(key, data, TTL.move);
 	}
 }
@@ -80,7 +34,7 @@ export class AbilityService {
 		const key = `ability-${nameOrId}`;
 		const cached = get<Ability>(key);
 		if (cached) return cached;
-		const data = await fetchJSON<Ability>(`${API_BASE}/ability/${nameOrId}`);
+		const data = await fetchJson<Ability>(`${API_BASE}/ability/${nameOrId}`);
 		return set(key, data, TTL.ability);
 	}
 }
@@ -93,7 +47,7 @@ export class NatureService {
 		const cached = get<Nature[]>(key);
 		if (cached) return cached;
 
-		const list = await fetchJSON<{ results: { url: string }[] }>(`${API_BASE}/nature?limit=25`);
+		const list = await fetchJson<{ results: { url: string }[] }>(`${API_BASE}/nature?limit=25`);
 		const natures = await batchFetch<Nature>(
 			list.results.map((r) => r.url),
 			(url) => {
@@ -118,7 +72,7 @@ export class MachineService {
 		const key = `machine-list-${offset}-${limit}`;
 		const cached = get<{ count: number; results: { url: string }[] }>(key);
 		if (cached) return cached;
-		const data = await fetchJSON<{ count: number; results: { url: string }[] }>(
+		const data = await fetchJson<{ count: number; results: { url: string }[] }>(
 			`${API_BASE}/machine?offset=${offset}&limit=${limit}`
 		);
 		return set(key, data, TTL.machine);
@@ -128,7 +82,7 @@ export class MachineService {
 		const key = `machine-${id}`;
 		const cached = get<Machine>(key);
 		if (cached) return cached;
-		const data = await fetchJSON<Machine>(`${API_BASE}/machine/${id}`);
+		const data = await fetchJson<Machine>(`${API_BASE}/machine/${id}`);
 		return set(key, data, TTL.machine);
 	}
 

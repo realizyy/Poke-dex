@@ -1,8 +1,9 @@
+import { TtlCache } from '$lib/api/ttl-cache';
+import { fetchJson, batchFetch as sharedBatchFetch } from '$lib/api/http';
 import type { Berry, Item, ItemCategory, ItemPocket } from '$lib/types';
 
 const API_BASE = 'https://pokeapi.co/api/v2';
-const CACHE = new Map<string, unknown>();
-const CACHE_META = new Map<string, { expiry: number }>();
+const cache = new TtlCache(300);
 
 const TTL = {
 	berry: 30 * 60 * 1000,
@@ -12,55 +13,10 @@ const TTL = {
 	list: 10 * 60 * 1000
 };
 
-function isValid(key: string): boolean {
-	const meta = CACHE_META.get(key);
-	if (!meta) return false;
-	if (Date.now() > meta.expiry) {
-		CACHE.delete(key);
-		CACHE_META.delete(key);
-		return false;
-	}
-	return true;
-}
-
-function set<T>(key: string, data: T, ttl: number): T {
-	CACHE.set(key, data);
-	CACHE_META.set(key, { expiry: Date.now() + ttl });
-	return data;
-}
-
-function get<T>(key: string): T | null {
-	return isValid(key) ? (CACHE.get(key) as T) : null;
-}
-
-async function fetchJSON<T>(url: string): Promise<T> {
-	const res = await fetch(url);
-	if (!res.ok) throw new Error(`PokeAPI error ${res.status}: ${url}`);
-	return res.json() as Promise<T>;
-}
-
-async function batchFetch<T>(
-	urls: string[],
-	cacheKeyFn: (url: string) => string,
-	ttl: number,
-	batchSize = 10
-): Promise<T[]> {
-	const results: T[] = [];
-	for (let i = 0; i < urls.length; i += batchSize) {
-		const chunk = urls.slice(i, i + batchSize);
-		const fetched = await Promise.all(
-			chunk.map(async (url) => {
-				const key = cacheKeyFn(url);
-				const cached = get<T>(key);
-				if (cached) return cached;
-				const data = await fetchJSON<T>(url);
-				return set(key, data, ttl);
-			})
-		);
-		results.push(...fetched);
-	}
-	return results;
-}
+const get = <T>(key: string): T | null => cache.get<T>(key) ?? null;
+const set = <T>(key: string, data: T, ttl: number): T => cache.set(key, data, ttl);
+const batchFetch = <T>(urls: string[], cacheKeyFn: (url: string) => string, ttl: number) =>
+	sharedBatchFetch<T>(cache, urls, cacheKeyFn, ttl);
 
 export class ItemService {
 	// ─── Berries ─────────────────────────────────────────────────────────────
@@ -70,7 +26,7 @@ export class ItemService {
 		const cached = get<Berry[]>(key);
 		if (cached) return cached;
 
-		const list = await fetchJSON<{ results: { url: string }[] }>(`${API_BASE}/berry?limit=64`);
+		const list = await fetchJson<{ results: { url: string }[] }>(`${API_BASE}/berry?limit=64`);
 		const berries = await batchFetch<Berry>(
 			list.results.map((r) => r.url),
 			(url) => {
@@ -86,7 +42,7 @@ export class ItemService {
 		const key = `berry-${nameOrId}`;
 		const cached = get<Berry>(key);
 		if (cached) return cached;
-		const data = await fetchJSON<Berry>(`${API_BASE}/berry/${nameOrId}`);
+		const data = await fetchJson<Berry>(`${API_BASE}/berry/${nameOrId}`);
 		return set(key, data, TTL.berry);
 	}
 
@@ -97,7 +53,7 @@ export class ItemService {
 		const cached = get<ItemPocket[]>(key);
 		if (cached) return cached;
 
-		const list = await fetchJSON<{ results: { url: string }[] }>(`${API_BASE}/item-pocket`);
+		const list = await fetchJson<{ results: { url: string }[] }>(`${API_BASE}/item-pocket`);
 		const pockets = await batchFetch<ItemPocket>(
 			list.results.map((r) => r.url),
 			(url) => {
@@ -132,7 +88,7 @@ export class ItemService {
 		const key = `cat-${categoryName}`;
 		const cached = get<ItemCategory>(key);
 		if (cached) return cached;
-		const data = await fetchJSON<ItemCategory>(`${API_BASE}/item-category/${categoryName}`);
+		const data = await fetchJson<ItemCategory>(`${API_BASE}/item-category/${categoryName}`);
 		return set(key, data, TTL.category);
 	}
 
@@ -159,7 +115,7 @@ export class ItemService {
 		const key = `item-${nameOrId}`;
 		const cached = get<Item>(key);
 		if (cached) return cached;
-		const data = await fetchJSON<Item>(`${API_BASE}/item/${nameOrId}`);
+		const data = await fetchJson<Item>(`${API_BASE}/item/${nameOrId}`);
 		return set(key, data, TTL.item);
 	}
 
@@ -171,7 +127,7 @@ export class ItemService {
 		const cached = get<{ items: Item[]; total: number }>(key);
 		if (cached) return cached;
 
-		const list = await fetchJSON<{ count: number; results: { name: string; url: string }[] }>(
+		const list = await fetchJson<{ count: number; results: { name: string; url: string }[] }>(
 			`${API_BASE}/item?limit=${limit}&offset=${offset}`
 		);
 		const items = await batchFetch<Item>(

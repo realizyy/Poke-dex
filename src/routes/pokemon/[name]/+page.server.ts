@@ -1,54 +1,23 @@
-import type { Load } from '@sveltejs/kit';
-import type { Pokemon, PokemonSpecies } from '$lib/types';
+import { HttpError } from '$lib/api/http';
+import { PokemonService } from '$lib/services/pokemon-service';
+import type { PageServerLoad } from './$types';
 
-async function fetchWithRetry(url: string, retries = 3, timeoutMs = 20000): Promise<Response> {
-	let lastError: unknown;
-	for (let attempt = 1; attempt <= retries; attempt++) {
-		const controller = new AbortController();
-		const timer = setTimeout(() => controller.abort(), timeoutMs);
-		try {
-			const response = await fetch(url, { signal: controller.signal });
-			clearTimeout(timer);
-			return response;
-		} catch (err) {
-			clearTimeout(timer);
-			lastError = err;
-			if (attempt < retries) {
-				await new Promise((r) => setTimeout(r, attempt * 600));
-			}
-		}
-	}
-	throw lastError;
-}
+const CACHE_CONTROL = 'public, max-age=300, s-maxage=3600, stale-while-revalidate=86400';
 
-export const load: Load = async ({ params }) => {
+export const load: PageServerLoad = async ({ params, setHeaders }) => {
+	const pokemonName = params.name.toLowerCase();
+
 	try {
-		const pokemonName = params.name?.toLowerCase();
-		const response = await fetchWithRetry(`https://pokeapi.co/api/v2/pokemon/${pokemonName}`);
+		const pokemon = await PokemonService.fetchPokemonByName(pokemonName);
+		const speciesId = Number(pokemon.species.url.split('/').filter(Boolean).pop());
+		const species = await PokemonService.fetchPokemonSpecies(speciesId).catch(() => null);
 
-		if (!response.ok) {
-			throw new Error(`Pokemon ${pokemonName} not found`);
-		}
-
-		const pokemon: Pokemon = await response.json();
-
-		// Fetch species data for breeding info (extract ID from species URL)
-		let species: PokemonSpecies | null = null;
-		try {
-			const speciesId = pokemon.species.url.split('/').filter(Boolean).pop();
-			const speciesRes = await fetchWithRetry(
-				`https://pokeapi.co/api/v2/pokemon-species/${speciesId}`
-			);
-			if (speciesRes.ok) {
-				species = await speciesRes.json();
-			}
-		} catch {
-			// Species data is optional — page still works without it
-		}
-
+		setHeaders({ 'cache-control': CACHE_CONTROL });
 		return { pokemon, species };
 	} catch (error) {
-		console.error('Error fetching Pokemon details:', error);
+		if (!(error instanceof HttpError && error.status === 404)) {
+			console.error('Error fetching Pokemon details:', error);
+		}
 		return { pokemon: null, species: null };
 	}
 };

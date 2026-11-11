@@ -1,48 +1,13 @@
+import { HttpError, fetchJson } from '$lib/api/http';
+import { TtlCache } from '$lib/api/ttl-cache';
 import type { TcgCard, TcgCardBrief, TcgSet, TcgSetBrief, TcgSeries } from '$lib/types';
 
 const TCG_API_BASE = 'https://api.tcgdex.net/v2/en';
 
-// Cache with TTL — same pattern as pokemon-service.ts
-const TCG_CACHE = new Map<string, unknown>();
-const CACHE_METADATA = new Map<string, { expiry: number }>();
+const cache = new TtlCache(300);
 
-const TTL_LONG = 30 * 60 * 1000; // 30 min — sets & series rarely change
-const TTL_SHORT = 10 * 60 * 1000; // 10 min — card search results
-
-async function fetchWithRetry(url: string, retries = 3, timeoutMs = 20000): Promise<Response> {
-	let lastError: unknown;
-	for (let attempt = 1; attempt <= retries; attempt++) {
-		const controller = new AbortController();
-		const timer = setTimeout(() => controller.abort(), timeoutMs);
-		try {
-			const response = await fetch(url, { signal: controller.signal });
-			clearTimeout(timer);
-			return response;
-		} catch (err) {
-			clearTimeout(timer);
-			lastError = err;
-			if (attempt < retries) {
-				await new Promise((r) => setTimeout(r, attempt * 600));
-			}
-		}
-	}
-	throw lastError;
-}
-
-function isCacheValid(key: string): boolean {
-	const meta = CACHE_METADATA.get(key);
-	return !!meta && Date.now() < meta.expiry;
-}
-
-function setCache<T>(key: string, data: T, ttl: number): T {
-	TCG_CACHE.set(key, data);
-	CACHE_METADATA.set(key, { expiry: Date.now() + ttl });
-	return data;
-}
-
-function getCache<T>(key: string): T | undefined {
-	return TCG_CACHE.get(key) as T | undefined;
-}
+const TTL_LONG = 30 * 60 * 1000;
+const TTL_SHORT = 10 * 60 * 1000;
 
 export interface CardSearchFilters {
 	name?: string;
@@ -58,42 +23,30 @@ export interface CardSearchFilters {
 export class TcgService {
 	/** All TCG series (each containing their sets) */
 	static async fetchSeries(): Promise<TcgSeries[]> {
-		const key = 'series:all';
-		if (isCacheValid(key)) return getCache<TcgSeries[]>(key) ?? [];
-		const res = await fetchWithRetry(`${TCG_API_BASE}/series`);
-		if (!res.ok) throw new Error(`TCG API error: ${res.status}`);
-		const data: TcgSeries[] = await res.json();
-		return setCache(key, data, TTL_LONG);
+		return cache.getOrLoad('series:all', TTL_LONG, () =>
+			fetchJson<TcgSeries[]>(`${TCG_API_BASE}/series`)
+		);
 	}
 
 	/** All sets (brief) */
 	static async fetchSets(): Promise<TcgSetBrief[]> {
-		const key = 'sets:all';
-		if (isCacheValid(key)) return getCache<TcgSetBrief[]>(key) ?? [];
-		const res = await fetchWithRetry(`${TCG_API_BASE}/sets`);
-		if (!res.ok) throw new Error(`TCG API error: ${res.status}`);
-		const data: TcgSetBrief[] = await res.json();
-		return setCache(key, data, TTL_LONG);
+		return cache.getOrLoad('sets:all', TTL_LONG, () =>
+			fetchJson<TcgSetBrief[]>(`${TCG_API_BASE}/sets`)
+		);
 	}
 
 	/** Single set with its card list */
 	static async fetchSet(id: string): Promise<TcgSet> {
-		const key = `set:${id}`;
-		if (isCacheValid(key)) return getCache<TcgSet>(key)!;
-		const res = await fetchWithRetry(`${TCG_API_BASE}/sets/${encodeURIComponent(id)}`);
-		if (!res.ok) throw new Error(`TCG set not found: ${id}`);
-		const data: TcgSet = await res.json();
-		return setCache(key, data, TTL_LONG);
+		return cache.getOrLoad(`set:${id}`, TTL_LONG, () =>
+			fetchJson<TcgSet>(`${TCG_API_BASE}/sets/${encodeURIComponent(id)}`)
+		);
 	}
 
 	/** Single card detail */
 	static async fetchCard(id: string): Promise<TcgCard> {
-		const key = `card:${id}`;
-		if (isCacheValid(key)) return getCache<TcgCard>(key)!;
-		const res = await fetchWithRetry(`${TCG_API_BASE}/cards/${encodeURIComponent(id)}`);
-		if (!res.ok) throw new Error(`TCG card not found: ${id}`);
-		const data: TcgCard = await res.json();
-		return setCache(key, data, TTL_SHORT);
+		return cache.getOrLoad(`card:${id}`, TTL_SHORT, () =>
+			fetchJson<TcgCard>(`${TCG_API_BASE}/cards/${encodeURIComponent(id)}`)
+		);
 	}
 
 	/** Search cards with optional filters, sort, and pagination */
@@ -122,13 +75,9 @@ export class TcgService {
 		params.set('pagination:itemsPerPage', String(itemsPerPage));
 
 		const qs = params.toString();
-		const key = `cards:search:${qs}`;
-		if (isCacheValid(key)) return getCache<TcgCardBrief[]>(key) ?? [];
-
-		const res = await fetchWithRetry(`${TCG_API_BASE}/cards?${qs}`);
-		if (!res.ok) throw new Error(`TCG search error: ${res.status}`);
-		const data: TcgCardBrief[] = await res.json();
-		return setCache(key, data, TTL_SHORT);
+		return cache.getOrLoad(`cards:search:${qs}`, TTL_SHORT, () =>
+			fetchJson<TcgCardBrief[]>(`${TCG_API_BASE}/cards?${qs}`)
+		);
 	}
 
 	/**
@@ -136,16 +85,18 @@ export class TcgService {
 	 * detail page modal). Uses laxist name matching (TCGDex default).
 	 */
 	static async fetchCardsByPokemonName(pokemonName: string): Promise<TcgCardBrief[]> {
-		const key = `cards:pokemon:${pokemonName.toLowerCase()}`;
-		if (isCacheValid(key)) return getCache<TcgCardBrief[]>(key) ?? [];
 		const params = new URLSearchParams({
 			name: `eq:${pokemonName}`,
 			'pagination:itemsPerPage': '60'
 		});
-		const res = await fetchWithRetry(`${TCG_API_BASE}/cards?${params.toString()}`);
-		if (!res.ok) return [];
-		const data: TcgCardBrief[] = await res.json();
-		return setCache(key, data, TTL_SHORT);
+		try {
+			return await cache.getOrLoad(`cards:pokemon:${pokemonName.toLowerCase()}`, TTL_SHORT, () =>
+				fetchJson<TcgCardBrief[]>(`${TCG_API_BASE}/cards?${params.toString()}`)
+			);
+		} catch (error) {
+			if (error instanceof HttpError) return [];
+			throw error;
+		}
 	}
 
 	/** Helpers */
