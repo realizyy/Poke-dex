@@ -15,8 +15,8 @@ const CONTRAST_BUDGET: Record<string, number> = {
 	'/tcg/cards': 0,
 	'/tcg/collection': 0,
 	'/tcg/decks': 0,
-	'/tcg/sets/swsh3': 1,
-	'/tcg/cards/swsh3-136': 4
+	'/tcg/sets/swsh3': 0,
+	'/tcg/cards/swsh3-136': 1
 };
 
 for (const [path, contrastBudget] of Object.entries(CONTRAST_BUDGET)) {
