@@ -69,8 +69,9 @@
 	let tcgLoaded = false;
 
 	let shownPokemonName: string | undefined;
-	$: if (pokemon?.name !== shownPokemonName) {
-		shownPokemonName = pokemon?.name;
+	function resetForPokemon(name: string | undefined) {
+		if (name === shownPokemonName) return;
+		shownPokemonName = name;
 		openModal = null;
 		showAddToTeamModal = false;
 		encounterAreas = null;
@@ -78,6 +79,7 @@
 		tcgCards = null;
 		tcgLoaded = false;
 	}
+	$: resetForPokemon(pokemon?.name);
 
 	async function openLocationsModal() {
 		openModal = 'locations';

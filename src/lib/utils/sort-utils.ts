@@ -11,7 +11,7 @@ export class SortUtils {
 		if (!pokemons || pokemons.length === 0) return [];
 
 		return [...pokemons].sort((a, b) => {
-			let comparison = 0;
+			let comparison: number;
 
 			switch (sortBy) {
 				case 'id':
