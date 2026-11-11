@@ -1,19 +1,19 @@
 # Pokédex — Feature Map (PokeAPI)
 
-> Last updated: March 2026
+> Last updated: November 2026
 
 ---
 
 ## ✅ Implemented — Core
 
-| Route             | Description                                                                                                                                |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `/`               | Home — editorial hero, 6-feature grid, 8-Pokémon spotlight, stats strip                                                                    |
-| `/search`         | Filter 1,025+ Pokémon by name, type, generation; infinite scroll; sort by ID / name / stats; URL persistence                               |
-| `/pokemon/[name]` | Detail page — base stats, abilities, moves, evolution chain (visual), sprites gallery, encounter locations, breeding info, type weaknesses |
-| `/teams`          | CRUD team builder — up to 6 Pokémon per team, type-coverage analysis, JSON export, localStorage persistence                                |
-| `/battle`         | Turn-based battle simulator — team selection, type-effectiveness damage calc, battle log, win/lose result                                  |
-| `/compare`        | Side-by-side comparison — stat bars (winner highlighted in green), types, weaknesses, physical info; URL params `?a=&b=`                   |
+| Route             | Description                                                                                                                                                                  |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/`               | Home — editorial hero, 6-feature grid, 8-Pokémon spotlight, stats strip                                                                                                      |
+| `/search`         | Filter 1,025+ Pokémon by name, type, generation; infinite scroll; sort by ID / name / stats; URL persistence                                                                 |
+| `/pokemon/[name]` | Detail page — base stats, abilities, moves with learnset per game and method, evolution chain (visual), sprites gallery, encounter locations, breeding info, type weaknesses |
+| `/teams`          | CRUD team builder — up to 6 Pokémon per team, type-coverage analysis, JSON export, localStorage persistence                                                                  |
+| `/battle`         | Turn-based battle simulator — team selection, type-effectiveness damage calc, battle log, win/lose result                                                                    |
+| `/compare`        | Side-by-side comparison — stat bars (winner highlighted in green), types, weaknesses, physical info; URL params `?a=&b=`                                                     |
 
 ## ✅ Implemented — Items & Moves
 
@@ -41,16 +41,7 @@
 
 ## 🔴 High Value — Next Sprints
 
-### 1. Learnset by Game — Moves Tab Upgrade
-
-**Endpoint:** `/pokemon/{id}` → `moves[].version_group_details`
-**Why:** Data is already fetched; UI only shows move names, not method or level.
-
-- Tabs: Level-up / TM / Egg Move / Tutor / Transfer
-- Show level learned, version group badge
-- Already has move link → `/moves/[name]`
-
-### 2. Pokémon Forms & Regional Variants — `/pokemon/[name]/forms`
+### 1. Pokémon Forms & Regional Variants — `/pokemon/[name]/forms`
 
 **Endpoint:** `GET /pokemon-form/{id}`, `/pokemon-species/{id}`
 **Why:** Alolan / Galarian / Hisuian / Paldean forms are highly searched.
@@ -59,7 +50,7 @@
 - Different stat blocks per form
 - Form badge on PokémonCard where applicable
 
-### 3. Damage Calculator — `/calc`
+### 2. Damage Calculator — `/calc`
 
 **Custom — no new endpoint needed**
 **Why:** Most popular tool in the competitive Pokémon community.
@@ -70,7 +61,7 @@
 - Uses `TYPE_EFFECTIVENESS` already in codebase + base damage formula
 - Presets: 252 Atk / 252 Def spreads
 
-### 4. Pokémon Quiz — `/quiz`
+### 3. Pokémon Quiz — `/quiz`
 
 **Custom — uses existing Pokémon data**
 **Why:** Engagement / re-visit driver, no new API calls needed.
@@ -81,7 +72,7 @@
 - Difficulty: Gen filter (only Gen 1, only Legendary, etc.)
 - Share score card as image
 
-### 5. Pokédex Completion Tracker — `/tracker`
+### 4. Pokédex Completion Tracker — `/tracker`
 
 **Custom — localStorage**
 **Why:** Core loop for Pokémon fans — "catch 'em all."
