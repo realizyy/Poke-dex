@@ -125,3 +125,63 @@ test('a missing deck explains itself', async ({ page }) => {
 	await page.goto('/tcg/decks/does-not-exist');
 	await expect(page.getByRole('heading', { name: 'Deck not found' })).toBeVisible();
 });
+
+test('the TCG index lists the sets of every series', async ({ page }) => {
+	await page.goto('/tcg');
+	await expect(page.locator('a[href^="/tcg/sets/"]').first()).toBeVisible({ timeout: 30000 });
+	expect(await page.locator('a[href^="/tcg/sets/"]').count()).toBeGreaterThan(50);
+	await expect(page.locator('a[href^="/tcg/series/"]').first()).toBeVisible();
+});
+
+test('a series page lists its sets', async ({ page }) => {
+	await page.goto('/tcg/series/swsh');
+	await expect(page.getByRole('heading', { name: 'Sword & Shield', level: 1 })).toBeVisible();
+	await expect(page.locator('a[href="/tcg/sets/swsh3"]')).toBeVisible();
+	await page.locator('a[href="/tcg/sets/swsh3"]').click();
+	await expect(page).toHaveURL(/\/tcg\/sets\/swsh3/);
+});
+
+test('unknown series, set and card answer 404', async ({ page }) => {
+	for (const path of ['/tcg/series/nope', '/tcg/sets/nope', '/tcg/cards/nope-1']) {
+		const response = await page.goto(path);
+		expect(response?.status(), path).toBe(404);
+	}
+});
+
+test('switching the card language translates cards and persists across pages', async ({
+	page,
+	context
+}) => {
+	await context.clearCookies();
+	await page.goto('/tcg/cards/swsh3-136');
+	await expect(page.getByRole('heading', { name: 'Furret' })).toBeVisible();
+	await page.getByLabel('Card language').selectOption('fr');
+	await expect(page.getByRole('heading', { name: 'Fouinar' })).toBeVisible({ timeout: 30000 });
+
+	await page.goto('/tcg/cards');
+	await expect(page.getByLabel('Card language')).toHaveValue('fr');
+	await expect(page.getByLabel('Type', { exact: true })).toBeDisabled();
+	await expect(page.getByText(/filters use English card data/)).toBeVisible();
+
+	await page.getByLabel('Card language').selectOption('en');
+	await expect(page.getByLabel('Type', { exact: true })).toBeEnabled({ timeout: 30000 });
+});
+
+test('a deck keeps English card names even when browsing in French', async ({ page, context }) => {
+	await context.clearCookies();
+	await page.goto('/tcg/decks');
+	await page.getByLabel('Deck name').fill('Langue');
+	await page.getByRole('button', { name: 'New deck' }).click();
+	await expect(page).toHaveURL(/\/tcg\/decks\/[0-9a-f-]+/);
+
+	await context.addCookies([{ name: 'tcg-lang', value: 'fr', domain: 'localhost', path: '/' }]);
+	await page.goto('/tcg/cards/swsh3-136');
+	await expect(page.getByRole('heading', { name: 'Fouinar' })).toBeVisible();
+	await page.getByRole('button', { name: 'Add to deck' }).click();
+	await expect(page.getByText(/Furret is in Langue/).first()).toBeVisible({ timeout: 30000 });
+
+	await page.goto('/tcg/decks');
+	await page.getByRole('link', { name: 'Langue' }).click();
+	await expect(page.getByRole('link', { name: /^Furret/ })).toBeVisible();
+	await expect(page.getByLabel('Card language')).toHaveCount(0);
+});

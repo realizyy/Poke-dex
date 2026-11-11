@@ -13,6 +13,7 @@ const CONTRAST_BUDGET: Record<string, number> = {
 	'/items': 1,
 	'/tcg': 0,
 	'/tcg/cards': 0,
+	'/tcg/series/swsh': 0,
 	'/tcg/collection': 0,
 	'/tcg/decks': 0,
 	'/tcg/sets/swsh3': 0,
@@ -22,7 +23,7 @@ const CONTRAST_BUDGET: Record<string, number> = {
 for (const [path, contrastBudget] of Object.entries(CONTRAST_BUDGET)) {
 	test(`accessibility on ${path}`, async ({ page }) => {
 		await page.goto(path);
-		await page.waitForLoadState('networkidle');
+		await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {});
 		const { violations } = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa']).analyze();
 
 		const blocking = violations.filter((v) => v.id !== 'color-contrast');

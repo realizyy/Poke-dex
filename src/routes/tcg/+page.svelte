@@ -1,15 +1,11 @@
 <script lang="ts">
 	import { Layers } from '#lib/icons';
-	import type { TcgSeries, TcgSetBrief } from '#lib/types';
+	import SetCard from '../../components/tcg/SetCard.svelte';
+	import type { TcgSeriesDetail } from '#lib/types';
 
-	let { data }: { data: { series: TcgSeries[] } } = $props();
+	let { data }: { data: { series: TcgSeriesDetail[] } } = $props();
 
 	const series = $derived(data.series ?? []);
-
-	function setCardCount(set: TcgSetBrief): string {
-		const { total = 0, official = 0 } = set.cardCount ?? {};
-		return official > 0 && official !== total ? `${official}/${total}` : `${total}`;
-	}
 </script>
 
 <svelte:head>
@@ -52,17 +48,6 @@
 			Explore every Trading Card Game set — from Base Set to the latest releases. Click any set to
 			browse its cards.
 		</p>
-		<nav class="mt-6 flex flex-wrap gap-3" aria-label="TCG tools">
-			{#each [{ href: '/tcg/cards', label: 'Search cards' }, { href: '/tcg/collection', label: 'My collection' }, { href: '/tcg/decks', label: 'Deck builder' }] as link (link.href)}
-				<a
-					href={link.href}
-					class="rounded-full px-4 py-2 text-sm font-semibold transition-opacity hover:opacity-80"
-					style="background: var(--bg-secondary); color: var(--text-main); border: 1px solid var(--border-color);"
-				>
-					{link.label}
-				</a>
-			{/each}
-		</nav>
 	</div>
 </section>
 
@@ -94,7 +79,13 @@
 								}}
 							/>
 						{/if}
-						<h2 class="text-xl font-extrabold" style="color: var(--text-main);">{serie.name}</h2>
+						<h2 class="text-xl font-extrabold">
+							<a
+								href="/tcg/series/{serie.id}"
+								class="hover:underline"
+								style="color: var(--text-main);">{serie.name}</a
+							>
+						</h2>
 						<span class="ml-1 text-sm" style="color: var(--text-muted);">
 							{serie.sets?.length ?? 0} set{serie.sets?.length !== 1 ? 's' : ''}
 						</span>
@@ -102,58 +93,8 @@
 
 					<!-- Sets grid -->
 					<div class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-						{#each serie.sets ?? [] as set (set.id)}
-							<a
-								href="/tcg/sets/{set.id}"
-								class="card-hover flex flex-col items-center gap-3 rounded-2xl p-4 text-center"
-								style="background-color: var(--bg-secondary); border: 1px solid var(--border-color);"
-							>
-								<!-- Set logo / symbol -->
-								<div class="flex h-16 items-center justify-center">
-									{#if set.logo}
-										<img
-											src="{set.logo}/logo.webp"
-											alt={set.name}
-											class="max-h-16 max-w-full object-contain"
-											loading="lazy"
-											onerror={(e) => {
-												const img = e.currentTarget as HTMLImageElement;
-												img.src = set.symbol ? `${set.symbol}/symbol.webp` : '';
-												img.onerror = () => {
-													img.style.display = 'none';
-												};
-											}}
-										/>
-									{:else if set.symbol}
-										<img
-											src="{set.symbol}/symbol.webp"
-											alt={set.name}
-											class="h-10 w-10 object-contain"
-											loading="lazy"
-											onerror={(e) => {
-												(e.currentTarget as HTMLImageElement).style.display = 'none';
-											}}
-										/>
-									{:else}
-										<div
-											class="h-10 w-10 rounded-full"
-											style="background: var(--border-color);"
-										></div>
-									{/if}
-								</div>
-
-								<p class="text-sm leading-tight font-semibold" style="color: var(--text-main);">
-									{set.name}
-								</p>
-
-								<!-- Card count badge -->
-								<span
-									class="rounded-full px-2.5 py-0.5 text-xs font-bold"
-									style="background: var(--bg-main); color: var(--text-muted); border: 1px solid var(--border-color);"
-								>
-									{setCardCount(set)} cards
-								</span>
-							</a>
+						{#each [...serie.sets].reverse() as set (set.id)}
+							<SetCard {set} />
 						{/each}
 					</div>
 				</div>

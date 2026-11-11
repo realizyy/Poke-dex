@@ -462,10 +462,14 @@ export interface TcgSet extends TcgSetBrief {
 }
 
 /** Series (generation group) object */
-export interface TcgSeries {
+/** A series as returned by /series/{id}, with its sets. */
+export interface TcgSeriesDetail {
 	id: string;
 	name: string;
 	logo?: string;
+	releaseDate?: string;
+	firstSet?: TcgSetBrief;
+	lastSet?: TcgSetBrief;
 	sets: TcgSetBrief[];
 }
 

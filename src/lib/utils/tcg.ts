@@ -1,10 +1,12 @@
 import type { TcgPricing } from '#lib/types';
+import type { TcgLang } from './tcg-lang';
 
 export type CardCategory = 'Pokemon' | 'Trainer' | 'Energy';
 export type CardSortField = 'name' | 'hp' | 'localId';
 export type SortDirection = 'ASC' | 'DESC';
 
 export interface CardSearchFilters {
+	lang?: TcgLang;
 	name?: string;
 	types?: string;
 	rarity?: string;

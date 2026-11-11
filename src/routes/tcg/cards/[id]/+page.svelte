@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { Layers } from '#lib/icons';
 	import { TcgService } from '#lib/services/tcg-service';
-	import type { TcgCard } from '#lib/types';
+	import type { PageData } from './$types';
 	import { formatPrice, getCardPrices } from '#lib/utils/tcg';
 	import { collectionStore } from '#lib/stores/collection.svelte';
 	import { deckStore } from '#lib/stores/decks.svelte';
@@ -10,7 +10,7 @@
 	import type { CardRef } from '#lib/utils/collection';
 	import { onMount } from 'svelte';
 
-	let { data }: { data: { card: TcgCard } } = $props();
+	let { data }: { data: PageData } = $props();
 	const card = $derived(data.card);
 	onMount(() => {
 		collectionStore.load();
@@ -20,15 +20,23 @@
 	let chosenDeckId = $state('');
 	const targetDeck = $derived(deckStore.get(chosenDeckId) ?? deckStore.list[0]);
 
-	function addToDeck() {
+	async function addToDeck() {
 		if (!targetDeck) return;
-		const deckCard = toDeckCard(card);
-		if (atCopyLimit(targetDeck, deckCard)) {
-			toastStore.warning('Copy limit', `${targetDeck.name} already has 4 copies of ${card.name}.`);
-			return;
+		try {
+			const english = data.lang === 'en' ? card : await TcgService.fetchCard(card.id, 'en');
+			const deckCard = toDeckCard(english);
+			if (atCopyLimit(targetDeck, deckCard)) {
+				toastStore.warning(
+					'Copy limit',
+					`${targetDeck.name} already has 4 copies of ${english.name}.`
+				);
+				return;
+			}
+			deckStore.adjust(targetDeck.id, deckCard, 1);
+			toastStore.success('Added to deck', `${english.name} is in ${targetDeck.name}.`);
+		} catch {
+			toastStore.error('Could not add card', 'The card database is not responding.');
 		}
-		deckStore.adjust(targetDeck.id, deckCard, 1);
-		toastStore.success('Added to deck', `${card.name} is in ${targetDeck.name}.`);
 	}
 
 	const cardRef = $derived<CardRef>({

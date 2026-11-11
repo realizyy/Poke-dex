@@ -3,6 +3,7 @@
 	import { Layers, Search, ChevronLeft, ChevronRight } from '#lib/icons';
 	import { TcgService } from '#lib/services/tcg-service';
 	import type { PageData } from './$types';
+	import { supportsValueFilters } from '#lib/utils/tcg-lang';
 	import { CARD_CATEGORIES, CARD_SORT_FIELDS, DEFAULT_PAGE_SIZE } from '#lib/utils/tcg';
 
 	let { data }: { data: PageData } = $props();
@@ -35,6 +36,7 @@
 		hpMaxInput = query?.hpMax != null ? String(query.hpMax) : '';
 	});
 
+	const valueFilters = $derived(supportsValueFilters(data.lang));
 	const currentPage = $derived(query.page ?? 1);
 	const hasNextPage = $derived(data.hasMore);
 	const firstShown = $derived((currentPage - 1) * DEFAULT_PAGE_SIZE + 1);
@@ -173,6 +175,7 @@
 				>
 				<select
 					id="tcg-type"
+					disabled={!valueFilters}
 					bind:value={typesInput}
 					class="rounded-xl px-4 py-2.5 text-sm focus:outline-none"
 					style="background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main);"
@@ -193,6 +196,7 @@
 				>
 				<select
 					id="tcg-rarity"
+					disabled={!valueFilters}
 					bind:value={rarityInput}
 					class="rounded-xl px-4 py-2.5 text-sm focus:outline-none"
 					style="background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main);"
@@ -213,6 +217,7 @@
 				>
 				<select
 					id="tcg-category"
+					disabled={!valueFilters}
 					bind:value={categoryInput}
 					class="rounded-xl px-4 py-2.5 text-sm focus:outline-none"
 					style="background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main);"
@@ -233,6 +238,7 @@
 				>
 				<select
 					id="tcg-stage"
+					disabled={!valueFilters}
 					bind:value={stageInput}
 					class="rounded-xl px-4 py-2.5 text-sm focus:outline-none"
 					style="background: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-main);"
@@ -305,6 +311,16 @@
 					/>
 				</div>
 			</fieldset>
+
+			{#if !valueFilters}
+				<p
+					class="text-sm sm:col-span-2 md:col-span-3 lg:col-span-4"
+					style="color: var(--text-secondary);"
+				>
+					Type, rarity, category and stage filters use English card data. Switch the card language
+					to English to use them.
+				</p>
+			{/if}
 
 			<!-- Actions row -->
 			<div class="flex items-end gap-3 sm:col-span-2 md:col-span-3 lg:col-span-4">

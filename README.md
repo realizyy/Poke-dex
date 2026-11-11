@@ -4,7 +4,7 @@ A Pokédex built with SvelteKit 3 and Svelte 5. It reads Pokémon, item and move
 
 ## Features
 
-Search with type, generation and stat filters, Pokémon detail pages with evolution chains and learnsets per game, side-by-side comparison, a team builder, a battle simulator, items, berries, TMs, natures, abilities and TCG cards. `FEATURES.md` lists what exists and what is planned.
+Search with type, generation and stat filters, Pokémon detail pages with evolution chains and learnsets per game, side-by-side comparison, a team builder, a battle simulator, items, berries, TMs, natures and abilities. The Pokémon TCG section has set and series browsing, card search with prices, a collection and wishlist tracker, and a deck builder that checks the official deck rules. `FEATURES.md` lists what exists and what is planned.
 
 ## Requirements
 
@@ -42,8 +42,8 @@ src/
   lib/
     api/           fetchJson (retry, timeout), TtlCache (LRU), bounded batch fetching
     services/      PokeAPI and TCGdex clients built on lib/api
-    stores/        Rune based stores (*.svelte.ts)
-    utils/         Pure logic: type chart, learnsets, sorting, filters
+    stores/        Rune based stores (*.svelte.ts), including collection and decks
+    utils/         Pure logic: type chart, learnsets, sorting, filters, TCG search, collection, deck rules
     testing/       Fixtures shared by tests
 e2e/               Playwright tests
 ```

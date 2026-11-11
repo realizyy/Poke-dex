@@ -26,6 +26,20 @@
 | `/abilities/[name]` | `GET /ability/{id}`              | In-battle & overworld effect, flavor text per game, Pokémon list                                |
 | `/natures`          | `GET /nature/{id}`               | All 25 natures — stat modifiers (+10%/−10%), berry flavor preference                            |
 
+## ✅ Implemented — Pokémon TCG (TCGdex)
+
+| Route                           | Description                                                                                                                                                          |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `/tcg`                          | Every series with its sets, newest first. Language selector and a tool bar shared by all TCG pages                                                                   |
+| `/tcg/series/[id]`              | One series with all of its sets                                                                                                                                      |
+| `/tcg/sets/[id]`                | Set card grid with collection progress and an All / Owned / Missing / Wishlist filter                                                                                |
+| `/tcg/cards`                    | Card search by name, type, rarity, category, stage and HP, with sorting and pagination that knows when there is no next page                                         |
+| `/tcg/cards/[id]`               | Card detail with attacks, weaknesses, legality, variants, Cardmarket and TCGplayer prices, a link to the matching Pokédex entry, collection controls and Add to deck |
+| `/tcg/collection`               | Owned cards and wishlist grouped by set, with totals, JSON export and import                                                                                         |
+| `/tcg/decks`, `/tcg/decks/[id]` | Deck builder with live checks for 60 cards, 4 copies per name, a Basic Pokémon and format legality (Standard, Expanded, Unlimited), plus decklist copy               |
+
+Notes. Collections and decks are stored in the browser (`localStorage`). Card languages are English, French, German, Spanish, Italian and Portuguese. Type, rarity, category and stage filters need English because the API translates those values. Decks always use English card data so the copy limit counts names correctly.
+
 ## ✅ Implemented — Infrastructure
 
 | Layer             | What's built                                                                            |

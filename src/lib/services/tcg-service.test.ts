@@ -71,3 +71,68 @@ describe('TcgService.searchCards', () => {
 		expect(result.hasMore).toBe(false);
 	});
 });
+
+describe('TcgService languages', () => {
+	it('requests the chosen language and caches each language separately', async () => {
+		const urls: string[] = [];
+		fetchMock.mockImplementation(async (input: string | URL) => {
+			urls.push(String(input));
+			return new Response(JSON.stringify({ id: 'x-1', name: 'card' }), { status: 200 });
+		});
+		await TcgService.fetchCard('lang-case', 'fr');
+		await TcgService.fetchCard('lang-case', 'fr');
+		await TcgService.fetchCard('lang-case', 'en');
+		expect(urls).toEqual([
+			'https://api.tcgdex.net/v2/fr/cards/lang-case',
+			'https://api.tcgdex.net/v2/en/cards/lang-case'
+		]);
+	});
+
+	it('defaults to English', async () => {
+		fetchMock.mockResolvedValue(new Response('{"id":"d"}', { status: 200 }));
+		await TcgService.fetchSet('default-lang-case');
+		expect(String(fetchMock.mock.calls[0][0])).toContain('/v2/en/sets/');
+	});
+});
+
+describe('TcgService.fetchSeriesWithSets', () => {
+	const set = (id: string) => ({ id, name: id, cardCount: { total: 1, official: 1 } });
+
+	it('loads each series, skips failures and empty series, newest first', async () => {
+		fetchMock.mockImplementation(async (input: string | URL) => {
+			const url = String(input);
+			if (url.endsWith('/series')) {
+				return new Response(
+					JSON.stringify([
+						{ id: 'old', name: 'Old' },
+						{ id: 'new', name: 'New' },
+						{ id: 'broken', name: 'Broken' },
+						{ id: 'empty', name: 'Empty' }
+					]),
+					{ status: 200 }
+				);
+			}
+			if (url.endsWith('/series/old')) {
+				return new Response(
+					JSON.stringify({ id: 'old', name: 'Old', releaseDate: '1999-01-09', sets: [set('o1')] }),
+					{ status: 200 }
+				);
+			}
+			if (url.endsWith('/series/new')) {
+				return new Response(
+					JSON.stringify({ id: 'new', name: 'New', releaseDate: '2024-03-22', sets: [set('n1')] }),
+					{ status: 200 }
+				);
+			}
+			if (url.endsWith('/series/empty')) {
+				return new Response(JSON.stringify({ id: 'empty', name: 'Empty', sets: [] }), {
+					status: 200
+				});
+			}
+			return new Response('{}', { status: 404 });
+		});
+		const series = await TcgService.fetchSeriesWithSets('de');
+		expect(series.map((s) => s.id)).toEqual(['new', 'old']);
+		expect(series[0].sets).toHaveLength(1);
+	});
+});

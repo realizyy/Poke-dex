@@ -1,41 +1,59 @@
-import { HttpError, fetchJson } from '#lib/api/http';
+import { HttpError, fetchJson, mapWithConcurrency } from '#lib/api/http';
 import { TtlCache } from '#lib/api/ttl-cache';
 import { DEFAULT_PAGE_SIZE, buildCardSearchParams, type CardSearchFilters } from '#lib/utils/tcg';
-import type { TcgCard, TcgCardBrief, TcgSet, TcgSetBrief, TcgSeries } from '#lib/types';
+import { DEFAULT_TCG_LANG, type TcgLang } from '#lib/utils/tcg-lang';
+import type { TcgCard, TcgCardBrief, TcgSet, TcgSetBrief, TcgSeriesDetail } from '#lib/types';
 
-const TCG_API_BASE = 'https://api.tcgdex.net/v2/en';
+const apiBase = (lang: TcgLang) => `https://api.tcgdex.net/v2/${lang}`;
 
-const cache = new TtlCache(300);
+const cache = new TtlCache(400);
 
 const TTL_LONG = 30 * 60 * 1000;
 const TTL_SHORT = 10 * 60 * 1000;
+const SERIES_CONCURRENCY = 6;
 
 export class TcgService {
-	/** All TCG series (each containing their sets) */
-	static async fetchSeries(): Promise<TcgSeries[]> {
-		return cache.getOrLoad('series:all', TTL_LONG, () =>
-			fetchJson<TcgSeries[]>(`${TCG_API_BASE}/series`)
+	/** One series with its sets. The list endpoint only returns ids and names. */
+	static async fetchSerie(id: string, lang: TcgLang = DEFAULT_TCG_LANG): Promise<TcgSeriesDetail> {
+		return cache.getOrLoad(`${lang}:serie:${id}`, TTL_LONG, async () => {
+			const serie = await fetchJson<TcgSeriesDetail>(
+				`${apiBase(lang)}/series/${encodeURIComponent(id)}`
+			);
+			return { ...serie, sets: serie.sets ?? [] };
+		});
+	}
+
+	/** Every series with its sets, newest release first. A series that fails to load is skipped. */
+	static async fetchSeriesWithSets(lang: TcgLang = DEFAULT_TCG_LANG): Promise<TcgSeriesDetail[]> {
+		const list = await cache.getOrLoad(`${lang}:series:list`, TTL_LONG, () =>
+			fetchJson<{ id: string; name: string }[]>(`${apiBase(lang)}/series`)
 		);
+		const loaded = await mapWithConcurrency(list, SERIES_CONCURRENCY, (item) =>
+			this.fetchSerie(item.id, lang).catch(() => null)
+		);
+		return loaded
+			.filter((serie): serie is TcgSeriesDetail => serie !== null && serie.sets.length > 0)
+			.sort((a, b) => (b.releaseDate ?? '').localeCompare(a.releaseDate ?? ''));
 	}
 
 	/** All sets (brief) */
-	static async fetchSets(): Promise<TcgSetBrief[]> {
-		return cache.getOrLoad('sets:all', TTL_LONG, () =>
-			fetchJson<TcgSetBrief[]>(`${TCG_API_BASE}/sets`)
+	static async fetchSets(lang: TcgLang = DEFAULT_TCG_LANG): Promise<TcgSetBrief[]> {
+		return cache.getOrLoad(`${lang}:sets:all`, TTL_LONG, () =>
+			fetchJson<TcgSetBrief[]>(`${apiBase(lang)}/sets`)
 		);
 	}
 
 	/** Single set with its card list */
-	static async fetchSet(id: string): Promise<TcgSet> {
-		return cache.getOrLoad(`set:${id}`, TTL_LONG, () =>
-			fetchJson<TcgSet>(`${TCG_API_BASE}/sets/${encodeURIComponent(id)}`)
+	static async fetchSet(id: string, lang: TcgLang = DEFAULT_TCG_LANG): Promise<TcgSet> {
+		return cache.getOrLoad(`${lang}:set:${id}`, TTL_LONG, () =>
+			fetchJson<TcgSet>(`${apiBase(lang)}/sets/${encodeURIComponent(id)}`)
 		);
 	}
 
 	/** Single card detail */
-	static async fetchCard(id: string): Promise<TcgCard> {
-		return cache.getOrLoad(`card:${id}`, TTL_SHORT, () =>
-			fetchJson<TcgCard>(`${TCG_API_BASE}/cards/${encodeURIComponent(id)}`)
+	static async fetchCard(id: string, lang: TcgLang = DEFAULT_TCG_LANG): Promise<TcgCard> {
+		return cache.getOrLoad(`${lang}:card:${id}`, TTL_SHORT, () =>
+			fetchJson<TcgCard>(`${apiBase(lang)}/cards/${encodeURIComponent(id)}`)
 		);
 	}
 
@@ -54,9 +72,10 @@ export class TcgService {
 	}
 
 	private static fetchCardPage(filters: CardSearchFilters): Promise<TcgCardBrief[]> {
+		const lang = filters.lang ?? DEFAULT_TCG_LANG;
 		const qs = buildCardSearchParams(filters).toString();
-		return cache.getOrLoad(`cards:search:${qs}`, TTL_SHORT, () =>
-			fetchJson<TcgCardBrief[]>(`${TCG_API_BASE}/cards?${qs}`)
+		return cache.getOrLoad(`${lang}:cards:search:${qs}`, TTL_SHORT, () =>
+			fetchJson<TcgCardBrief[]>(`${apiBase(lang)}/cards?${qs}`)
 		);
 	}
 
@@ -70,8 +89,8 @@ export class TcgService {
 			'pagination:itemsPerPage': '60'
 		});
 		try {
-			return await cache.getOrLoad(`cards:pokemon:${pokemonName.toLowerCase()}`, TTL_SHORT, () =>
-				fetchJson<TcgCardBrief[]>(`${TCG_API_BASE}/cards?${params.toString()}`)
+			return await cache.getOrLoad(`en:cards:pokemon:${pokemonName.toLowerCase()}`, TTL_SHORT, () =>
+				fetchJson<TcgCardBrief[]>(`${apiBase('en')}/cards?${params.toString()}`)
 			);
 		} catch (error) {
 			if (error instanceof HttpError) return [];
