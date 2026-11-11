@@ -7,7 +7,7 @@ export const load: PageServerLoad = async () => {
 		const list = await MachineService.fetchMachineList(0, 1);
 		const machines = await MachineService.fetchMachineBatch(0, 100);
 		return { machines, total: list.count };
-	} catch (e) {
+	} catch {
 		throw error(500, 'Failed to load machines');
 	}
 };

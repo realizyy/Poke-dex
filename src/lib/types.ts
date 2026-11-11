@@ -441,3 +441,20 @@ export interface TcgSearchResult {
 	page: number;
 	itemsPerPage: number;
 }
+
+export interface EvolutionDetail {
+	min_level?: number | null;
+	item?: { name: string } | null;
+	trigger?: { name: string } | null;
+}
+
+export interface EvolutionChainLink {
+	species: { name: string; url: string };
+	evolution_details: EvolutionDetail[];
+	evolves_to: EvolutionChainLink[];
+}
+
+export interface EvolutionChain {
+	id: number;
+	chain: EvolutionChainLink;
+}

@@ -16,7 +16,7 @@ export const load: PageServerLoad = async ({ params }) => {
 			}
 		}
 		return { item, berry };
-	} catch (e) {
+	} catch {
 		throw error(404, `Item "${params.name}" not found`);
 	}
 };

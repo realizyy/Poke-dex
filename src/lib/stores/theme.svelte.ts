@@ -47,7 +47,7 @@ class ThemeStore {
 		}
 		// Force repaint to ensure CSS vars take effect
 		root.style.display = 'none';
-		root.offsetHeight;
+		void root.offsetHeight;
 		root.style.display = '';
 	}
 

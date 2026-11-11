@@ -44,13 +44,9 @@
 		"vitest": "^3.0.0"
 	},
 	"dependencies": {
-		"@inlang/paraglide-js": "^2.15.0",
 		"@tanstack/svelte-virtual": "^3.13.23",
-		"axios": "^1.7.9",
-		"axios-cache-interceptor": "^1.6.2",
 		"daisyui": "^5.5.19",
-		"lucide-svelte": "^0.577.0",
-		"pokenode-ts": "^1.20.0"
+		"lucide-svelte": "^0.577.0"
 	},
 	"overrides": {
 		"cookie": "^0.7.2",

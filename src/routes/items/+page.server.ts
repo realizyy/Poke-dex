@@ -13,7 +13,7 @@ export const load: PageServerLoad = async () => {
 			initialItems: result.items,
 			total: result.total
 		};
-	} catch (e) {
+	} catch {
 		throw error(500, 'Failed to load items');
 	}
 };

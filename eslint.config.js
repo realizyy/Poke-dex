@@ -23,6 +23,15 @@ export default ts.config(
 		}
 	},
 	{
+		rules: {
+			'no-undef': 'off',
+			'@typescript-eslint/no-unused-vars': [
+				'error',
+				{ argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrors: 'none' }
+			]
+		}
+	},
+	{
 		files: ['**/*.svelte'],
 
 		languageOptions: {

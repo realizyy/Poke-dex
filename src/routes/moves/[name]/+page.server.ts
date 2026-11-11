@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({ params }) => {
 	try {
 		const move = await MoveService.fetchMove(params.name.toLowerCase());
 		return { move };
-	} catch (e) {
+	} catch {
 		throw error(404, `Move "${params.name}" not found`);
 	}
 };

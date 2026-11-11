@@ -141,10 +141,6 @@
 		);
 	}
 
-	function capitalize(s: string): string {
-		return s.charAt(0).toUpperCase() + s.slice(1).replace(/-/g, ' ');
-	}
-
 	const bothLoaded = $derived(!!pokemonA && !!pokemonB);
 	const eitherLoaded = $derived(!!pokemonA || !!pokemonB);
 
@@ -438,7 +434,6 @@
 						{@const valB = getStat(pokemonB, statKey)}
 						{@const aWins = valA > valB}
 						{@const bWins = valB > valA}
-						{@const maxVal = Math.max(valA, valB, 1)}
 						<div class="grid grid-cols-[2.5rem_1fr_6rem_1fr_2.5rem] items-center gap-2 py-2">
 							<!-- A value -->
 							<span

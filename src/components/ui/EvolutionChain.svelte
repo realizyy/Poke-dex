@@ -1,23 +1,31 @@
-﻿<script lang="ts">
+<script lang="ts">
 	import { onMount } from 'svelte';
 	import { PokemonService } from '$lib/services/pokemon-service';
 	import { getTypeColor } from '$lib/utils/pokemon-utils';
 	import { goto } from '$app/navigation';
-	
+	import type { EvolutionChain, EvolutionChainLink, EvolutionDetail } from '$lib/types';
+
+	interface ParsedEvolution {
+		name: string;
+		id: string;
+		level: number;
+		evolutionDetails: EvolutionDetail[];
+	}
+
 	export let pokemonId: number;
-	
-	let evolutionChain: any = null;
+
+	let evolutionChain: EvolutionChain | null = null;
 	let loading = false;
 	let error = false;
-	
+
 	onMount(async () => {
 		await loadEvolutionChain();
 	});
-	
+
 	async function loadEvolutionChain() {
 		loading = true;
 		error = false;
-		
+
 		try {
 			evolutionChain = await PokemonService.getEvolutionChainForPokemon(pokemonId);
 		} catch (err) {
@@ -27,104 +35,58 @@
 			loading = false;
 		}
 	}
-	
-	function parseEvolutionChain(chain: any): any[] {
-		const evolutions: any[] = [];
-		
-		function traverseChain(evolution: any, level: number = 0) {
+
+	function parseEvolutionChain(chain: EvolutionChain): ParsedEvolution[] {
+		const evolutions: ParsedEvolution[] = [];
+
+		function traverseChain(evolution: EvolutionChainLink | undefined, level = 0) {
 			if (!evolution) return;
-			
+
 			evolutions.push({
 				name: evolution.species.name,
 				id: evolution.species.url.split('/').slice(-2)[0],
-				level: level,
+				level,
 				evolutionDetails: evolution.evolution_details || []
 			});
-			
-			if (evolution.evolves_to && evolution.evolves_to.length > 0) {
-				evolution.evolves_to.forEach((next: any) => {
-					traverseChain(next, level + 1);
-				});
+
+			for (const next of evolution.evolves_to ?? []) {
+				traverseChain(next, level + 1);
 			}
 		}
-		
+
 		traverseChain(chain.chain);
 		return evolutions;
 	}
-	
+
 	async function getPokemonTypes(pokemonId: number): Promise<string[]> {
 		try {
 			const pokemon = await PokemonService.fetchPokemon(pokemonId);
-			return pokemon.types.map((type: any) => type.type.name);
+			return pokemon.types.map((type) => type.type.name);
 		} catch (error) {
 			console.error('Error fetching Pokemon types:', error);
 			return [];
 		}
 	}
-	
-	function getEvolutionCondition(details: any[]): string {
-		if (!details || details.length === 0) return '';
-		
-		const detail = details[0];
-		if (detail.min_level) {
-			return `(Level ${detail.min_level})`;
-		} else if (detail.item) {
-			return `(${detail.item.name.replace('-', ' ')})`;
-		} else if (detail.trigger?.name === 'trade') {
-			return '(Trade)';
-		} else if (detail.trigger?.name === 'use-item') {
-			return `(${detail.item?.name?.replace('-', ' ') || 'Item'})`;
-		}
-		
+
+	function describeCondition(detail: EvolutionDetail | undefined): string {
+		if (!detail) return '';
+		if (detail.min_level) return `(Level ${detail.min_level})`;
+		if (detail.item) return `(${detail.item.name.replace('-', ' ')})`;
+		if (detail.trigger?.name === 'trade') return '(Trade)';
+		if (detail.trigger?.name === 'use-item') return '(Item)';
 		return '';
 	}
 
-	function getEvolutionConditionForIndex(evolution: any, index: number): string {
-		// Untuk Pokemon pertama (index 0), tidak ada condition
-		if (index === 0) return '';
-		
-		// Untuk Pokemon kedua dan seterusnya, gunakan evolution details dari Pokemon sebelumnya
-		return getEvolutionCondition(evolution.evolutionDetails);
-	}
-
-	function getEvolutionConditionForArrow(evolutionChain: any, currentIndex: number): string {
-		if (!evolutionChain || !evolutionChain.chain) return '';
-		
-		// Untuk arrow pertama (index 0), ambil condition dari evolusi pertama
-		if (currentIndex === 0) {
-			const firstEvolution = evolutionChain.chain.evolves_to?.[0];
-			if (firstEvolution?.evolution_details?.length > 0) {
-				const detail = firstEvolution.evolution_details[0];
-				if (detail.min_level) {
-					return `(Level ${detail.min_level})`;
-				} else if (detail.item) {
-					return `(${detail.item.name.replace('-', ' ')})`;
-				} else if (detail.trigger?.name === 'trade') {
-					return '(Trade)';
-				} else if (detail.trigger?.name === 'use-item') {
-					return `(${detail.item?.name?.replace('-', ' ') || 'Item'})`;
-				}
-			}
-		}
-		
-		// Untuk arrow kedua (index 1), ambil condition dari evolusi kedua
+	function getEvolutionConditionForArrow(
+		evolutionChain: EvolutionChain | null,
+		currentIndex: number
+	): string {
+		if (!evolutionChain?.chain) return '';
+		const first = evolutionChain.chain.evolves_to?.[0];
+		if (currentIndex === 0) return describeCondition(first?.evolution_details?.[0]);
 		if (currentIndex === 1) {
-			const firstEvolution = evolutionChain.chain.evolves_to?.[0];
-			const secondEvolution = firstEvolution?.evolves_to?.[0];
-			if (secondEvolution?.evolution_details?.length > 0) {
-				const detail = secondEvolution.evolution_details[0];
-				if (detail.min_level) {
-					return `(Level ${detail.min_level})`;
-				} else if (detail.item) {
-					return `(${detail.item.name.replace('-', ' ')})`;
-				} else if (detail.trigger?.name === 'trade') {
-					return '(Trade)';
-				} else if (detail.trigger?.name === 'use-item') {
-					return `(${detail.item?.name?.replace('-', ' ') || 'Item'})`;
-				}
-			}
+			return describeCondition(first?.evolves_to?.[0]?.evolution_details?.[0]);
 		}
-		
 		return '';
 	}
 </script>

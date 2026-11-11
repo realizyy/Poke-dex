@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores';
 	import { preloadData } from '$app/navigation';
-	import type { SearchEvent } from '$lib/types';
+	import type { SearchEvent, SortBy } from '$lib/types';
 
 	// Components
 	import SearchFilter from '../../components/search/SearchFilter.svelte';
@@ -64,7 +64,7 @@
 
 	function handleSortChange(event: Event) {
 		const target = event.target as HTMLSelectElement;
-		searchStore.updateSort(target.value as any, searchStore.sortOrder);
+		searchStore.updateSort(target.value as SortBy, searchStore.sortOrder);
 	}
 
 	function handleSortOrderToggle() {

@@ -1,4 +1,4 @@
-import type { Team, TeamPokemon, Pokemon } from '$lib/types';
+import type { Team, Pokemon } from '$lib/types';
 import { toastStore } from './toast-store.svelte';
 
 class TeamStore {

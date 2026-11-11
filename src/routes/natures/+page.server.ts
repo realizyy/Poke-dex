@@ -6,7 +6,7 @@ export const load: PageServerLoad = async () => {
 	try {
 		const natures = await NatureService.fetchAllNatures();
 		return { natures };
-	} catch (e) {
+	} catch {
 		throw error(500, 'Failed to load natures');
 	}
 };

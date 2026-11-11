@@ -1,21 +1,10 @@
 <script lang="ts">
 	import { Layers, ChevronLeft } from '$lib/icons';
-	import type { TcgSet, TcgCardBrief } from '$lib/types';
+	import type { TcgSet } from '$lib/types';
 	import { TcgService } from '$lib/services/tcg-service';
 
 	let { data }: { data: { set: TcgSet } } = $props();
 	const set = $derived(data.set);
-
-	const rarityOrder = [
-		'Common', 'Uncommon', 'Rare', 'Rare Holo', 'Rare Holo EX', 'Rare Holo GX',
-		'Rare Holo V', 'Rare Holo VMAX', 'Rare Holo VSTAR',
-		'Ultra Rare', 'Secret Rare', 'Amazing Rare', 'Promo',
-	];
-
-	function rarityRank(r?: string) {
-		const idx = rarityOrder.indexOf(r ?? '');
-		return idx === -1 ? 99 : idx;
-	}
 
 	const cards = $derived(
 		[...(set.cards ?? [])].sort((a, b) => {

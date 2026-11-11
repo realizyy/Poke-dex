@@ -6,7 +6,7 @@ export const load: PageServerLoad = async ({ params }) => {
 	try {
 		const ability = await AbilityService.fetchAbility(params.name.toLowerCase());
 		return { ability };
-	} catch (e) {
+	} catch {
 		throw error(404, `Ability "${params.name}" not found`);
 	}
 };

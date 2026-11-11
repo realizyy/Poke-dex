@@ -1,5 +1,5 @@
-import type { Pokemon, PokemonSpecies, SearchFilters, EncounterArea } from '$lib/types';
-import { toastStore } from '$lib/stores/toast-store';
+import type { Pokemon, PokemonSpecies, SearchFilters, EncounterArea, EvolutionChain } from '$lib/types';
+import { toastStore } from '$lib/stores/toast-store.svelte';
 
 const POKEMON_API_BASE = 'https://pokeapi.co/api/v2';
 const POKEMON_CACHE = new Map<string, any>();
@@ -134,7 +134,7 @@ export class PokemonService {
 		return data;
 	}
 
-	static async fetchEvolutionChain(chainId: number): Promise<any> {
+	static async fetchEvolutionChain(chainId: number): Promise<EvolutionChain> {
 		const cacheKey = `evolution-chain-${chainId}`;
 		const cached = this.getCachedData(cacheKey);
 		
@@ -152,7 +152,7 @@ export class PokemonService {
 		return evolutionChain;
 	}
 
-	static async getEvolutionChainForPokemon(pokemonId: number): Promise<any> {
+	static async getEvolutionChainForPokemon(pokemonId: number): Promise<EvolutionChain | null> {
 		try {
 			// First get the species to find the evolution chain URL
 			const species = await this.fetchPokemonSpecies(pokemonId);

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { ChevronLeft, Layers } from '$lib/icons';
+	import { Layers } from '$lib/icons';
 	import { TcgService } from '$lib/services/tcg-service';
 	import type { TcgCard } from '$lib/types';
 
@@ -29,12 +29,6 @@
 	function energyDot(type: string) {
 		return typeColors[type] ?? '#64748b';
 	}
-
-	const pokemonSearchName = $derived(
-		card.evolveFrom
-			? card.evolveFrom.toLowerCase()
-			: card.name.toLowerCase().split(' ')[0]
-	);
 </script>
 
 <svelte:head>

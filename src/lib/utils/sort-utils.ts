@@ -21,9 +21,7 @@ export class SortUtils {
 					comparison = a.name.localeCompare(b.name);
 					break;
 				case 'stats':
-					const aTotal = this.calculateTotalStats(a);
-					const bTotal = this.calculateTotalStats(b);
-					comparison = aTotal - bTotal;
+					comparison = this.calculateTotalStats(a) - this.calculateTotalStats(b);
 					break;
 				default:
 					comparison = a.id - b.id;

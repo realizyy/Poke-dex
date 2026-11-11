@@ -1,6 +1,5 @@
 <script lang="ts">
 	import type { Pokemon } from '$lib/types';
-	import { getTypeColor } from '$lib/utils/pokemon-utils';
 
 	export let pokemon: Pokemon;
 	export let onMovesSelected: (moves: string[]) => void = () => {};

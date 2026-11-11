@@ -2,7 +2,7 @@
 	import '../app.css';
 	import '$lib/fonts.css';
 	// Import theme store to ensure it's initialized
-	import '$lib/stores/theme';
+	import '$lib/stores/theme.svelte';
 	// Import cache store to start preloading
 	import '$lib/stores/pokemon-cache';
 	import Header from '../components/header/header.svelte';
