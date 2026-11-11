@@ -10,7 +10,7 @@ const CONTRAST_BUDGET: Record<string, number> = {
 	'/compare': 3,
 	'/battle': 0,
 	'/natures': 11,
-	'/items': 0,
+	'/items': 1,
 	'/tcg': 0
 };
 

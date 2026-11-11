@@ -85,7 +85,8 @@
 			<div class="flex flex-wrap items-center gap-2">
 				<span
 					class="rounded-full px-2 py-0.5 text-xs font-medium capitalize"
-					style="background-color: {catColor}1A; color: {catColor};">{categoryDisplay}</span
+					style="background-color: {catColor}1A; color: color-mix(in srgb, {catColor} var(--accent-text-mix), black);"
+					>{categoryDisplay}</span
 				>
 				<span class="text-xs tabular-nums" style="color: var(--text-muted);">{costLabel}</span>
 			</div>

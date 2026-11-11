@@ -190,7 +190,10 @@
 						<div>
 							<div class="flex items-center gap-1.5 px-3 py-1">
 								<span class="text-sm leading-none">{meta.emoji}</span>
-								<p class="text-xs font-bold tracking-wider uppercase" style="color: {meta.color};">
+								<p
+									class="text-xs font-bold tracking-wider uppercase"
+									style="color: color-mix(in srgb, {meta.color} var(--accent-text-mix), black);"
+								>
 									{meta.label}
 								</p>
 							</div>
