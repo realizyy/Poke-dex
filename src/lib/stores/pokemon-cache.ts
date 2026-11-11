@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 import { PokemonService } from '#lib/services/pokemon-service';
-import { browser } from '$app/environment';
+import { browser } from '$app/env';
 
 interface CacheState {
 	isPreloading: boolean;

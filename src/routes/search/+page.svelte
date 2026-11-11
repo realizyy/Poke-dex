@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { preloadData } from '$app/navigation';
 	import type { SearchEvent, SortBy } from '#lib/types';
 
@@ -19,9 +19,9 @@
 	onMount(() => {
 		teamStore.loadTeams();
 
-		const urlQuery = $page.url.searchParams.get('q') ?? '';
-		const urlTypes = $page.url.searchParams.get('types')?.split(',').filter(Boolean) ?? [];
-		const urlGens = $page.url.searchParams.get('generations')?.split(',').filter(Boolean) ?? [];
+		const urlQuery = page.url.searchParams.get('q') ?? '';
+		const urlTypes = page.url.searchParams.get('types')?.split(',').filter(Boolean) ?? [];
+		const urlGens = page.url.searchParams.get('generations')?.split(',').filter(Boolean) ?? [];
 
 		if (urlQuery || urlTypes.length > 0 || urlGens.length > 0) {
 			const filtersFromUrl = { types: urlTypes, generations: urlGens };

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import { PokemonService } from '#lib';
 	import {
 		getTypeColor,
@@ -70,8 +70,8 @@
 	}
 
 	onMount(() => {
-		const a = $page.url.searchParams.get('a') ?? '';
-		const b = $page.url.searchParams.get('b') ?? '';
+		const a = page.url.searchParams.get('a') ?? '';
+		const b = page.url.searchParams.get('b') ?? '';
 		if (a) {
 			queryA = a;
 			loadPokemonByName(a, 'a');
@@ -122,7 +122,7 @@
 		if (nameA) params.set('a', nameA);
 		if (nameB) params.set('b', nameB);
 		const qs = params.toString();
-		goto(qs ? `?${qs}` : '/compare', { replaceState: true, keepFocus: true });
+		goto(qs ? `?${qs}` : '/compare', { replaceState: true, reset: false });
 	}
 
 	function selectPokemon(pokemon: Pokemon, slot: 'a' | 'b') {

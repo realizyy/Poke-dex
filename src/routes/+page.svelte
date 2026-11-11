@@ -3,8 +3,7 @@
 	import { goto } from '$app/navigation';
 	import type { Pokemon } from '#lib/types';
 	import type { TcgSetBrief } from '#lib/types';
-	import { page } from '$app/stores';
-	import { get } from 'svelte/store';
+	import { page } from '$app/state';
 	import { getTypeColor } from '#lib/utils/pokemon-utils';
 
 	let pokemons: Pokemon[] = [];
@@ -14,7 +13,7 @@
 
 	onMount(() => {
 		heroMon = HERO_POOL[Math.floor(Math.random() * HERO_POOL.length)];
-		const data = get(page).data;
+		const data = page.data;
 		pokemons = data.pokemons ?? [];
 		featuredSets = data.featuredSets ?? [];
 		loading = false;

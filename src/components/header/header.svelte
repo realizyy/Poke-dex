@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
+	import { page } from '$app/state';
 	import {
 		Home,
 		Search,
@@ -24,7 +24,7 @@
 		{ href: '/tcg', label: 'TCG', Icon: Layers }
 	];
 
-	const currentPath = $derived($page.url.pathname);
+	const currentPath = $derived(page.url.pathname);
 
 	let isMobileMenuOpen = $state(false);
 

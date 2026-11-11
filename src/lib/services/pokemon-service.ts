@@ -1,4 +1,4 @@
-import { browser } from '$app/environment';
+import { browser } from '$app/env';
 import { HttpError, fetchJson, mapWithConcurrency } from '#lib/api/http';
 import { TtlCache } from '#lib/api/ttl-cache';
 import type {

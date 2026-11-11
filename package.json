@@ -51,9 +51,5 @@
 	"dependencies": {
 		"@tanstack/svelte-virtual": "^3.13.23",
 		"daisyui": "^5.5.19"
-	},
-	"overrides": {
-		"cookie": "^0.7.2",
-		"kysely": "^0.28.12"
 	}
 }

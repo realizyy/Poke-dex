@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { themeStore } from '#lib/stores/theme.svelte';
-	import { browser } from '$app/environment';
+	import { browser } from '$app/env';
 
 	const isDark = $derived(
 		themeStore.theme === 'dark' ||
