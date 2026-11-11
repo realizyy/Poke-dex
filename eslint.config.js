@@ -32,7 +32,14 @@ export default ts.config(
 		}
 	},
 	{
-		files: ['**/*.svelte'],
+		rules: {
+			'svelte/no-navigation-without-resolve': 'off',
+			'svelte/prefer-svelte-reactivity': 'off',
+			'svelte/require-each-key': 'warn'
+		}
+	},
+	{
+		files: ['**/*.svelte', '**/*.svelte.ts'],
 
 		languageOptions: {
 			parserOptions: {

@@ -43,3 +43,19 @@ test('an unknown pokemon does not crash the page', async ({ page }) => {
 	await expect(page.locator('body')).toBeVisible();
 	expect(errors).toEqual([]);
 });
+
+test('following an evolution link updates the pokemon page', async ({ page }) => {
+	await page.goto('/pokemon/pikachu');
+	await expect(page.getByRole('heading', { name: /pikachu/i }).first()).toBeVisible();
+	await page
+		.getByRole('button', { name: /evolution/i })
+		.first()
+		.click();
+	await page
+		.getByRole('button', { name: /raichu/i })
+		.first()
+		.click();
+	await expect(page).toHaveURL(/\/pokemon\/raichu/);
+	await expect(page.getByRole('heading', { name: /raichu/i }).first()).toBeVisible();
+	await expect(page.getByRole('heading', { name: /^pikachu$/i })).toHaveCount(0);
+});

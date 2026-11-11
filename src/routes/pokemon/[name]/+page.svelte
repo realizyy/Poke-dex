@@ -20,8 +20,8 @@
 	import type { TcgCardBrief } from '$lib/types';
 
 	export let data: PageData;
-	const pokemon = data.pokemon;
-	const species = data.species;
+	$: pokemon = data.pokemon;
+	$: species = data.species;
 
 	// Modal state
 	let openModal: string | null = null;
@@ -67,6 +67,17 @@
 	let tcgCards: TcgCardBrief[] | null = null;
 	let loadingTcg = false;
 	let tcgLoaded = false;
+
+	let shownPokemonName: string | undefined;
+	$: if (pokemon?.name !== shownPokemonName) {
+		shownPokemonName = pokemon?.name;
+		openModal = null;
+		showAddToTeamModal = false;
+		encounterAreas = null;
+		encountersLoaded = false;
+		tcgCards = null;
+		tcgLoaded = false;
+	}
 
 	async function openLocationsModal() {
 		openModal = 'locations';

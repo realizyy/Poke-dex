@@ -13,13 +13,8 @@
 	let { searchQuery: initialQuery = '', onsearch, onclear }: Props = $props();
 
 	// Local state — fully owned by this component.
-	let searchQuery = $state('');
+	let searchQuery = $derived(initialQuery);
 	let filters = $state<SearchFilters>(SearchFilterUtils.createEmptyFilters());
-
-	// When the parent pushes a new query (e.g. URL init), reflect it in the input.
-	$effect(() => {
-		searchQuery = initialQuery;
-	});
 
 	let showFilters = $state(false);
 
